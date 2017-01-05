@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>Tree</title>
+    <link rel="stylesheet" type="text/css" href="./css/style.css">
+    <script type="text/javascript" src="./js/jquery-1.8.0.min.js"></script>
+    <script type="text/javascript" src="./js/knockout-3.3.0.js"></script>
+    <script type="text/javascript" src="./js/data.js"></script>
+</head>
+<body>
+    <div class="tree" data-bind="template: { name: 'test-template', data: $data}"></div>
+
+    <script type="text/html" id="test-template">
+        <ul>
+            <li>
+                <a data-bind="text: name" href="#"></a>
+                <!-- ko template: { name: 'test-template', foreach: children } -->
+                <!-- /ko -->
+            </li>
+        </ul>
+    </script>
+
+    <script type="text/javascript">
+        var FormElementNode = function(name, children) {
+           var self = this;
+           console.log(name);
+           self.children = ko.observableArray(children);
+           self.name = ko.observable(name);
+        }
+
+        var viewModel = new FormElementNode(
+            'xx公司',
+            [
+                new FormElementNode('总经办', [
+                    new FormElementNode('技术部', [
+                        new FormElementNode('开发一组', [
+                            new FormElementNode('甲'),
+                            new FormElementNode('乙'),
+                            new FormElementNode('丙')
+                        ])
+                    ]),
+                    new FormElementNode('推广部', [
+                        new FormElementNode('推广一组', [
+                            new FormElementNode('甲'),
+                            new FormElementNode('乙'),
+                            new FormElementNode('丙')
+                        ])
+                    ])
+                ])
+                // new FormElementNode([new FormElementNode([],'Child2.1','Value2.1')], 'Child2', 'Value2'),
+                // new FormElementNode('董事会', []),
+            ]
+        );
+
+        ko.applyBindings(viewModel);
+    </script>
+</body>
+</html>
