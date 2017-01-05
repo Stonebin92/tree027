@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>foreach-binding</title>
+    <!-- <link rel="stylesheet" type="text/css" href="./css/style.css"> -->
+    <!-- <script type="text/javascript" src="./js/jquery-1.8.0.min.js"></script> -->
+    <!-- <script type="text/javascript" src="./js/jquery.tmpl.js"></script> -->
+    <script type="text/javascript" src="./js/knockout-3.3.0.js"></script>
+</head>
+<body>
+<script id="formElementNodeTemplate" type="text/html">
+<ul>
+    <li>Parent <span data-bind="text: text"></span> <span data-bind="text: value"></span>
+        <br/>
+      Children:
+        <!-- ko template: { name: 'formElementNodeTemplate', foreach: children } -->
+        <!-- /ko -->
+     </li>
+   </ul>
+</script>
+
+ <div data-bind="template: { name: 'formElementNodeTemplate', data:  $data}"></div>
+
+ <script type="text/javascript">
+     var FormElementNode = function(children, text, value) {
+       var self = this;
+       self.children = ko.observableArray(children);
+       self.text = ko.observable(text);
+       self.value = ko.observable(value);
+    }
+
+
+
+    var viewModel = new FormElementNode(
+        [
+            new FormElementNode([], 'Child1', 'Value1'),
+            new FormElementNode([new FormElementNode([],'Child2.1','Value2.1')], 'Child2', 'Value2'),
+            new FormElementNode([], 'Child3', 'Value3'),
+        ], 'Main', 'MainValue');
+
+    ko.applyBindings(viewModel);
+ </script>
+</body>
+</html>
