@@ -1,0 +1,221 @@
+<div id="{{.GUID}}">
+	<div data-bind="visible:AttrView()==0" >
+		<!--新闻管理标题栏-->
+		<div class="pc-head">
+			<span class="pc-head-title">新闻</span>
+			<button data-bind="click:EventSearch" class="pc-head-search right" title="搜索"></button>
+			<button data-bind="click:EventAdd" class="pc-head-addreadbtn right" title="添加"></button>
+		</div>
+		<!--列表内容-->
+		<div class="pc-list-lightgraybg">		
+			<div data-bind="attr:{id:CtrlListID}" class="pc-list">
+				<div data-bind="visible:AttrLoading()==false,foreach:ListNews" style="display:none;">
+					<div class="pc-list-item" data-bind="click:$root.EventSelNews">
+						<img data-bind="visible:$data.UI_Image==1,attr:{src:$data.UI_Image}" width="56px" height="56px" class="pc-list-item-pic"/>
+						<!--专题新闻标志-->
+						<div data-bind="visible:$data.ExtType==2" class="pc-redlabel right"></div>
+						<div data-bind="text:$data.Title" class="pc-list-item-title"></div>
+						<div data-bind="html:$data.InnerContent" class="pc-list-item-txt"></div>
+						<div data-bind="text:$data.UI_CommentCount" class="pc-list-item-comment"></div>
+					</div>
+				</div>
+				<!--正在加载-->
+				<div data-bind="visible:AttrLoadingMore" class="loading">
+					<span class="loading-gif"></span>
+					<span>正在加载</span>
+				</div>
+				
+				<div data-bind="visible:AttrLoading" class="loading">
+					<span class="loading-gif"></span>
+					<span>正在加载数据</span>
+				</div>
+			</div>		
+		</div>
+		<!--没有数据新闻-->
+		<div data-bind="visible:ListNews().length<1&&AttrLoading()==false" id="ManagerNewsViewNoContentHint" class="pc-article" style="display:none;">
+			<div class="pc-nonenews"></div>
+			<div class="pc-noneloretxt">没有任何内容</div>
+		</div>
+	</div>
+	<!-- 子页面内容 -->
+	<div data-bind="visible:AttrView()==1,attr:{id:CtrlID}" style="display:none;">
+		
+	</div>
+
+	<script type="text/javascript">
+		$(function(){
+			var ctrl = $('#{{.GUID}}');
+			function Module_Manage_News_V2(){
+				this.PageSize=20;
+				this.CtrlID=tone.sys.guid();
+				this.CtrlListID=tone.sys.guid();
+				
+				this.AttrView=ko.observable(0);/*控制显隐*/
+				this.AttrLoading = ko.observable(true);
+				this.AttrLoadingMore = ko.observable(false);
+				this.ListNews=ko.observableArray([]);
+				this.AttrNewsList = {skip:-1,total:0,get:true};
+				
+				this.FuncGetNewList=function(skip,limit){
+					this.AttrLoading(skip==-1);
+					tone.ajaxJson('/news/admin/ordinary/list',{skip:skip,limit:limit},'get',function(data){
+						try{
+						if(data.success!=undefined&&data.success==true){
+							data=data.data;
+							this.AttrNewsList.skip=data.seek;
+							
+							this.AttrNewsList.total=data.total;
+							$.each(data.data,function(index,item){
+								item.UI_CommentCount=ko.observable(item.CommentCount);
+								//item.UI_Image = '{{.StaticServer}}/T1yun/cssAndjs/pc_style/images/news_nopic.png';
+								item.UI_Image = 0;
+								if(item.ExtType==2&&item.Cover2.length>0){
+									item.UI_Image="/{{.CurVersion}}/img/news/100?id="+item.Cover2;
+								}
+								if(item.ExtType!=2&&item.Images2!=undefined&&item.Images2.ID!=undefined){
+									item.UI_Image="/{{.CurVersion}}/img/news/100?id="+item.Images2.ID;
+								}
+							});
+							if(skip==-1){
+								this.ListNews(data.data);
+								this.AttrLoading(false);
+							}else{
+								var tmp=this.ListNews();
+								this.ListNews([]);
+								$.merge(tmp,data.data);
+								this.ListNews(tmp);
+							}
+							
+						}
+						}catch(e){console.log(e)}
+						this.AttrNewsList.get=true;
+					}.bind(this));
+				};
+				this.EventSelNews=function(m,e){
+					var url='/t1yun/manage1/news/detail';
+					if(m.ExtType==2){
+						url='/t1yun/manage1/news/tdetail';
+					}
+					tone.func.get(url,function(data){
+						try{
+						this.AttrView(1);
+						var ctrl=$('#'+this.CtrlID);
+						ctrl.html(data);
+						var module = {};
+						if(m.ExtType==2){
+							module = new Module_Manage_News_TDetail_V2();
+							module.FuncDelC = function(){
+								m.CorrelationCount--;
+							};
+							module.FuncAddC = function(){
+								m.CorrelationCount++;
+							};
+						}else{
+							module = new Module_Manage_News_Detail_V2();
+						}
+						module.Binding(ctrl.children()[0]);
+						module.FuncGetNewsByID(m.ID);
+						module.FuncBack=function(){
+							this.AttrView(0);
+						}.bind(this);
+						module.FuncDel=function(){
+							this.ListNews.remove(m);
+							this.AttrNewsList.total--;
+						}.bind(this);
+						module.FuncEdit=function(data){
+							m.UI_Image = '{{.StaticServer}}/T1yun/cssAndjs/pc_style/images/news_nopic.png';
+							for(var obj in data){
+								if(obj=="Images2"){
+									if(data[obj].length>0){
+										m[obj]=data[obj][0];
+										if(m.ExtType!=2){
+											m['UI_Image']='/{{.CurVersion}}/img/news/100?id='+data[obj][0].ID;
+										}
+									}
+									continue;
+								}
+								if(obj=="Cover2"&&m.ExtType==2){
+									if(data[obj].length>0){
+										m['UI_Image']='/{{.CurVersion}}/img/news/100?id='+data[obj];
+									}
+								}
+								m[obj]=data[obj];
+							}
+							var tmp=this.ListNews();
+							this.ListNews([]);
+							this.ListNews(tmp);
+						}.bind(this);
+						module.FuncDelComment=function(){
+							m.UI_CommentCount(m.UI_CommentCount()-1);
+							m.CommentCount--;
+						};
+						module.FuncAddComment=function(){
+							m.UI_CommentCount(m.UI_CommentCount()+1);
+							m.CommentCount++;
+						};
+						}catch(e){console.log(e);}
+					}.bind(this));
+				}.bind(this);
+				this.EventSearch=function(m,e){
+					tone.func.get('/t1yun/manage1/news/search',function(data){
+						try{
+						this.AttrView(1);
+						var ctrl=$('#'+this.CtrlID);
+						ctrl.html(data);
+						var module = new Module_Manage_News_Detail_V2();
+						module.Binding(ctrl.children()[0]);
+						module.FuncBack=function(){
+							this.AttrView(0);
+						}.bind(this);
+						}catch(e){console.log(e);}
+					}.bind(this));
+				}.bind(this);
+				this.EventAdd = function(m,e){
+					tone.func.get('/t1yun/manage1/news/edit',function(data){
+						try{
+							this.AttrView(1);
+							var ctrl=$('#'+this.CtrlID);
+							ctrl.html(data);
+							var module = new Module_Manage_News_Edit_V2();
+							module.FuncInit({});
+							module.Binding(ctrl.children()[0]);
+							module.FuncAddNews=function(news){
+								try{
+								news.UI_CommentCount=ko.observable(0);
+								news.UI_Image = '{{.StaticServer}}/T1yun/cssAndjs/pc_style/images/news_nopic.png';
+								if(news.ExtType==2){
+									news.UI_Image="/{{.CurVersion}}/img/news/100?id="+news.Cover2;
+								}
+								if(news.ExtType!=2&&news.Images2!=undefined&&news.Images2.length>0){
+									news.UI_Image="/{{.CurVersion}}/img/news/100?id="+news.Images2[0].ID;
+								}
+								this.ListNews.unshift(news);
+								this.AttrNewsList.total++;
+								}catch(e){console.log(e)}
+							}.bind(this);
+							module.FuncBack=function(){
+								this.AttrView(0);
+							}.bind(this);
+							}catch(e){console.log(e);}
+					}.bind(this));
+				};
+				
+				this.Views=function(){
+					this.FuncGetNewList(-1,this.PageSize);
+					tone.func.setRollDownEvent($('#'+this.CtrlListID),function(){
+						if(this.AttrNewsList.get==false)return;
+						this.AttrNewsList.get=false;
+						if(this.AttrNewsList.total>this.ListNews().length)
+							this.FuncGetNewList(this.AttrNewsList.skip,this.PageSize);
+					}.bind(this));
+				};
+				this.Binding=function(ctrl){
+					ko.applyBindings(this,ctrl);
+					this.Views();
+				};
+			};
+			var module_Manage_News_V2=new Module_Manage_News_V2();
+			module_Manage_News_V2.Binding(ctrl[0]);
+		});		
+	</script>
+</div>
