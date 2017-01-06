@@ -1,0 +1,63 @@
+<div id="news">
+	<!-- 主页面内容 -->
+	<div data-bind="visible: AttrView() == 0">
+		<div class="headtap">
+			<div><span>新闻</span></div>
+			<div class="right"><span class="close"></span></div><!-- 关闭按钮 -->
+		</div>
+		<!-- 新闻标题管理 -->
+		<div class="head">
+			<a data-bind="visible: AttrStatus() == 0, click: EventAddNews">新增新闻</a>
+			<a data-bind="visible: AttrStatus() == 0, click: EventEdit" style="display : none;">编辑</a>
+			<a data-bind="visible: AttrStatus() == 0, click: EventDelete" style="display : none;">删除</a>
+			<a data-bind="visible: AttrStatus() == 0, click: EventPush" style="display : none;">发布新闻</a>
+		</div>
+		<!-- 列表内容 -->
+		<div class="news-content" data-bind="visible: AttrStatus() == 0" style="display : none;">
+			<!-- 具体内容 -->
+			<div class="detail">
+				<ul data-bind="foreach">
+					<li data-bind="" style="display : none;">
+						<div class="right newsimg" ></div>
+						<div class="overflow-h">
+							<a class="title" data-bind=""></a>
+							<div class="label">
+								<span></span>
+							</div>
+							<div class="date">
+								<span data-bind=""></span><!-- 时间 -->
+								<span data-bind=""></span><!-- 更贴 -->
+							</div>
+						</div>
+					</li>
+					<li class="theam-news">
+						<div class="right newsimg" ></div>
+						<div class="overflow-h">
+							<a class="title" data-bind=""></a>
+							<div class="label">
+								<span></span>
+							</div>
+							<div class="date">
+								<span data-bind=""></span><!-- 时间 -->
+								<span data-bind=""></span><!-- 更贴 -->
+								<span data-bind=""></span><!-- 专题 -->
+							</div>
+						</div>
+					</li>
+				</ul>
+			</div>
+			<!-- 加载更多 -->
+			<div class="text-center" data-bind="visible: AttrStatus() ==0" style="display : none">
+				<button type="button" data-bind="click: EventLoadMore">加载更多</button>
+			</div>
+			<!-- 内容为空 -->
+			<div class="news-empty" data-bind="" style="display : none;">
+				<div class="empty-img"></div>
+				<div class="empty-txt">现在什么也没有</div>
+				<div class="empty-tips">可以通过"新增新闻"进行添加</div>
+			</div>
+		</div>
+	</div>
+	<!-- 子页面内容 -->
+	<div data-bind="visible: AttrView() == 1" style="display:none;"></div>
+</div>
