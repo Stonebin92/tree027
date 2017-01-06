@@ -1,0 +1,614 @@
+<div id="{{.GUID}}">
+	
+	<!--添加新闻标题栏-->
+	<div class="pc-head">
+		<!--普通标题栏-->
+		<div style="display:none-;">
+			<button data-bind="click:EventBack" class="pc-head-backbtn left" title="返回"></button>
+			<span data-bind="visible:AttrNews.Type()!=3&&AttrNews.ID==''" class="pc-head-title" style="display:none;text-align:left;padding-left:88px;">
+				添加新闻</span>
+			<span data-bind="visible:AttrNews.Type()==3&&AttrNews.ID==''" class="pc-head-title" style="display:none;text-align:left;padding-left:88px;">
+				添加相关新闻</span>
+			<span data-bind="visible:AttrNews.Type()!=3&&AttrNews.ID!=''" class="pc-head-title" style="display:none;text-align:left;padding-left:88px;">
+				更新新闻</span>
+			<span data-bind="visible:AttrNews.Type()==3&&AttrNews.ID!=''" class="pc-head-title" style="display:none;text-align:left;padding-left:88px;">
+				更新相关新闻</span>
+			<button data-bind="click:EventSave" class="pc-head-txtbtn right">发表</button>
+			<!--专题新闻与普通新闻切换-->
+			<div data-bind="visible:AttrNews.Type()!=3&&AttrNews.ID==''" class="pc-manage-news-change">
+				<span data-bind="css:{'pc-manage-news-change-current':AttrNews.Type()==1,'pc-manage-news-change-uncurrent':AttrNews.Type()==2},
+					click:function(m,e){this.EventNewsType(m,e,1);}" class="left pc-manage-news-change-current">普通新闻</span>
+				<span data-bind="css:{'pc-manage-news-change-current':AttrNews.Type()==2,'pc-manage-news-change-uncurrent':AttrNews.Type()!=2},
+					click:function(m,e){this.EventNewsType(m,e,2);}" class="left pc-manage-news-change-uncurrent">专题新闻</span>
+			</div>
+		</div>
+	</div>
+			
+	<!--新闻-->
+	<div style="display:none-;">
+		<!--新闻部分-->
+		<input type="file" data-bind="attr:{id:CtrlCoverID},event:{change:EventUpCover}" style="display:none;"/>
+		<input type="file" data-bind="attr:{id:CtrlImgID},event:{change:EventUpImg}" style="display:none;"/>
+		<div id="ManagerNewsAddView" style="display:none-">
+			<div class="pc-manage-addcontent">
+				<!--专题封面-->
+				<div data-bind="visible:AttrNews.Type()==2" class="pc-manage-theme-cover" style="display:none;">
+					<!--没有内容的时候-->
+					<div data-bind="visible:AttrNews.Cover2()==''&&AttrNews.Cover2Data()==''" class="none_notice" style="display:none-;">
+						<img data-bind="click:EventSelCover" src="{{.StaticServer}}/T1yun/cssAndjs/pc_style/images/pc-img-b.png"/><Br/>
+						<span>添加专题新闻主题封面</span>
+					</div>
+					<!--有内容的时候-->
+					<div  data-bind="visible:AttrNews.Cover2()!=''||AttrNews.Cover2Data()!=''" class="pc-manage-themeimgdiv" style="display:none;">
+						<div  class="img_data">
+							<img data-bind="visible:AttrNews.Cover2()!=''&&AttrNews.Cover2Data()=='',attr:{src:'/{{.CurVersion}}/img/news?id='+AttrNews.Cover2()}" />
+							<img data-bind="visible:AttrNews.Cover2Data()!='',attr:{src:AttrNews.Cover2Data()}" />
+						</div>
+						<!--更换主题封面-->
+						<div class="pc-manage-changethemecover">
+							<button data-bind="click:EventSelCover" class="pc-manage-changethemebtn">更换主题封面</button>
+						</div>
+					</div>
+				</div>
+				<!--标题输入框-->
+				<div class="pc-manage-inputtxt">
+					<span class="pc-manage-inputname left">标题</span>
+					<div class="pc-manage-inputdiv">
+						<input data-bind="textInput:AttrNews.Title" type="text" placeholder="填写新闻标题"/>
+					</div>
+				</div>
+				<!--标签-->
+				<div class="pc-manage-inputtxt">
+					<span class="pc-manage-inputname left">标签</span>
+					<div class="pc-manage-inputdiv">
+						<input data-bind="textInput:AttrNews.Tags" type="text" placeholder="填写标签，以逗号隔开"/>
+					</div>
+				</div>
+				<!--视频图片-->
+				<div data-bind="visible:AttrNews.Video2().length>0||AttrNews.Images2().length>0" class="pc-manage-videoimg" style="display:none;">
+					<div class="pc-overflow-h">
+						<!--视频-->
+						<div data-bind="if:AttrNews.Video2().length>0">
+							<div data-bind="css:{'pc-manage-videoimg-current':AttrCurrentVI()==AttrNews.Video2()[0]},
+								visible:AttrNews.Video2().length>0,
+								click:function(m,e){EventSelVI(m,e,0);}
+								" 
+								class="pc-manage-videoimg-item"  style="display:none">
+								<!--mask-->
+								<div data-bind-="text:AttrNews.Video2()[0].Remark" class="pc-manage-videoimg-mask"></div>
+								<!--删除按钮-->
+								<div data-bind="click:$root.EventDelVideo,clickBubble:false" class="pc-manage-videoimg-del" title="删除"></div>
+								<!--img-->
+								<img data-bind="attr:{src:'/video/cover?id='+AttrNews.Video2()[0].ID}"/>
+		                    </div>
+	                    </div>
+						<!--图片-->
+						<div data-bind="foreach:AttrNews.Images2" >
+							<div data-bind="css:{'pc-manage-videoimg-current':$root.AttrCurrentVI()==$data},
+								click:function(m,e){$root.EventSelVI(m,e,1);}"
+								class="pc-manage-videoimg-item" style="display:none-"><!--选中当前pc-manage-videoimg-current-->
+								<!--mask-->
+								<div data-bind="text:$data.Remark" class="pc-manage-videoimg-mask"></div>
+								<!--删除按钮-->
+								<div data-bind="click:$root.EventDelImg,clickBubble:false" class="pc-manage-videoimg-del" title="删除"></div>
+								<!--img-->
+								<img data-bind="attr:{src:$data.ID==undefined?$data.Data:'/{{.CurVersion}}/img/news?id='+$data.ID}"/>
+							</div>
+						</div>
+					</div>
+					<!--输入文本-->
+					<div data-bind="visible:AttrCurrentVI().Remark!=undefined" class="pc-manage-videoimg-txt">
+						<span class="pc-manage-inputname left">描述</span>
+						<div class="pc-manage-inputdiv">
+							<input data-bind="textInput:AttrCurrentVI().Remark" type="text" placeholder="为选中的图片或视频添加文字说明"/>
+						</div>
+					</div>
+				</div>
+				<!--编辑区-->
+				<div data-bind="visible:AttrFu()==false" class="pc-manage-simpletextarea">
+	                <!--普通文本-->
+					<textarea data-bind="attr:{id:CtrlContentID},textInput:AttrNews.Content" placeholder="在此输入正文内容" class="pc-manage-simpletextarea"></textarea>
+				</div>
+				<div data-bind="visible:AttrFu" class="pc-manage-simpletextarea">
+	                <!--富文本-->
+					<textarea data-bind="attr:{id:CtrlContentFID,name:CtrlContentFID}" placeholder="在此输入正文内容" class="pc-manage-simpletextarea"></textarea>
+				</div>
+			</div>
+			<!--分享组织-->
+			<div data-bind="visible:AttrNews.Actor().length>0" class="pc-manage-share-line" style="display:none;">
+				<!--more-->
+				<span id="ManagerNewsAddViewShareDivMore" class="pc-manage-share-more left" style="display:none;"></span>
+				<!--cell-->
+				<div data-bind="foreach:AttrNews.Actor">
+					<span class="pc-manage-share-organize" style="display:none-;">
+						<span data-bind="text:$data.CircleName"></span>
+						<span data-bind="click:$root.EventDelShare" class="pc-manage-share-close" title="删除"></span>
+					</span>
+				</div>
+				<!--展开-->
+				<span id="ManagerNewsAddViewShareDivClose" class="pc-manage-share-closelist" title="收缩" style="display:none;"></span>
+			</div>
+			<!--底部按钮-->
+			<div class="pc-manage-bottom">
+			
+				<div data-bind="css:{'sys-params-btn-current':AttrFu},click:EventSelFu" class="sys-params-btn left sys-params-ml336" 
+					style="margin-top:15px;margin-left:0px;line-height:22px;display:none;">
+					<span>启用富文本</span>
+				</div>
+				<button data-bind="click:EventSelVideo" class="pc-manage-bottom-videobtn right" title="添加视频"></button>
+				<button data-bind="click:EventSelImg" class="pc-manage-bottom-imgbtn right" title="添加图片"></button>
+				<button data-bind="visible:AttrNews.Type()==2,click:EventShowShare" class="pc-manage-bottom-sharebtn right" title="分享" style="display:none;"></button>
+			</div>
+			<!--分享弹出层-->
+			<div data-bind="attr:{id:CtrlShareID}" class="pc-manage-popupbg" style="display:none">
+				<div class="pc-manage-sharepopup">
+	                <div class="pc-manage-popup-videohead">
+					    <span class="pc-manage-sharepopup-title left">分享范围</span>
+					    <span data-bind="click:EventShareCal" class="pc-manage-sharepopup-closebtn right" title="关闭"></span>
+					</div>
+	                <!--列表-->
+					<div data-bind="foreach:AttrShare.List" class="pc-manage-sharepopup-listdiv">
+	                    <div data-bind="click:$root.EventShareSel">
+			                <div data-bind="css:{'pc-graybg':$data.UI_Sel}">
+						        <div class="pc-manage-sharepopup-list">
+							        <img src="{{.StaticServer}}/T1yun/cssAndjs/pc_style/images/pc-blue-people.png" class="left"/>
+							        <span data-bind="text:$data.CircleName" class="left pc-manage-sharepopup-listtxt"></span>
+						        </div>
+	                        </div>
+	                    </div>
+					</div>
+					<!--按钮-->
+					<div class="pc-manage-sharepopup-bottom">
+						<div data-bind="css:{'sys-params-btn-current':AttrShare.Sel().length==AttrShare.List().length&&AttrShare.List().length>0},click:EventShareAll" class="sys-params-btn left sys-params-ml336" 
+							style="margin-top:15px;margin-left:0px;line-height:22px;">
+							<span>全选</span>
+						</div>	
+						<!-- 
+						<input data-bind="click:EventShareAll,clickBubble:false,checked:AttrShare.Sel().length==AttrShare.List().length"
+							type="checkbox" class="pc-me-set-list-checked-s left" style="height:47px;margin-right:5px;">
+						<span class="pc-manage-span left" style="margin-top:-3px;">全选</span> -->
+						<span data-bind="click:EventShareOK" class="pc-manage-sharepopup-bluebtn right">确定</span>
+						<span data-bind="click:EventShareCal" class="right pc-manage-sharepopup-cancelbtn">取消</span>
+					</div>
+				</div>
+			</div>		
+			<!--视频弹出层-->
+			<div data-bind="attr:{id:CtrlVideoID}" class="pc-manage-popupbg" style="display:none;">
+				<div class="pc-manage-chooseimg-popup">
+					<div class="pc-manage-popup-videohead">
+						<span class="pc-manage-sharepopup-title left">选择视频</span>
+						<span data-bind="click:EventVideoCal" class="pc-manage-sharepopup-closebtn right" title="关闭"></span>
+					</div>
+					<!--下划线-->
+					<div class="pc-manage-popup-titleline"></div>
+					<!--列表-->
+					<div data-bind="foreach:AttrVideo.List" class="pc-manage-popup-videoH">
+						<!--每一条记录-->
+	                    <div data-bind="click:$root.EventTagVideo">
+			                <div >
+						        <div data-bind="css:{'pc-lightblue':$root.AttrVideo.Sel().length>0&&$root.AttrVideo.Sel()[0].ID==$data.ID}" class="pc-manage-sharepopup-list">
+							        <div class="pc-overflow-h">
+								        <div class="pc-manage-popup-img left">
+									        <img data-bind="attr:{src:'/video/cover?id='+$data.ID}"/>
+								        </div>
+								        <!--名字-->
+								        <span data-bind="text:$data.FileName" class="left pc-manage-popup-txt"></span>
+								        <!--大小-->
+								        <span data-bind="text:($data.Size/1024/1024).toFixed(2)+'M'" class="pc-manage-popup-kb left"></span>
+								        <!--日期-->
+								        <span data-bind="text:$data.CreateDate" class="pc-manage-popup-date left"></span>
+							        </div>
+	                            </div>
+	                        </div>
+						</div>
+					</div>
+					<!--按钮-->
+					<div class="pc-manage-sharepopup-bottom">
+						<span data-bind="click:EventVideoOK" class="pc-manage-sharepopup-bluebtn right">确定</span>
+						<span data-bind="click:EventVideoCal" class="right pc-manage-sharepopup-cancelbtn">取消</span>
+					</div>
+				</div>
+			</div>
+					
+			<!--空内容提示-->
+			<div data-bind="attr:{id:CtrlBackID}" class="pc-manage-popupbg " style="display:none;">
+				<div class="pc-manage-chooseimg-popup pc-manage-emptynotice-popup">
+					<div class="pc-overflow-h">
+						<span class="pc-manage-sharepopup-title left">提示</span>
+						<span data-bind="click:EventBackFalse" class="pc-manage-sharepopup-closebtn right" title="关闭"></span>
+					</div>
+					<div class="pc-manage-emptynoteic-txt">
+						该文章未发表，返回会导致内容丢失，
+						确定要执行此操作吗？
+					</div>
+					<!--按钮-->
+					<div class="pc-manage-sharepopup-bottom">
+						<span data-bind="click:EventBackOK" class="pc-manage-sharepopup-bluebtn right">确定</span>
+						<span data-bind="click:EventBackFalse" class="right pc-manage-sharepopup-cancelbtn">取消</span>
+					</div>
+				</div>
+			</div>
+	    </div>
+	</div>
+<script type="text/javascript">
+	var ctrl = $('#{{.GUID}}');
+	function Module_Manage_News_Edit_V2(){
+		this.PageSize=20;
+		this.CtrlID=tone.sys.guid();
+		this.CtrlContentID=tone.sys.guid();
+		this.CtrlContentFID=tone.sys.guid();
+		this.CtrlVideoID=tone.sys.guid();
+		this.CtrlBackID=tone.sys.guid();
+		this.CtrlCoverID=tone.sys.guid();
+		this.CtrlImgID=tone.sys.guid();
+		this.CtrlShareID=tone.sys.guid();
+		
+		this.CtrlFuText = ko.observable({});
+		
+		this.AttrView=ko.observable(0);
+		this.AttrFu = ko.observable(true);
+		this.AttrCurrentVI = ko.observable({});
+		this.AttrVideo = {List:ko.observableArray([]),Sel:ko.observableArray([]),skip:-1,total:0};
+		this.AttrShare = {List:ko.observableArray([]),Sel:ko.observableArray([]),ShowAll:ko.observable(false)};
+		
+		
+		this.DelIMG = ko.observableArray([]);
+		
+		this.AttrNews = {ID:'',Title:ko.observable(''),Content:ko.observable(''),ThemeID:'',
+			Cover2Data:ko.observable(''),Tags:ko.observable(''),Type:ko.observable(1),// 1普通/2主题/3相关
+			Cover2:ko.observable(''),
+			Actor:ko.observableArray([]),
+			Share:ko.observable(1),
+			Video2:ko.observableArray([]),
+			Images2:ko.observableArray([])
+		};
+		
+		this.FuncBack = function(){};
+		this.FuncUpdateNews = function(){};
+		this.FuncAddNews = function(data){};
+		
+		this.FuncInit = function(data,type){
+			if(type==undefined||$.inArray(type,[1,2,3])==-1){
+				type=1;
+			}
+			this.AttrNews.Type(type);
+			if(data.ID!=undefined){
+				this.AttrNews.ID=data.ID;
+				this.AttrNews.ThemeID = data.ThemeID||'';
+				this.AttrNews.Title(data.Title);
+				this.AttrNews.Content(data.Content);
+				this.AttrNews.Cover2Data('');
+				this.AttrNews.Cover2(data.Cover2||'');
+				this.AttrNews.Tags(data.Tags.join(','));
+				this.AttrNews.Type(data.ExtType);
+				this.AttrNews.Share(1);
+				this.AttrNews.Video2(data.Video2||[]);
+				this.AttrNews.Images2(data.Images2||[]);
+				this.AttrNews.Actor([]);
+			}else{
+				this.AttrNews.ID='';
+				this.AttrNews.ThemeID = '';
+				this.AttrNews.Title('');
+				this.AttrNews.Content('');
+				this.AttrNews.Cover2Data('');
+				this.AttrNews.Cover2('');
+				this.AttrNews.Tags('');
+				this.AttrNews.Share(1);
+				this.AttrNews.Video2([]);
+				this.AttrNews.Images2([]);
+				this.AttrNews.Actor([]);
+			}
+			if(type==3){
+				this.AttrNews.ThemeID = data.ThemeID;
+			}
+			this.FuncListCircle(data.Actor);
+		};
+		// /admin/user/admin_circle
+		this.FuncListCircle=function(actor){
+		/*	if(actor==undefined){
+				actor=[];
+			}
+			tone.ajaxJson('/home/ctrl',{'api':'/admin/user/admin_circle','data':{Auth:501}},'post',function(data){
+				if(data.success==true){
+					var tmp=[];
+					$.merge(tmp,data.data.Admin,data.data.Share);
+					var tmp_actor = [];
+					$.each(tmp,function(i,item){
+						item.UI_Sel = ko.observable(false);
+						if($.inArray(item.ID,actor)!=-1){
+							item.UI_Sel(true);
+							this.AttrNews.Actor.push(item);
+						}
+					});
+					this.AttrShare.List(tmp);
+				}else{
+					tone.views.FuncAddTip('获取圈子列表失败');
+				}
+			}.bind(this));*/
+		};
+		this.FuncListVideo = function(start){
+			/*
+			tone.ajaxJson('/home/ctrl',{api:'/gfs/video/api/query',data:{'Start':start,'Status':1}},'get',function(data){
+				if(data.success==true){
+					data=data.data;
+					this.AttrVideo.skip=data.end;
+					if(start==-1){
+						this.AttrVideo.total = data.total;
+						this.AttrVideo.List(data.data);
+					}else{
+						var tmp = this.AttrVideo.List();
+						$.merge(tmp,data.data);
+						this.AttrVideo.List(tmp);
+					}
+				}else{
+					tone.views.FuncAddTip('获取视频列表失败');
+				}
+			}.bind(this));
+			*/
+		};
+		this.EventNewsType = function(m,e,i){
+			this.AttrNews.Type(i);
+		};
+		this.EventSelVI = function(m,e,i){
+			if(i==0){
+				this.AttrCurrentVI(this.AttrNews.Video2()[0]);
+			}else{
+				this.AttrCurrentVI(m);
+			}
+		}.bind(this);
+		this.EventSave = function(m,e){
+			//var params={Title,Content,Tags,Type,Share,Video2,Images2};
+			//var params={Title,Content,Cover2Data,Tags,Actor,Video2,Images2};
+			//var params={ThemeID,Title,Content,Tags,Video2,Images2};
+			if(this.AttrFu()){
+				//this.AttrNews.Content(tinymce.get(this.CtrlContentFID).getContent());
+				this.AttrNews.Content(this.CtrlFuText().getData());
+			}
+			var params={Title:$.trim(this.AttrNews.Title()),Content:this.AttrNews.Content(),Tags:this.AttrNews.Tags(),
+				Video2:this.AttrNews.Video2(),Images2:JSON.stringify(this.AttrNews.Images2())
+			};
+			var err=[];
+			if(params.Content.length<1){
+				err.push('请输入正文内容');
+			}
+			if(params.Content.length>1024*1024){
+				err.push('正文内容过长');
+			}
+			if(params.Title.length>1024*1024){
+				err.push('标题过长');
+			}
+			$.each(['Tags','Video2','Images2'],function(i,item){
+				if(params[item].length<3){
+					params[item]=false;
+				}
+			});
+			var url='';
+			var tip='';
+			var callback=function(){};
+			if(this.AttrNews.Type()==1){
+				params.Type=1;
+				params.Share=this.AttrNews.Share();
+				url='/news/admin/ordinary/add';
+				tip='添加新闻失败';
+				callback=this.FuncAddNews;
+			}else if(this.AttrNews.Type()==2){
+				params.Cover2Data=this.AttrNews.Cover2Data();
+				if(params.Cover2Data == '' && this.AttrNews.Cover2()==''){
+					tone.views.FuncAddTip(['请为专题新闻选择一张图片作为封面']);
+					return
+				}
+				params.Actor=[];
+				$.each(this.AttrNews.Actor(),function(i,item){
+					params.Actor.push(item.ID);
+				});
+				if(params.Actor.length<1) params.Actor=false;
+				url='/news/admin/theme/add';
+				tip='添加专题新闻失败';
+				callback=this.FuncAddNews;
+			}else if(this.AttrNews.Type()==3){
+				params.ThemeID=this.AttrNews.ThemeID;
+				if(params.ThemeID.length<1){
+					err.push('相关新闻数据有误，请刷新重试');
+				}
+				url='/news/admin/about/add';
+				tip='添加相关新闻失败';
+				callback=this.FuncAddNews;
+			}
+			
+			if(this.AttrNews.ID!=""){
+				url='/news/update';
+				params.ID=this.AttrNews.ID;
+				params.Remove = this.DelIMG();
+				tip = '更新失败';
+				callback=this.FuncUpdateNews;
+			}
+			if(params.Tags!=false){
+				params.Tags = params.Tags.split(',');
+			}
+			if(err.length>0){
+				tone.views.FuncAddTip(err);
+				return;
+			}
+		/*	console.log(params)
+			return*/
+			tone.ajaxJson(url,params,'post',function(data){
+				if(data.success==true){
+					callback(data.data);
+					this.FuncBack();
+				}else{
+					if(tip.length>0) tone.views.FuncAddTip(tip);
+					if(data.error.length>0){
+						tone.views.FuncAddTip(data.error);
+					}
+				}
+			}.bind(this));
+			
+		}.bind(this);
+		/**
+		 * @see 把文件转换为base64字符
+		 * @param obj:document file input元素
+		 * @param callback:function 回调函数
+		 * @param fsize:int(字节) 文件最大的大小 默认100K
+		 * @param type:array 支持的后缀名(小写)
+		 * @return: {success:0出错/1中断/2类型不支持/3文件过大/4成功,
+		 * 		data:{data:string base64,filename:string文件名,type:string文件后缀名}
+		}
+			function file2Base64(obj,callback,fsize,ftype){
+			}
+		*/
+		this.EventUpCover=function(m,e){
+			var that=this;
+			tone.sys.img_inflate($(e.target)[0],function(data){
+					that.AttrNews.Cover2Data(data);
+			}.bind(this),500*1024);
+		};
+		this.EventSelImg = function(){
+			$('#'+this.CtrlImgID).click();
+		};
+		this.EventSelCover = function(){
+			$('#'+this.CtrlCoverID).click();
+		};
+		this.EventSelVideo = function(){
+			this.AttrVideo.Sel([]);
+			$.each(this.AttrNews.Video2(),function(i,item){
+				this.AttrVideo.Sel.push(item);
+			}.bind(this));
+			$('#'+this.CtrlVideoID).show();
+			this.FuncListVideo(-1);
+		};
+		this.EventTagVideo = function(m,e){
+			if(this.AttrVideo.Sel().length>0&&this.AttrVideo.Sel()[0].ID==m.ID){
+				this.AttrVideo.Sel([]);
+				return;
+			}
+			this.AttrVideo.Sel([m]);
+		}.bind(this);
+		this.EventVideoOK = function(){
+			this.AttrNews.Video2(this.AttrVideo.Sel());
+			$('#'+this.CtrlVideoID).hide();
+		};
+		this.EventVideoCal = function(){
+			$('#'+this.CtrlVideoID).hide();
+		};
+		
+		this.EventShowShare = function(){
+			this.AttrShare.Sel([]);
+			$.each(this.AttrNews.Actor(),function(i,item){
+				this.AttrShare.Sel.push(item);
+			}.bind(this));
+			$('#'+this.CtrlShareID).show();
+		};
+		this.EventShareSel = function(m,e){
+			m.UI_Sel(!m.UI_Sel());
+			if(!m.UI_Sel()){
+				this.AttrShare.Sel.remove(m);
+			}else{
+				this.AttrShare.Sel.push(m);
+			}
+		}.bind(this);
+		this.EventDelShare = function(m,e){
+			m.UI_Sel(false);
+			this.AttrNews.Actor.remove(m);
+		}.bind(this);
+		this.EventShareAll = function(m,e){
+			var all = this.AttrShare.Sel().length==this.AttrShare.List().length;
+			this.AttrShare.Sel([]);
+			$.each(this.AttrShare.List(),function(i,item){
+				item.UI_Sel(!all);
+				if(!all) this.AttrShare.Sel.push(item);
+			}.bind(this));
+			return false;
+		};
+		this.EventShareOK = function(){
+			this.AttrNews.Actor(this.AttrShare.Sel());
+			$('#'+this.CtrlShareID).hide();
+		};
+		this.EventShareCal = function(){
+			$.each(this.AttrShare.Sel(),function(i,item){
+				item.UI_Sel(false);
+			});
+			this.AttrShare.Sel([]);
+			$.each(this.AttrNews.Actor(),function(i,item){
+				item.UI_Sel(true);
+			});
+			$('#'+this.CtrlShareID).hide();
+		};
+		
+		this.EventUpImg = function(m,e){
+			tone.sys.img_inflate($(e.target)[0],function(data){
+					var img={Data:data,Remark:''};
+					this.AttrNews.Images2.push(img);
+			}.bind(this),500*1024);
+		}.bind(this);
+		
+		this.EventDelImg = function(m,e){
+			
+			this.AttrNews.Images2.remove(m);
+			if(m.ID != undefined){
+				this.DelIMG.push(m.ID)
+			}
+		}.bind(this);
+		this.EventDelVideo = function(m,e){
+			this.AttrNews.Video2([]);
+		}.bind(this);
+
+		this.EventBack = function(m,e){
+			$('#'+this.CtrlBackID).show();
+		}.bind(this);
+
+		this.EventBackOK = function(m,e){
+			this.FuncBack();
+		}.bind(this);
+		this.EventBackFalse = function(m,e){
+			$('#'+this.CtrlBackID).hide();
+		}.bind(this);
+		this.EventSelFu = function(m,e){
+			//var tiny=tinymce.get(this.CtrlContentFID);
+			if(this.AttrFu()){
+				this.AttrNews.Content(this.CtrlFuText().getData());
+				//this.AttrNews.Content(tiny.getContent());
+			}else{
+				this.CtrlFuText().setData(this.AttrNews.Content())
+				//tiny.setContent(this.AttrNews.Content());
+			}
+			this.AttrFu(!this.AttrFu());
+		}.bind(this);
+
+		this.Views=function(){
+			var that = this;
+			this.CtrlFuText(CKEDITOR.replace(this.CtrlContentFID));
+			this.CtrlFuText().setData(this.AttrNews.Content());
+			/*tinymce.init({
+				language:'zh_CN',
+				selector: '#'+this.CtrlContentFID,
+				theme: "modern",
+				height:''+$('#'+this.CtrlContentID).parent().height()*0.75,
+				plugins: [
+					"advlist autolink lists link image charmap print preview hr anchor pagebreak",
+					"searchreplace wordcount visualblocks visualchars code fullscreen",
+					"insertdatetime media nonbreaking save table contextmenu directionality",
+					"emoticons template paste textcolor colorpicker textpattern imagetools"
+				],
+				toolbar1: "insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | \
+					bullist numlist outdent indent | link image | print preview media | forecolor backcolor emoticons",
+				image_advtab: true,
+				convert_urls:false,
+				autosave_ask_before_unload: false,
+				init_instance_callback:function(ed){
+					ed.setContent(that.AttrNews.Content());
+				}
+			});*/
+
+			tone.func.setRollDownEvent($('#'+this.CtrlVideoID).find('div.pc-manage-popup-videoH'),function(){
+				if(this.AttrVideo.total>this.AttrVideo.List().length)
+					this.FuncListVideo(this.AttrVideo.skip);
+			}.bind(this));
+		};
+		this.Binding=function(ctrl){
+			ko.applyBindings(this,ctrl)
+			this.Views();
+		};
+	};	
+
+</script>
+</div>
