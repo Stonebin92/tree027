@@ -1,0 +1,99 @@
+
+	<div class="head-tabs">
+		<div data-bind="foreach:ListHead" class="clearfix">
+			<div data-bind="click:$root.EventSelHead,css:{'current':$data.UI_IsSel()}" class="left items current">
+				<span data-bind="text:$data.Name">新闻</span>
+				<span style="display: none;" data-bind="visible:!$data.IsFirst,click:$root.EventCloseHead" class="i-close" title="关闭"></span>
+			</div>
+		</div>
+	</div>
+	<div class="head">
+		<a data-bind="visible:AttrStatus()==0,click:EventAddNews" class="items supplier-bluebtn">新增新闻</a>
+		<a style="display: none;" data-bind="visible:AttrStatus()==2,click:EventEdit" class="items">编辑</a>
+		<a style="display: none;" data-bind="visible:AttrStatus()==2,click:EventRemove" class="items">删除</a>
+		<a style="display: none;" data-bind="visible:AttrStatus()==1,click:EventSaveInterface" class="items supplier-bluebtn">发布</a>
+		
+	</div>
+	
+	<div data-bind="visible:AttrStatus()==0" class="right-contentA p25 bgff" style="display:none-;">
+		<div class="v4-news-editlist list-widgets">
+			<ul data-bind="foreach:AttrListData.data">
+				<li data-bind="visible:$data.ExtType!=2">
+					
+					<div data-bind="style:{'background':'url('+$data.UI_Image+')'}" class="news-img image-normal" style="background: transparent url(&quot;0&quot;) repeat scroll 0% 0%;"></div>
+					<div class="overflow-h">
+						<a data-bind="text:$data.Title,click:$root.EventDetail" class="fs18 title">xxxx111</a>
+						<div data-bind="foreach:$data.Tags" class="label">
+							<span data-bind="text:$data">oooo</span>
+						</div>
+						<div class="date">
+							<span data-bind="text:$data.CreateDate">2016-10-11 17:04:58</span>
+							<span class="ml10" data-bind="text:'跟贴('+$data.UI_CommentCount()+')'">跟贴(6)</span>
+						</div>
+					</div>
+				</li>
+				
+				<li style="display: none;" data-bind="visible:$data.ExtType==2" class="theme-news">
+					
+					<div style="background: transparent url(&quot;0&quot;) repeat scroll 0% 0%;" data-bind="style:{'background':'url('+$data.UI_Image+')'}" class="news-img image-normal"></div>
+					<div class="overflow-h">
+						<a data-bind="text:$data.Title,click:$root.EventDetail" class="fs18 title">xxxx111</a>
+						<div data-bind="foreach:$data.Tags" class="label">
+							<span data-bind="text:$data">oooo</span>
+						</div>
+						<div class="date">
+							<span data-bind="text:$data.CreateDate">2016-10-11 17:04:58</span>
+							<span class="ml10" data-bind="text:'跟贴('+$data.UI_CommentCount()+')'">跟贴(6)</span>
+							<span class="special-title mr12 ml15">专题</span>
+						</div>
+					</div>
+				</li>
+			
+				<li style="display: none;" data-bind="visible:$data.ExtType!=2">
+					
+					<div data-bind="style:{'background':'url('+$data.UI_Image+')'}" class="news-img image-normal" style="background: transparent url(&quot;/V2.4/img/news?id=5604b25660faf50bb94ce96e&quot;) repeat scroll 0% 0%;"></div>
+					<div class="overflow-h">
+						<a data-bind="text:$data.Title,click:$root.EventDetail" class="fs18 title">asdfasdf</a>
+						<div data-bind="foreach:$data.Tags" class="label">
+							<span data-bind="text:$data">false</span>
+						</div>
+						<div class="date">
+							<span data-bind="text:$data.CreateDate">2015-09-25 10:32:54</span>
+							<span class="ml10" data-bind="text:'跟贴('+$data.UI_CommentCount()+')'">跟贴(0)</span>
+						</div>
+					</div>
+				</li>
+				
+				<li data-bind="visible:$data.ExtType==2" class="theme-news">
+					
+					<div style="background: transparent url(&quot;/V2.4/img/news?id=5604b25660faf50bb94ce96e&quot;) repeat scroll 0% 0%;" data-bind="style:{'background':'url('+$data.UI_Image+')'}" class="news-img image-normal"></div>
+					<div class="overflow-h">
+						<a data-bind="text:$data.Title,click:$root.EventDetail" class="fs18 title">asdfasdf</a>
+						<div data-bind="foreach:$data.Tags" class="label">
+							<span data-bind="text:$data">false</span>
+						</div>
+						<div class="date">
+							<span data-bind="text:$data.CreateDate">2015-09-25 10:32:54</span>
+							<span class="ml10" data-bind="text:'跟贴('+$data.UI_CommentCount()+')'">跟贴(0)</span>
+							<span class="special-title mr12 ml15">专题</span>
+						</div>
+					</div>
+				</li>
+			</ul>
+		</div>
+		<div style="" data-bind="visible:AttrListData.data().length<AttrListData.total" class="txt-center">
+			<button data-bind="click:EventLoadingMore" type="button" class="v4-hr-morebtn">加载更多</button>
+		</div>
+		
+		<div data-bind="visible:AttrLoading()&amp;&amp;AttrListData.data().length<1" style="margin-top: 10%; display: none;">
+			<div class="v4-news-nonedata"></div>
+			<div class="txt-center fs18 mt20">现在什么也没有～</div>
+			<div class="txt-center fs14 clrb8 mt10">可以通过“新增新闻”进行添加</div>
+		</div>
+	</div>
+	<div id="efc00f7f-0b74-7a65-753d-185222f9027e" data-bind="visible:AttrStatus()==1,attr:{id:CtrlEditID}" style="display: none;">
+	</div>
+	
+	<div id="fe178e60-d5c9-0266-c8b3-d2558371229e" data-bind="visible:AttrStatus()==2,attr:{id:CtrlDetailID}" class="right-contentA p50 bgff" style="display:none;">
+	</div>
+	
