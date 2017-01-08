@@ -1,0 +1,223 @@
+<script type="text/javascript" src="./js/jquery-1.8.0.min.js"></script>
+<script type="text/javascript" src="./js/knockout-3.3.0.js"></script>
+<style type="text/css">
+	body {
+		background: #ddd;
+	}
+	#news {
+		width: 900px;
+		margin: 0 auto;
+	}
+	a {
+		color: black;
+		text-decoration: none;
+	}
+	a:hover {
+		color: skyblue;
+		text-decoration: underline;
+	}
+	.right {
+		float: right;
+	}
+	.left {
+		float: left;
+	}
+
+	.headtap {
+		width: 60px;
+		height: 40px;
+		/*margin: 0 auto;*/
+	}
+	.headtap span {
+		display: inline-block;
+		width: auto;
+		height: 24px;
+		line-height: 24px;
+		padding: 0 8px;
+		border-radius: 4px;
+		background: #59c1df;
+	}
+	.headtap div a {
+		height: 40px;
+		width: 40px;
+		/*display: block;*/
+	}
+	.head {
+		margin-top: 20px;
+	}
+	.head a {
+		background: #59c1df;
+		color: #fff;
+		display: inline-block;
+		width: auto;
+		height: 25px;
+		line-height: 25px;
+		padding: 0 8px;
+		border-radius: 4px;
+	}
+	.head a:hover {
+		color: black;
+		background: blue;
+	}
+	.text-center {
+		text-align: center;
+	}
+	button.addmore {
+		width: 140px;
+		height: 46px;
+		font-size: 20px;
+		border-radius: 4px;
+		-webkit-border-radius: 4px;
+	}
+	.news-empty {
+		text-align: center;
+		margin-top: 20px;
+	}
+	.news-empty .empty-img {
+		width: 900px;
+		height: 300px;
+		background: url(img/nocontent_1024.jpg) no-repeat top;
+		background-size: contain;
+	}
+	.news-empty .empty-txt {
+		height: 25px;
+		line-height: 25px;
+		font-size: 16px;
+		margin-top: 15px;
+		color: grey;
+	}
+	.news-empty .empty-tips {
+		height: 25px;
+		line-height: 25px;
+		font-size: 16px;
+		margin-top: 15px;
+	}
+	.newsimg {
+		margin-top: 5px;
+		width: 100px;
+		height: 100px;
+	}
+	li {
+		list-style-type: none;
+	}
+	.detail ul li {
+		width: 278px;
+		height: 170px;
+		border: 1px solid black;
+		margin-left: 5px;
+		margin-top: 5px;
+	}
+	.detail a.title {
+		display: block;
+		margin-top: 46px;
+		font-size: 21px;
+		text-align: center;
+	}
+	.detail .date {
+		margin-top: 26px;
+		width: 180px;
+		text-align: center;
+	}
+	.detail .date span {
+		display: block;
+		margin-top: 10px;
+	}
+</style>
+<div id="news">
+	<!-- 主页面内容 -->
+	<div data-bind="visible: AttrView() == 0">
+		<div class="headtap">
+			<div class="left"><span>新闻</span></div>
+			<div class="right"><a href="#" class="close" style="display: none;">x</a></div><!-- 关闭按钮 -->
+		</div>
+		<!-- 新闻标题管理 -->
+		<div class="head">
+			<a href="#" data-bind="visible: AttrStatus() == 0, click: EventAddNews">新增新闻</a>
+			<a href="#" data-bind="visible: AttrStatus() == 0, click: EventEdit" style="display : none;">编辑</a>
+			<a href="#" data-bind="visible: AttrStatus() == 0, click: EventDelete" style="display : none;">删除</a>
+			<a href="#" data-bind="visible: AttrStatus() == 0, click: EventPush" style="display : none;">发布新闻</a>
+		</div>
+		<script type="text/html" id="news-template">
+			<li class="left" data-bind="visible: AttrLoading() == false" >
+				<div class="right newsimg" style="background: transparent url(./img/news-head.png);"></div>
+				<div class="overflow-h">
+					<a class="title" data-bind="text: title">果粒橙里面有虫子</a>
+					<!-- <div class="label">
+						<span></span>
+					</div> -->
+					<div class="date">
+						<span data-bind="text: CreateDate">2016年12月8日13:21</span><!-- 时间 -->
+						<span data-bind="text: numbers">更贴(6)</span><!-- 更贴 -->
+					</div>
+				</div>
+			</li>
+		</script>
+		<!-- 列表内容 -->
+		<div class="news-content" data-bind="visible: AttrStatus() == 0" style="display : none;">
+			<!-- 具体内容 -->
+			<div class="detail">
+				<ul data-bind="template: {name: 'news-template', foreach: news}">
+					<!-- 一般新闻 -->
+					
+					<!-- 标题新闻 -->
+					<!-- <li data-bind="visible: AttrLoading() == false, foreach: ListNews" class="theam-news">
+						<div class="right newsimg" ></div>
+						<div class="overflow-h">
+							<a class="title" data-bind=""></a>
+							<div class="label">
+								<span></span>
+							</div>
+							<div class="date">
+								<span data-bind=""></span>时间
+								<span data-bind=""></span>更贴
+								<span data-bind=""></span>专题
+							</div>
+						</div>
+					</li> -->
+				</ul>
+			</div>
+			<!-- 加载更多 -->
+			<div class="text-center" data-bind="visible: AttrStatus() ==0" style="display:none">
+				<button type="button" data-bind="click: EventLoadMore" class="addmore">加载更多</button>
+			</div>
+			<!-- 内容为空 -->
+			<div class="news-empty" data-bind="" style="display : none;">
+				<div class="empty-img"></div>
+				<div class="empty-txt">现在什么也没有</div>
+				<div class="empty-tips">可以通过"新增新闻"进行添加</div>
+			</div>
+		</div>
+	</div>
+	<!-- 子页面内容 -->
+	<div data-bind="visible: AttrView() == 1" style="display:none;"></div>
+</div>
+
+<script type="text/javascript">
+	$(function() {
+		function News_Model() {
+			this.AttrView = ko.observable(0);
+			this.AttrStatus = ko.observable(0);
+			this.ListNews = ko.observable([]);
+
+			this.EventPush = ko.observable(0);
+			this.EventDelete = ko.observable(0);
+			this.EventEdit = ko.observable(0);
+			this.EventLoadMore = ko.observable(0);
+			this.EventAddNews = ko.observable(0);
+
+
+			/**/
+			this.news = [
+				{
+					title : '果粒橙里面有虫子',
+					CreateDate : '2016年12月8日13:21',
+					numbers : '更贴(6)'
+
+				}
+			]
+		}
+		var thenews_model = new News_Model();
+		ko.applyBindings(thenews_model);
+	})
+
+</script>
