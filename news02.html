@@ -1,0 +1,271 @@
+<script type="text/javascript" src="./js/jquery.js"></script>
+<script type="text/javascript" src="./js/knockout-3.4.1.js"></script>
+<style type="text/css">
+	body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, abbr, acronym, address, big, cite,code, del, dfn, em, img, ins, kbd, q, s, samp, small, strike, strong, sub, sup, tt, var, b, u, i, center, dl, dt, dd, ol, ul,li, fieldset, form, label, legend, table, caption, tbody, tfoot, thead, tr, th, td, article, aside, canvas, details,embed, figure, figcaption, footer, header, hgroup, menu, nav, output, ruby, section, summary, time, mark, audio, video {
+		margin: 0;
+		padding: 0;
+		border: none;
+		vertical-align: baseline;
+		font-family: '微软雅黑';
+	}
+	body {
+		/*background: #ddd;*/
+	}
+	#news {
+		width: 1080px;
+		margin: 0 auto;
+	}
+	a {
+		color: black;
+		text-decoration: none;
+	}
+	a:hover {
+		color: skyblue;	
+		text-decoration: underline;
+	}
+	.right {
+		float: right;
+	}
+	.left {
+		float: left;
+	}
+	.headtap {
+		height: 26px;
+		border-bottom: 1px solid #e8e8e8;
+		/*margin: 0 auto;*/
+	}
+	.headtap-title {
+		display: inline-block;
+		border-top: 2px solid #59c1df;
+		border-left: 1px solid #e8e8e8;
+		border-right: 1px solid #e8e8e8;
+	}
+	.headtap span {
+		display: inline-block;
+		width: 100px;
+		text-align: center;
+		height: 24px;
+		font-size: 14px;
+		line-height: 24px;
+		padding: 0 8px;
+		border-radius: 4px;
+		cursor: pointer;
+	}
+	.headtap span a {
+		float: right;
+	}
+	.head {
+		margin-top: 20px;
+	}
+	.head a {
+		background: #59c1df;
+		color: #fff;
+		display: inline-block;
+		width: auto;
+		height: 25px;
+		font-size: 14px;
+		line-height: 25px;
+		padding: 0 8px;
+		border-radius: 12px;
+	}
+	.head a:hover {
+		background: #40c1df!important;
+	}
+	.text-center {
+		text-align: center;
+	}
+	button.addmore {
+		width: 152px;
+		height: 25px;
+		font-size: 13px;
+		border-radius: 4px;
+		-webkit-border-radius: 4px;
+		margin-top: 30px;
+		border: 1px solid;
+		cursor: pointer;
+	}
+	button.addmore:hover {
+		background: #ddd;
+	}
+	.news-empty {
+		text-align: center;
+		margin-top: 20px;
+	}
+	.news-empty .empty-img {
+		width: 900px;
+		height: 300px;
+		background: url(img/nocontent_1024.jpg) no-repeat top;/*http://a.hiphotos.baidu.com/baike/w%3D268%3Bg%3D0/sign=c4f3051fcabf6c81f7372bee8405d608/a1ec08fa513d2697019fe92a53fbb2fb4316d87d.jpg*/
+		background-size: contain;
+	}
+	.news-empty .empty-txt {
+		height: 25px;
+		line-height: 25px;
+		font-size: 16px;
+		margin-top: 15px;
+		color: grey;
+	}
+	.news-empty .empty-tips {
+		height: 25px;
+		line-height: 25px;
+		font-size: 16px;
+		margin-top: 15px;
+	}
+	.newsimg {
+		/*margin-top: 5px;*/
+		width: 80px;
+		height: 80px;
+		background-size: cover!important;
+	}
+	li {
+		list-style-type: none;
+	}
+	.news-content {
+		margin-top: 15px;
+	}
+	.detail ul li {
+		width: 285px;
+		height: 170px;
+		color: #222;
+		border-right: 1px solid #e6e6e6;
+		
+		/*margin-left: 5px;
+		margin-top: 5px;*/
+		padding: 20px;
+		padding-bottom: 0;
+		background: #fff;
+	}
+	.detail a.title {
+		display: block;
+		margin-top: 32px;
+		font-size: 18px;
+		height: 21px;
+		overflow: hidden;
+		text-align: left;
+		margin-left: 26px;
+	}
+	li.left .overflow-h {
+		/*border-bottom: 1px dotted #e6e6e6;*/
+		/*overflow: hidden;*/
+	}
+	.detail .date {
+		margin-top: 16px;
+		width: 100%;
+		text-align: left;
+		border-bottom: 1px solid #e6e6e6;
+		padding-bottom: 15px
+	}
+	.detail .label {
+		margin-top: 28px;
+	}
+	.detail .label span {
+		background: url(img/bookmark.png) no-repeat left;/*http://www.iconpng.com/png/devine2/bookmark.png*/
+		padding-left: 18px;
+		margin-left: 26px;
+		background-size: 16px;
+	}
+	.detail .date span {
+		font-size: 12px;
+		margin-left: 2px;
+	}
+	.date b {
+		font-weight: 500;
+		font-size: 12px;
+	}
+	.date span.theam-tip {
+		background: #ff695d;
+		color: #fff;
+		padding: 2px;
+		border-radius: 2px;
+	}
+</style>
+<div id="news">
+	<!-- 主页面内容 -->
+	<div data-bind="visible: AttrView() == 0">
+		<div class="headtap">
+			<div class="left headtap-title"><span data-bind="">新闻</span></div>
+			<div class="left headtap-title"><span data-bind="">新增新闻<a href="#" class="close">x</a></span></div><!-- 关闭按钮 -->
+			<div class="left headtap-title"><span data-bind="">查看新闻<a href="#" class="close">x</a></span></div><!-- 关闭按钮 -->
+		</div>
+		<!-- 新闻标题管理 -->
+		<div class="head">
+			<a href="#" data-bind="visible: AttrStatus() == 0, click: EventAddNews">新增新闻</a>
+			<a href="#" data-bind="visible: AttrStatus() == 1, click: EventEdit" style="display : none;">编辑</a>
+			<a href="#" data-bind="visible: AttrStatus() == 1, click: EventDelete" style="display : none;">删除</a>
+			<a href="#" data-bind="visible: AttrStatus() == 1, click: EventPush" style="display : none;">发布新闻</a>
+		</div>
+
+		<script type="text/html" id="news-template">
+			<li class="left"  >
+				<div class="right newsimg" data-bind="style: {'background': 'transparent url(./img/news-head.jpg)'}"></div>
+				<div class="overflow-h">
+					<a class="title" data-bind="text: title"></a>
+					<div class="label" >
+						<span data-bind="text: tags"></span>
+					</div>
+					<div class="date">
+						<span data-bind="text: CreateDate"></span><!-- 时间 -->
+						<b>跟贴(<span data-bind="text: numbers"></span>)</b><!-- 更贴 -->
+						<span data-bind="visible: false" class="theam-tip">专题</span><!-- 专题 -->
+					</div>
+				</div>
+			</li>
+		</script>
+
+		<!-- 列表内容 -->
+		<div class="news-content" data-bind="visible: AttrStatus() == 0" style="display : none;">
+			<!-- 具体内容 -->
+			<div class="detail">
+				<ul data-bind="template: {name: 'news-template', foreach: news}, visible: AttrLoading()==0"></ul>
+			</div>
+			<!-- 查看新闻 -->
+			<div class="readnews" data-bind="" style="dsiplay: none;"></div>
+			<!-- 加载更多 -->
+			<div class="text-center" data-bind="visible: AttrStatus() ==0" style="display:none;clear:both;">
+				<button type="button" data-bind="click: EventLoadMore" class="addmore">加载更多</button>
+			</div>
+			<!-- 内容为空 -->
+			<div class="news-empty" data-bind="" style="display : none;">
+				<div class="empty-img"></div>
+				<div class="empty-txt">现在什么也没有</div>
+				<div class="empty-tips">可以通过"新增新闻"进行添加</div>
+			</div>
+		</div>
+	</div>
+	<!-- 子页面内容 -->
+	<div data-bind="visible: AttrView() == 1" style="display:none;"></div>
+</div>
+
+<script type="text/javascript">
+	$(function() {
+		function News_Model() {
+			this.AttrView = ko.observable(0);
+			this.AttrStatus = ko.observable(0);
+			this.ListNews = ko.observable([]);
+			this.EventPush = ko.observable(0);
+			this.EventDelete = ko.observable(0);
+			this.EventEdit = ko.observable(0);
+			this.EventLoadMore = ko.observable(0);
+			this.EventAddNews = ko.observable(0);
+			this.AttrLoading = ko.observable(false);
+
+			this.news = ko.observableArray([]);
+			this.TheamTip = ko.observable(false);
+			/**/
+			
+			$.getJSON("f.json",function  (rre) {
+					thenews_model.news(rre);
+				}
+			);
+
+			/*加载更多*/
+			this.EventLoadMore = function () {
+				alert(13)
+			}
+			var hl = [{"title":"1果粒橙里面有虫子","image":"http://192.168.0.13/V2.3/img/news?id=5603d1a437fd1a72e0abfe8f","tags":"asd","CreateDate":"2016-12-8 13:21","numbers":6,"tip":0},{"title":"232","image":"http://192.168.0.13/V2.3/img/news?id=5603d1a437fd1a72e0abfe8f","tags":"asd","CreateDate":"dasda22","numbers":6,"tip":0},{"title":"232","image":"http://192.168.0.13/V2.3/img/news?id=5603d1a437fd1a72e0abfe8f","tags":"asd","CreateDate":"dasda22","numbers":2,"tip":0},{"title":"232","image":"http://192.168.0.13/V2.3/img/news?id=5603d1a437fd1a72e0abfe8f","tags":"asd","CreateDate":"dasda22","numbers":4,"tip":0},{"title":"232","image":"http://192.168.0.13/V2.3/img/news?id=5603d1a437fd1a72e0abfe8f","tags":"asd","CreateDate":"dasda22","numbers":1,"tip":0},{"title":"232","image":"http://192.168.0.13/V2.3/img/news?id=5603d1a437fd1a72e0abfe8f","tags":"asd","CreateDate":"dasda22","numbers":0,"tip":0},{"title":"asd55","image":"http://192.168.0.13/V2.3/img/news?id=5603d1a437fd1a72e0abfe8f","tags":"ss55","CreateDate":"2016-2-30","numbers":4,"tip":1}]
+			
+			
+		}
+		var thenews_model = new News_Model();
+		ko.applyBindings(thenews_model);
+	})
+</script>
