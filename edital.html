@@ -1,0 +1,225 @@
+
+<div id="{{.GUID}}">
+<!-- 新增专题新闻 -->
+	<div class="right-contentA plr50 p25 bgff" style="display:none-;">
+		<div class="v4-edit-richtext v4-news-editrichtext">
+			<input data-bind="textInput:AttrNews.Title" type="text" placeholder="输入新闻标题" class="bigtitle"/>
+			<div>
+				<div class="labeltitle overflow-h">
+					<input data-bind="textInput:AttrNews.Tags" type="text" placeholder="点击添加标签，以逗号隔开（通过给新闻添加#标签#，更好地整理新闻）" />
+				</div>
+			</div>
+			<div class="mt30 v4-speacial-nav">
+				<a data-type="0" data-bind="click:EventSwitchContent,css:{'current':AttrContentType()==0}" class="mr15 f-bold fs14">内容</a>
+				<a data-type="1" data-bind="click:EventSwitchContent,css:{'current':AttrContentType()==1}" class="current f-bold fs14">焦点图片</a>
+			</div>
+			<!-- 插入副文本 --><!-- 内容 -->
+			<div data-bind="visible:AttrContentType()==0" class="edit-richtext-div" style="top:132px;display:none-;">
+			    <div class="container">
+			        <div data-bind="attr:{id:AttrEditors.CtrlThemeID}"><p>请输入内容</p></div>
+			    </div>
+			</div>
+			<!-- 插入副文本 --><!-- 焦点图片 -->
+			<div data-bind="visible:AttrContentType()==1" class="edit-richtext-div" style="top:132px;overflow:hidden;display:none">
+				<div data-bind="visible:AttrCoverData().length<1" class="edit-richtext-image" style="margin-top:10%;">
+					<button class="upload-btn clr77 fs16">
+						<span>上传图片</span>
+						<input data-ui="img" data-bind="event:{change:EventUploadImg}" type="file"/>
+					</button>
+					<div style="display:none" class="fs16 clr77 mt20">或直接拖拽图片到该区域，完成上传</div>
+					<div class="clrbb mt10">建议图片尺寸为 960*540，大小不超过 1M</div>
+				</div>
+				<div data-bind="visible:AttrCoverData().length>0,click:EventSwitchCover" class="check-theme-banner s-bgf5" style="height:100%;display:none;">
+					<img data-bind="attr:{src:AttrCoverData()}" src="/V2.4/img/atri?id=56c2f2b860faf51cc65b546e" style="height:100%;"/>
+				</div>				
+			</div>
+		</div>
+	</div>
+	<script type="text/javascript">
+		$(function(){
+			var ctrl = $('#{{.GUID}}');
+			tone.sys.loadcss('{{.StaticServer}}/common/cssAndjs/lib/wangeditor-2.1.21/css/wangEditor.min.css');
+			tone.sys.loadjs('{{.StaticServer}}/common/cssAndjs/lib/highlight.min.js',false);
+			tone.sys.loadjs('{{.StaticServer}}/common/cssAndjs/lib/wangeditor-2.1.21/wangEditor.min.js',false);
+			tone.sys.loadjs('{{.StaticServer}}/common/cssAndjs/lib/wangeditor-2.1.21/imgplugins.js',function(){
+				var mod_T1yun_Manage_News_Edit = new Mod_T1yun_Manage_News_Edit();
+				mod_T1yun_Manage_News_Edit.Bindings(ctrl[0]);
+			});
+			function Mod_T1yun_Manage_News_Edit(){
+				this.AttrEditors={
+						CtrlThemeID:tone.sys.guid(),
+						AttrThemeEditor:{}
+				};
+				this.AttrType = ko.observable(1);// 1 普通 2 专题 
+				this.AttrContentType = ko.observable(0);
+				this.AttrCoverData = ko.observable('');
+				this.AttrIsEdit = ko.observable(0);
+				this.AttrNews = {
+						ID:'',
+						Title:ko.observable(''),
+						Content:ko.observable(''),
+						/* ThemeID:'', */
+						Cover2Data:ko.observable(''),
+						Tags:ko.observable(''),
+						Cover2:ko.observable(''),
+						Type:ko.observable(1),
+						Actor:ko.observableArray([]),
+						Share:ko.observable(1),
+						Video2:ko.observableArray([]),
+						Images2:ko.observableArray([])
+				};
+				this.EventSitchType = function(m,e){
+					var n = $(e.target).attr("data-type");
+					this.AttrType(n);
+					this.AttrNews.Type(n);
+				}
+				this.EventSwitchCover = function(){
+					$('[data-ui="img"]').click();
+				};
+				this.EventUploadImg = function(m,e){
+					tone.sys.img_inflate($(e.target)[0],function(data){
+						if(data.length<1){return}
+						var s = data.split(",");
+						this.AttrNews.Cover2Data(s[1]);
+						this.AttrCoverData(data);
+					}.bind(this),500*1024);
+				}
+				this.EventSwitchContent = function(m,e){
+					var n = $(e.target).attr("data-type");
+					this.AttrContentType(n);
+				}
+				this.EventSaveData = function(){
+					try{
+					var url = '';
+					if(this.AttrIsEdit()==0){
+						/* if(this.AttrType()==1){ */
+							url = '/article/admin/add';
+						/* }
+						if(this.AttrType()==2){
+							url = '/news/admin/theme/add';
+						}
+						if(this.AttrType()==3){
+							url = '/news/admin/about/add';
+						} */
+					}else{
+						url='/article/update';
+					}
+					var ok = this.FuncCheckData();
+					if(!ok){return}
+					var params = this.FuncMakeData();
+					this.FuncSaveData(url,params,function(data){
+						console.log(data);
+					})
+					}catch(e){console.log(e)}
+				}.bind(this);
+				this.FuncCheckData = function(){
+					var ok = true;
+					var data = this.AttrNews;
+					var clen = this.AttrEditors.AttrThemeEditor.$txt.html().length;
+					if(data.Title().length<1||data.Title().length>60){
+						ok=false;
+						tone.views.FuncAddTip('标题不能为空且长度不能大于60');
+						return ok;
+					}
+					if(clen<1||clen>60000){
+						ok=false;
+						tone.views.FuncAddTip('内容不能为空且不能过长');
+						return ok
+					}
+					if(data.Type()==2&&data.Cover2Data().length<1){
+						ok=false;
+						tone.views.FuncAddTip('请添加一张封面图');
+						return ok
+					}
+					return ok;
+				}
+				this.FuncMakeData = function(){
+					var data = this.AttrNews;
+					var params = {};
+					params.Title = data.Title();
+					params.Content = this.AttrEditors.AttrThemeEditor.$txt.html();
+					params.Tags = data.Tags();
+					params.Cover2Data=data.Cover2Data();
+					params.Share = data.Share();
+					params.Images2 = data.Images2();
+					params.Cover2 = data.Cover2();
+					params.Type=data.Type();
+					if(this.AttrIsEdit()==1){
+						params.ID = data.ID;
+					}
+					return params;
+				}
+				this.FuncSaveData = function(url,params,callback){
+					tone.ajaxJson(url,params,'post',function(data){
+						if(data.success==true){
+							callback(data.data);
+							this.FuncBack();
+						}else{
+							if(tip.length>0) tone.views.FuncAddTip(tip);
+							if(data.error.length>0){
+								tone.views.FuncAddTip("新闻发布失败");
+							}
+						}
+					}.bind(this));
+				}
+				this.FuncBack=function(){};
+				// type 0普通/1主题/2相关;  data 
+				this.FuncInit = function(data){
+					if(data != undefined){
+						this.AttrIsEdit(1);
+						this.AttrNews.ID=data.ID;
+						/* this.AttrNews.ThemeID = data.ThemeID||''; */
+						this.AttrNews.Title(data.Title);
+						this.AttrNews.Content(data.Content);
+						this.AttrNews.Cover2Data('');
+						this.AttrNews.Cover2(data.Cover2||'');
+						this.AttrNews.Tags(data.Tags.join(','));
+						this.AttrNews.Type(data.ExtType);
+						this.AttrNews.Share(1);
+						this.AttrNews.Video2(data.Video2||[]);
+						this.AttrNews.Images2(data.Images2||[]);
+						this.AttrNews.Actor([]);
+						this.AttrEditors.AttrThemeEditor.$txt.html(data.Content);
+						if(data.Cover2.length>0){
+							this.AttrCoverData('/V2.4/img/atri?id='+data.Cover2);
+						}
+						this.AttrType(data.ExtType);
+					}else{
+						this.AttrNews.ID='';
+						/* this.AttrNews.ThemeID = ''; */
+						this.AttrNews.Title('');
+						this.AttrNews.Content('');
+						this.AttrNews.Cover2Data('');
+						this.AttrNews.Cover2('');
+						this.AttrNews.Tags('');
+						this.AttrNews.Share(1);
+						this.AttrNews.Video2([]);
+						this.AttrNews.Images2([]);
+						this.AttrNews.Actor([]);
+					}
+				};
+				this.FuncClear = function(){
+					
+				};
+				this.FuncCreateEditor = function(){
+					this.AttrEditors.AttrThemeEditor=new wangEditor(this.AttrEditors.CtrlThemeID);
+					this.AttrEditors.AttrThemeEditor.config.menus= [
+						  "fontfamily", "fontsize", "|","bold", "underline", "italic", "head","forecolor","bgcolor", "|", "unorderlist", "orderlist", "|","alignleft", "aligncenter", "alignright", "|"
+							,"img"
+						  ];
+					this.AttrEditors.AttrThemeEditor.create();
+					//console.log(this.AttrEditors.AttrThemeEditor);
+				}
+				this.Views=function(){
+					this.FuncCreateEditor();
+				};
+				
+				
+				this.Bindings=function(ctrl){
+					ko.applyBindings(this,ctrl);
+					this.Views();
+				}
+			}
+		});
+	</script>
+</div>
