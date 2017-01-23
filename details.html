@@ -1,0 +1,103 @@
+<div id="{{.GUID}}">
+	<div data-bind="visible:AttrNews()" style="width:70%;display:none-;">
+		<p data-bind="text:AttrNews().Title" class="fs22">生活在信息爆炸的时代，怎么找到自己想要的？</p>
+		<div class="mt20 clr77">
+    		<span data-bind="text:AttrNews().RealName" class="mr20 i-member" style="margin-top:0;display:inline-block">李思思</span>
+    		<span data-bind="text:AttrNews().CreateDate" class="mr20">2016-08-31 10:39:17</span>
+    		<span data-bind="text:AttrNews().UI_CommentCount()+'条评论'" class="mr20 i-comment" style="margin-top:0;display:inline-block">20条评论</span>
+		</div>
+		<!-- 导语 -->
+		<div style="" data-bind="visible:AttrNews().InnerContent" class="v4-essay-guide v4-essay-guide-bgff">
+			<strong>【导语】</strong> <span data-bind="html:AttrNews().InnerContent">报道指出，如果这项研究属实，那么身材丰满有曲线的意大利女影星索菲亚·罗兰不仅容貌姣好，她拥有高智商的可能性也更高。而身材消瘦狭窄的好莱坞女星妮可·基德曼则缺乏必要的脂肪酸。
+			尽管这些理论有待证实，但是心理学家保拉·霍尔说：“这项研究表明性感的女性更聪明，说明身材好的女性除了会养育孩子，可能还擅长其他一些事 情。”生理学专家哈里·维切尔博士也说：“到目前为止，我们可以说身材好的女性在西方社会是有优势的，其本质是她们在生理上是有优势的。”</span>
+		</div>
+		<p data-bind="html:AttrNews().Content" class="fs14 lh24 mt20">
+			报道指出，如果这项研究属实，那么身材丰满有曲线的意大利女影星索菲亚·罗兰不仅容貌姣好，她拥有高智商的可能性也更高。而身材消瘦狭窄的好莱坞女星妮可·基德曼则缺乏必要的脂肪酸。
+			尽管这些理论有待证实，但是心理学家保拉·霍尔说：“这项研究表明性感的女性更聪明，说明身材好的女性除了会养育孩子，可能还擅长其他一些事 情。”生理学专家哈里·维切尔博士也说：“到目前为止，我们可以说身材好的女性在西方社会是有优势的，其本质是她们在生理上是有优势的。”
+		</p>
+		<div data-bind="visible:AttrNews().Cover2Data.length>0" style="display:none" class="v4-essay-imgdiv">
+			<img data-bind="attr:{src:'/V2.4/img/arti?id='+AttrNews().Cover2Data}" src="/V2.4/img/arti?id=56c2f2b860faf51cc65b546e"/>
+		</div>
+		<div class="v4-essay-label">
+			<span>标签：</span>
+			<span data-bind="text:AttrNews().Tags" class="item">电子商务</span>
+		</div>
+		<div data-bind="attr:{id:CtrlOradinlID}">
+		</div>
+	</div>
+
+	
+	<script type="text/javascript">	
+		var ctrl = $('#{{.GUID}}');
+		function Mod_T1yun_Manage_News_Detail(){
+			this.AttrNews=ko.observable({
+				UI_CommentCount:ko.observable(0),
+				Cover2Data:''
+			});
+			this.CtrlOradinlID = tone.sys.guid();
+			this.FuncGetOne = function(id,callback){
+				tone.ajaxJson('/article/admin/get?id='+id,{},'get',function(data){
+					if(data.success!=undefined&&data.success==true){
+						data.data.UI_CommentCount = ko.observable(data.data.CommentCount);
+						this.AttrNews(data.data);
+						if(callback!=undefined&&$.isFunction(callback)){
+							try{
+								callback(data);
+							}catch(e){}
+						}
+					}else{
+						tone.views.FuncAddTip('信息获取失败，请重试');
+					}
+				}.bind(this));
+			}
+			
+			this.FuncRemove=function(){
+				var url='/article/remove';
+				var params={'id':this.AttrNews().ID};
+				
+				tone.ajaxJson(url,params,'post',function(data){
+					if(data.success==true&&data.data==true){
+						//this.FuncDel();
+						this.FuncBack();
+					}
+				}.bind(this));
+			}.bind(this)
+			
+			 /*加载评论*/
+			this.FuncGetCommentHtml=function(id,callback){
+				tone.func.get('/t1yun/manage1/content/comment/article',function(data){
+					try{
+						var c = {};
+						c=$('#'+this.CtrlOradinlID);
+						
+						c.html(data);
+						var module = ko.contextFor(c.children('div')[0]).$root;
+						module.FuncInit("arti",id);
+						module.FuncAddComment = function(data){
+							this.AttrNews().CommentCount++;
+							this.AttrNews().UI_CommentCount(this.AttrNews().UI_CommentCount()+1);
+						}.bind(this);
+						module.FuncDelComment = function(){
+							this.AttrNews().CommentCount--;
+							this.AttrNews().UI_CommentCount(this.AttrNews().UI_CommentCount()-1);
+						}.bind(this);
+					}catch(e){console.log(e)}
+				}.bind(this));
+			}
+			this.FuncInit=function(data){
+				this.FuncGetOne(data.id);
+				this.FuncGetCommentHtml(data.id);
+			}
+			this.Views=function(){
+			};
+			this.Bindings=function(ctrl){
+				ko.applyBindings(this,ctrl);
+				this.Views();
+			}
+		}
+		var mod_T1yun_Manage_News_detail = new Mod_T1yun_Manage_News_Detail();
+		mod_T1yun_Manage_News_detail.Bindings(ctrl[0]);
+	</script>
+</div>
+
+	
