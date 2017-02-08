@@ -1,0 +1,287 @@
+<div class="v4-right-manage" id="{{.GUID}}">
+	<div class="head-tabs">
+		<div class="clearfix">
+			<div  class="left items current" data-bind="click:function(){AttrView(0);},css:{'current':AttrView()==0}">
+				<span >知识</span>
+			</div>
+			<div data-bind="click:function(){AttrView(2);},css:{'current':AttrView()==2},attr:{id:CtrlAddArtID}" style="display: none" class="left items">
+				<span data-bind="visible:AttrAddorEdit()==false">新增知识</span>
+				<span data-bind="visible:AttrAddorEdit">编辑知识</span>
+				<span class="i-close" title="关闭" data-bind="click:EventCloseAdd,clickBubble:false"></span>
+			</div>
+			<div data-bind="click:function(){AttrView(1);},css:{'current':AttrView()==1},attr:{id:CtrlDetailArtID}" style="display: none" class="left items">
+				<span>查看知识</span>
+				<span class="i-close" title="关闭" data-bind="click:EventCloseDetail,clickBubble:false"></span>
+			</div>
+		</div>
+	</div>
+	<div class="head">
+		<a class="items supplier-bluebtn" data-bind="visible:AttrView()==0,click:EventNewArti">新增知识</a>
+		<a class="items" data-bind="visible:AttrView()==1,click:EventEditArti">编辑</a>
+		<a class="items" data-bind="visible:AttrView()==1,click:EventDel">删除</a>
+		<a class="items supplier-bluebtn" data-bind="visible:AttrView()==2,click:EventAddArti">发布</a><!-- opacity5 -->
+		<!-- <div data-bind="visible:AttrStatus()==0" class="input-search right">
+			<span class="i-search"></span>
+			<input data-bind="textInput:AttrSearchValue" type="text" placeholder="快速搜索">
+		</div>-->
+	</div>
+	<!-- 知识列表 -->
+	<div class="right-contentA p25 bgff" style="display:none;" data-bind="visible:AttrView()==0">
+		<div class="v4-news-editlist list-widgets v4-lore-editlist" >
+			<ul data-bind="foreach:ListArti">
+				<li>
+					<!-- 知识图片 -->
+					<!-- <div class="news-img image-normal" style="background-image:url(/V2.4/img/news?id=56c2f2b860faf51cc65b546e);"></div> -->
+					<div class="overflow-h">
+						<a  class="fs18 title" data-bind="text:$data.Title,click:$root.EventDetail">数百用户建群吐槽iPhone7问题 客服称不影响正常使用数百用户建群吐槽iPhone7问题 客服称不影响正常使用</a>
+						<div class="label">
+							<span data-bind="text:$data.Tags">互联网</span>
+						</div>
+						<div class="date">
+							<span >2016-07-26 15:30</span>
+							<span class="ml10">评论（<span data-bind="text:$data.CommentCount"></span>）</span>
+						</div>
+					</div>
+				</li>
+			</ul>
+		</div>
+		<!-- <div class="txt-center">
+			<button type="button" class="v4-hr-morebtn">加载更多</button>
+		</div> -->
+		<!-- 没数据 -->
+		<div  style="margin-top:10%;display:none;" data-bind="visible:ListArti().length<1">
+			<div class="v4-news-nonedata"></div>
+			<div class="txt-center fs18 mt20">现在什么也没有～</div>
+			<div class="txt-center fs14 clrb8 mt10">可以通过“新增知识”进行添加</div>
+		</div>
+	</div>
+	<!-- 知识详情 -->
+	<div class="right-contentA p50 bgff" style="display:none;" data-bind="visible:AttrView()==1">
+		<div style="width:70%;">
+			<p data-bind="text:AttrSelArti().Title" class="fs22">生活在信息爆炸的时代，怎么找到自己想要的？</p>
+			<div class="mt20 clr77">
+	    		<span data-bind="text:AttrSelArti().RealName" class="mr20 i-member" style="margin-top:0;display:inline-block">李思思</span>
+	    		<span data-bind="text:AttrSelArti().CreateDate" class="mr20">2016-08-31 10:39:17</span>
+	    		<span data-bind="text:AttrSelArti().UI_CommentCount()+'条评论'" class="mr20 i-comment" style="margin-top:0;display:inline-block">20条评论</span>
+			</div>
+			<!-- 导语 -->
+			<div class="v4-essay-guide">
+				<strong><span data-bind="html:'【导语】'+AttrSelArti().InnerContent"></span></strong>
+			</div>
+			<p data-bind="html:AttrSelArti().Content" class="fs14 lh24 mt20">
+				其本质是她们在生理上是有优势的。”
+			</p>
+			<!-- <div  style="display:none" class="v4-essay-imgdiv">
+				<img  src="/V2.3/img/news?id=56c2f2b860faf51cc65b546e"/>
+			</div> -->
+			<div class="v4-essay-label">
+				<span>标签：</span>
+				<span data-bind="text:AttrSelArti().Tags" class="item">电子商务</span>
+			</div>
+			<div data-bind="attr:{id:CtrlOradinlID}">
+			</div>
+		</div>
+	</div>
+	<!--添加知识 -->
+	<div class="right-contentA plr50 p25 bgff" style="display:none;" data-bind="visible:AttrView()==2">
+		<div class="v4-edit-richtext v4-news-editrichtext">
+			<input type="text" placeholder="输入文章标题" class="bigtitle"  data-bind="textinput:AttrArti.Title"/>
+			<div class="labeltitle">
+				<input type="text" placeholder="点击添加标签，以逗号隔开（通过给文章添加#标签#，更好地整理文章）" data-bind="textinput:AttrArti.Tags" />
+			</div>
+			<!-- 插入副文本 -->
+			<div class="edit-richtext-div" style="display:none-;">
+			    <div class="container">
+			        <div data-bind="attr:{id:CtrlEditorID}"></div>
+			    </div>
+			</div>
+		</div>
+	</div>
+	<script type="text/javascript">
+		$(function(){
+			var ctrl = $('#{{.GUID}}');
+			tone.sys.loadcss('{{.StaticServer}}/common/cssAndjs/lib/wangeditor-2.1.21/css/wangEditor.min.css');
+			tone.sys.loadjs('{{.StaticServer}}/common/cssAndjs/lib/highlight.min.js',false);
+			tone.sys.loadjs('{{.StaticServer}}/common/cssAndjs/lib/wangeditor-2.1.21/wangEditor.min.js',false);
+			tone.sys.loadjs('{{.StaticServer}}/common/cssAndjs/lib/wangeditor-2.1.21/imgplugins.js',function(){
+				var mod_T1yun_Manage_Lores_Edit = new Mod_T1yun_Manage_Lores_List();
+				window.wangEditor.UI_Type = "arti";
+				mod_T1yun_Manage_Lores_Edit.Bindings(ctrl[0]);
+			});
+			function Mod_T1yun_Manage_Lores_List(){
+				this.CtrlOradinlID=tone.sys.guid();//评论
+				this.CtrlDetailArtID=tone.sys.guid();//查看知识View
+				this.CtrlAddArtID=tone.sys.guid();//新增知识View
+				this.CtrlEditorID=tone.sys.guid();//富文本
+				this.ListArti=ko.observableArray([]);
+				this.AttrEditor={};
+				this.AttrAddorEdit=ko.observable(false);
+				this.AttrView=ko.observable(0);
+				this.AttrSelArti=ko.observable({UI_CommentCount:ko.observable(0)});//选择知识对象
+				this.AttrArti={//新增知识对象
+						Title:ko.observable(''),
+						Tags:ko.observable(''),
+						Content:ko.observable(''),
+					}
+				//获取知识详情事件
+				this.EventDetail=function(m,e){
+					this.FuncGetArtiByID(m.ID,function(){
+						$('#'+this.CtrlDetailArtID).show();
+						this.AttrView(1);
+					}.bind(this));
+				}.bind(this);
+				//删除知识事件
+				this.EventDel=function(){
+					this.FuncDel(this.AttrSelArti().ID,function(){
+						$('#'+this.CtrlDetailArtID).hide();
+						this.AttrView(0);
+						this.FuncGetArtiList(-1,200);
+					}.bind(this))
+				}
+				//关闭知识详情页签事件
+				this.EventCloseDetail=function(){
+					this.AttrView(0);
+					$('#'+this.CtrlDetailArtID).hide();
+				}
+				//新增知识Page
+				this.EventNewArti=function(){
+					this.AttrAddorEdit(false)
+					this.AttrSelArti({UI_CommentCount:ko.observable(0)});//防止编辑操作为新增操作
+					this.AttrArti.Title('');
+					this.AttrArti.Tags('');
+					this.AttrEditor.$txt.html('');
+					this.AttrView(2);
+					$('#'+this.CtrlAddArtID).show();
+				}
+				//关闭新增知识Page
+				this.EventCloseAdd=function(){
+					this.AttrView(0);
+					$('#'+this.CtrlAddArtID).hide();
+				}
+				//新增知识发布事件
+				this.EventAddArti=function(){
+					this.AttrArti.Content(this.AttrEditor.$txt.html())
+					var params={};
+					if(this.AttrAddorEdit()){
+						params.ID=this.AttrSelArti().ID
+					}
+					params.Title=this.AttrArti.Title();
+					params.Content=this.AttrArti.Content();
+					params.Tags=this.AttrArti.Tags();
+					console.log("提交前的参数",params);
+					if(this.AttrAddorEdit()){//编辑
+						this.FuncEditText(params,function(){
+							this.FuncGetArtiList(-1,200);
+							this.FuncGetArtiByID(this.AttrSelArti().ID,function(){
+								this.AttrView(1);
+								$('#'+this.CtrlAddArtID).hide();
+								$('#'+this.CtrlDetailArtID).show();
+							}.bind(this));
+						}.bind(this))
+						return;
+					}
+					this.FuncAddText(params,function(){//新增
+						$('#'+this.CtrlAddArtID).hide();
+						this.FuncGetArtiList(-1,200);
+						this.AttrView(0);
+					}.bind(this))
+				}
+				//编辑知识
+				this.EventEditArti=function(){
+					this.AttrAddorEdit(true);
+					console.log("当前知识对象",this.AttrSelArti())
+					this.AttrEditor.$txt.html(this.AttrSelArti().Content);
+					this.AttrArti.Title(this.AttrSelArti().Title);
+					this.AttrArti.Tags(this.AttrSelArti().Tags);
+					$('#'+this.CtrlDetailArtID).hide();
+					$('#'+this.CtrlAddArtID).show();
+					this.AttrView(2);
+				}
+				//新增知识方法
+				this.FuncAddText=function(params,callback){
+					var url='/article/admin/add';
+					tone.ajaxJson(url,params,'post',function(data){
+						if(data.success==true){
+							callback();
+						}
+					}.bind(this));
+				}
+				//更新知识方法
+				this.FuncEditText=function(params,callback){
+					var url='/article/update';
+					tone.ajaxJson(url,params,'post',function(data){
+						if(data.success==true){
+							callback();
+						}
+					}.bind(this));
+				}
+				//删除知识方法
+				this.FuncDel=function(id,callback){
+					tone.ajaxJson('/article/remove',{'id':id},'post',function(data){
+						if(data.success==true&&data.data==true){
+							callback()
+						}
+					}.bind(this));
+				}
+				///获取知识详情方法
+				this.FuncGetArtiByID=function(artiid,callback){
+					this.FuncGetCommentHtml(artiid);
+					tone.ajaxJson('/article/admin/get?id='+artiid,{},'get',function(data){
+						if(data.success!=undefined&&data.success==true){
+							data.data.UI_CommentCount = ko.observable(data.data.CommentCount);
+							this.AttrSelArti(data.data);
+							callback();
+							/* if(callback!=undefined&&$.isFunction(callback)){
+								try{
+									callback(data);
+								}catch(e){}
+							} */
+						}
+					}.bind(this));
+				};
+				//获取评论页面
+				this.FuncGetCommentHtml=function(id,callback){
+					tone.func.get('/t1yun/manage1/content/comment/index',function(data){
+						var c=$('#'+this.CtrlOradinlID);
+						c.html(data);
+						var module = ko.contextFor(c.children('div')[0]).$root;
+						module.FuncInit("arti",id);
+						module.FuncAddComment = function(data){
+							this.AttrSelArti().CommentCount++;
+							this.AttrSelArti().UI_CommentCount(this.AttrSelArti().UI_CommentCount()+1);
+						}.bind(this);
+						module.FuncDelComment = function(){
+							this.AttrSelArti().CommentCount--;
+							this.AttrSelArti().UI_CommentCount(this.AttrSelArti().UI_CommentCount()-1);
+						}.bind(this);
+					}.bind(this));
+				}
+				//获取知识列表
+				this.FuncGetArtiList=function(skip,limit){
+					tone.ajaxJson('/article/admin/list',{skip:skip,limit:limit},'get',function(data){
+						if(data.success!=undefined&&data.success==true){
+							data=data.data;
+							this.ListArti(data.data);
+						}
+						this.AttrArtiList.get=true;
+					}.bind(this));
+				};
+				this.Views=function(){
+					this.FuncGetArtiList(-1,200);
+					this.AttrEditor=new wangEditor(this.CtrlEditorID);
+					this.AttrEditor.config.menus= [
+						  "fontfamily", "fontsize", "|","bold", "underline", "italic", "head","forecolor","bgcolor", "|", "unorderlist", "orderlist", "|","alignleft", "aligncenter", "alignright", "|",
+						 "img"
+					];
+					this.AttrEditor.create();
+				};
+				this.Bindings=function(ctrl){
+					ko.applyBindings(this,ctrl);
+					this.Views();
+				}
+			}
+			/* var mod_T1yun_Manage_Lores_list = new Mod_T1yun_Manage_Lores_List();
+			mod_T1yun_Manage_Lores_list.Bindings(ctrl[0]); */
+		});
+	</script>
+</div>
