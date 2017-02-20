@@ -1,0 +1,720 @@
+<div id="{{.GUID}}">
+  <!-- 添加下级部门弹出层 -->
+  <div data-bind="attr:{id:AddDeptPopID},click:FuncCloseAddPop" class="v4-pop-bg" style="z-index:10;display:none;">
+  	<div class="v4-pop v4-adddepartment-pop">
+  		<div class="head">
+			<span data-bind="text:IsUpdate()?'编辑部门名称':'添加下级部门'" class="title">添加下级部门</span>
+		</div>
+		<div class="content">
+			<div class="item">
+				<span class="title">部门名称</span>
+				<div class="input">
+					<input data-bind="textinput:Node.CircleName" type="text" placeholder="填写部门名称"/>
+				</div>
+			</div>
+		<!--  	<div class="item mt35">
+				<span class="title">组织类型</span>
+				<div class="clearfix">
+					<span data-num="2" data-bind="click:EventSwitchType,css:{'current-btn':Node.Type()==2}" class="left btn">实体组织</span>
+					<span data-num="3" data-bind="click:EventSwitchType,css:{'current-btn':Node.Type()==3}" class="left btn">虚拟组织</span>
+				</div>
+			</div>-->
+			<div class="item mt25">
+				<span class="title">部门负责人</span>
+				<div class="avatar">
+	  				<div class="avatar-mask left"></div>
+					<img data-bind="attr:{src:'/'+tone.apiVersion+'/sys/action/avatar'}"/>
+	  			</div>
+			</div>
+			<div class="clearfix">
+					<button data-bind="click:EventClickAdd"  class="pop-green-btn right" type="sumbit">保存</button>
+			</div>
+		</div>
+  	</div>
+  </div>
+  <!-- 移动至 -->
+  <div data-bind="visible:CtrlView.MoveDeptView()==1,click:function(){this.CtrlView.MoveDeptView(0)}" class="v4-pop-bg" style="display:none-;">
+		<div data-bind="click:function(){return},clickBubble:false" class="v4-pop v4-hr-person-pop">
+			<div data-bind="click:function(){return},clickBubble:false" class="nxtstep-content">
+				<div class="head">
+					<span>移动至</span>
+				</div>
+				<div class="main">
+					<div data-bind="attr:{id:CtrlTem.MoveDeptID}" class="tree-wrapper">
+					</div>
+				</div>
+				<div  class="btn-group clearfix">
+					<button data-bind="click:EventNextMoveNode(),clickBubble:false" data-step="next" type="button" class="green-btn right">确定</button>
+					<!-- <button data-bind="clickBubble:false" data-step="last" type="button" class="white-btn right">上一步</button>--> 
+				</div>
+			</div>
+		</div>
+ </div>
+  <!--弹出层-->
+  
+  <div data-bind="attr:{id:BgPopID},click:FuncClosePop" class="v4-pop-bg" style="display:none;">
+  	<div class="v4-pop v4-organ-popup">
+  		<!-- 提示 -->
+  		<div data-bind="attr:{id:TipViewID}" class="v4-tips-bg" style="display:none;">
+	  		<div class="v4-black-tips">
+	  			<span class="icon-notice icon-cross"></span><!-- icon-notice警示，icon-corss成功 -->
+	  			<div class="overflow-h lh24">仅允许删除空部门</div>
+	  		</div>
+  		</div>
+  		<div class="head clearfix" style="display:none">
+  			<div class="input-search right">
+  				<span class="icon-search"></span>
+  				<div class="input-div">
+  					<input type="text" placeholder="快速搜索"/>
+  				</div>
+  			</div>
+  			<button type="button" class="addbtn right" title="添加"></button>
+  			<!-- 未选中成员时候 -->
+  			<div data-bind="attr:{id:CtrlPopID}" class="left" style="display:none;">
+	  			<span class="organ-name left">交互设计组（20）</span>
+	  			<span class="depart-line left">|</span>
+	  			<div class="avatar left">
+	  				<div class="avatar-mask left"></div>
+					<img data-bind="attr:{src:'/'+tone.apiVersion+'/sys/action/avatar'}"/>
+	  			</div>
+	  			<span class="member-name left">李思思</span>
+  			</div>
+  			<!-- 选中成员按钮 -->
+  			<div data-bind="attr:{id:CtrlMenberID}" class="left">
+  				<button class="left gray-btn" type="button">
+  					<span class="move-btn left"></span>
+  					<span class="left">移动到</span>
+  				</button>
+  				<button class="left gray-btn" type="button">
+  					<span class="del-btn left"></span>
+  					<span class="left">删除</span>
+  				</button>
+  			</div>
+  			<!-- 添加成员弹出层 -->
+  			<div class="add-member-pop" style="display:none;">
+  				<div class="search-div">
+  					<span class="icon-search left"></span>
+  					<div class="input-div">
+  						<input type="text" placeholder="云助手帐号/邮箱"/>
+  					</div>
+  				</div>
+  				<div class="search-content">
+  					<!-- 搜索无结果 -->
+  					<div class="none-data" style="display:none">
+  						<span class="icon-notice">账号不存在</span>
+  					</div>
+  					<!--空值-->
+  					<div class="none-data" style="display:none">
+  						<div class="none-data-txt" style="font-size:18px;">添加成员</div>
+  						<div class="none-data-txt" style="font-size:12px;margin-top:5px;">输入云助手账号或邮箱地址，查找添加</div>
+  					</div>
+  					<!-- 有数据 -->
+  					<div class="member-data">
+  						<div class="member-data-head">
+  							<button class="blue-addbtn right">添加</button>
+  							<div class="avatar left">
+  								<div class="avatar-mask"></div>
+								<img data-bind="attr:{src:'/'+tone.apiVersion+'/sys/action/avatar'}"/>
+  							</div>
+  							<div class="overflow-h">
+  								<div class="txt-overflow">李思思</div>
+  								<div class="clr77 txt-overflow">帐号：100825</div>
+  							</div>
+  						</div>
+  						<div class="msg"><span>性别：</span><span>女</span></div>
+  						<div class="msg"><span>移动手机：</span><span>10086</span></div>
+  						<div class="msg"><span>邮箱地址：</span><span>abc@qq.com</span></div>
+  						<div class="msg"><span>通讯地址：</span><span>广东省中山市东区亨尾大街3号软件园1号楼...</span></div>
+  					</div>
+  				</div>
+  			</div>
+  			<!-- 加入圈子 -->
+  			<div class="add-circle-pop" style="display:none;">
+  				<div class="search-div">
+  					<span class="icon-search left"></span>
+  					<div class="input-div">
+  						<input type="text" placeholder="云助手帐号/邮箱"/>
+  					</div>
+  				</div>
+  				<div class="content">
+  					<div class="add-circle-item">
+  						<span class="icon-addcross right" title="选择"></span>
+  						<div class="avatar left">
+	  						<div class="avatar-mask left"></div>
+							<img data-bind="attr:{src:'/'+tone.apiVersion+'/sys/action/avatar'}"/>
+	  					</div>
+	  					<div class="overflow-h txt-overflow">
+	  						<span>李思思</span>
+	  					</div>
+  					</div>
+  					<div class="add-circle-item">
+  						<span class="icon-addcross right" title="选择"></span>
+  						<div class="avatar left">
+	  						<div class="avatar-mask left"></div>
+							<img data-bind="attr:{src:'/'+tone.apiVersion+'/sys/action/avatar'}"/>
+	  					</div>
+	  					<div class="overflow-h txt-overflow">
+	  						<span>李思思</span>
+	  					</div>
+  					</div>
+  					<div class="add-circle-item">
+  						<span class="icon-addcross right" title="选择"></span>
+  						<div class="avatar left">
+	  						<div class="avatar-mask left"></div>
+							<img data-bind="attr:{src:'/'+tone.apiVersion+'/sys/action/avatar'}"/>
+	  					</div>
+	  					<div class="overflow-h txt-overflow">
+	  						<span>李思思</span>
+	  					</div>
+  					</div>
+  					<div class="add-circle-item">
+  						<span class="icon-addcross right" title="选择"></span>
+  						<div class="avatar left">
+	  						<div class="avatar-mask left"></div>
+							<img data-bind="attr:{src:'/'+tone.apiVersion+'/sys/action/avatar'}"/>
+	  					</div>
+	  					<div class="overflow-h txt-overflow">
+	  						<span>李思思</span>
+	  					</div>
+  					</div>
+  					<div class="add-circle-item">
+  						<span class="icon-addcross right" title="选择"></span>
+  						<div class="avatar left">
+	  						<div class="avatar-mask left"></div>
+							<img data-bind="attr:{src:'/'+tone.apiVersion+'/sys/action/avatar'}"/>
+	  					</div>
+	  					<div class="overflow-h txt-overflow">
+	  						<span>李思思</span>
+	  					</div>
+  					</div>
+  				</div>
+  			</div>
+  		</div>
+  		<!-- 列表 -->
+  		<div data-bind="attr:{id:MenberPop},foreach:MenberCtrl.data" class="organ-listitem">
+  			<div data-bind="css:{'current':$data.IsSel()},click:$root.EventSelMenber" class="item left current"><!-- current选中当前 -->
+  				<div class="avatar left">
+  					<div class="avatar-mask"></div>
+					<img data-bind="attr:{src:'/'+tone.apiVersion+'/sys/action/avatar'}"/>
+  				</div>
+  				<!-- 内容 -->
+  				<div class="overflow-h">
+  					<div data-bind="text:$data.RealName" class="name">李思思</div>
+  					<div data-bind="text:$data.Mail" class="email">matthew@sian.com </div>
+  				</div>
+  			</div>	
+  		</div>
+  	</div>
+  </div>
+  
+  <div data-bind="attr:{id:CtrlTreeID}" class="chart-container" style="background-color:#f8f8f8;border-top:1px solid #e6e6e8;"></div>
+  
+  <div data-tem="menu" style="display:none">
+  	<div name="menu" style="display:none" onmouseout="manage_Dept_DeptManageV21.EventMouseOut(this)">
+  		<div class="v4-organize-hoverpop">
+  			<span class="organ-triangle"></span>
+  			<a onclick="manage_Dept_DeptManageV21.EventAddNode(this,event);return false;" class="item-icon">添加下级部门</a>
+  			<a onclick="manage_Dept_DeptManageV21.EventMoveNode(event);return false;" class="item-icon">移动至</a>
+  			<a onclick="manage_Dept_DeptManageV21.EventEditNode(this,event);return false;" class="item-icon">编辑</a>
+  			<a onclick="manage_Dept_DeptManageV21.EventDelNode(this,event);return false;" class="item-icon">删除</a>
+  			<a style="display:none" class="item-icon">开启通讯录</a>
+  			<a style="display:none" class="item-icon">开启群聊</a>
+  		</div>
+  	</div>
+  </div>
+  <script type="text/javascript">
+  	$(function(){
+  		var ctrl = $('#{{.GUID}}')
+  		function Manage_Dept_DeptManageV21(){
+  			this.CtrlTem={
+  				MoveBgID:tone.sys.guid(),
+  				MoveDeptID:tone.sys.guid()
+  			}
+  			this.CtrlView={
+  				MoveDeptView:ko.observable(0),
+  				MoveDeptObj:ko.observable({}),
+  			}
+  			this.CtrlData={
+  				selmovedept:ko.observable({}),
+  				seldeptnode:ko.observable({})
+  			}
+  			this.CtrlTreeID = tone.sys.guid();
+  			this.BgPopID = tone.sys.guid();
+  			this.MenberPop = tone.sys.guid();
+  			this.CtrlPopID = tone.sys.guid();
+  			this.CtrlMenberID = tone.sys.guid();
+  			this.AddDeptPopID = tone.sys.guid();
+  			this.TipViewID = tone.sys.guid();
+  			this.IsUpdate = ko.observable(false);
+  			//暂行虚拟跟编辑方法
+  			this.SelNode = {
+  					data:{},
+  					obj:{}
+  			};
+  			
+  			this.MenberCtrl = {
+  					start:-1,
+  					end:0,
+  					data:ko.observableArray([])
+  			}
+  			this.Node = {
+  					CircleName:ko.observable(''),
+  					Type:ko.observable(2)
+  			}
+		
+  			this.EventClickAdd = function(){
+  				if(!this.IsUpdate()){
+  					this.FuncAddNode()
+  				}else{
+  					var param = {
+  							ID:this.SelNode.data.ID,
+  							CircleName:this.Node.CircleName(),
+  					}
+  					this.FuncUpdateNode(param)
+  				}
+  			}.bind(this)
+  			/*添加节点*/
+  			this.FuncAddNode = function(){
+		     var $node = this.SelNode.obj;
+		     var nodeVals = [];
+		     var hasChild = $node.parent().attr('colspan') > 0 ? true : false;
+		     if(this.Node.CircleName().length<1){
+		    	tone.views.FuncAddTip("请输入要添加的子组织名称");	
+		    	 return	 
+		    	}		  
+		     nodeVals.push(this.Node.CircleName());
+		     var param = {
+		    		 CircleName:this.Node.CircleName(),
+		    		 ParentID:this.SelNode.data.ID,
+		    		 Type:2
+		     	}
+		     	this.FuncSaveNode(param,function(data){
+		     		 if (!hasChild) {
+		     			var pdata = data;
+		     			data.name = this.Node.CircleName();
+		     			data.relationship = '100';
+		     			data.Number = 0;
+			    	 	$('#'+this.CtrlTreeID).orgchart('addChildren', $node,{'children':nodeVals.map(function(){return data})}, $.extend({},$('#'+this.CtrlTreeID).data('orgchart').options,data));
+		     		} else {
+		     			data.name = this.Node.CircleName();
+		     			data.relationship = '110';
+		     			data.Number = 0;
+						$('#'+this.CtrlTreeID).orgchart('addSiblings', $node.closest('tr').siblings('.nodes').find('.node:last'),
+					            { 'siblings':   nodeVals.map(function() { return data})});
+					}
+		     	}.bind(this));	     
+  			}.bind(this);
+  			
+  			this.EventDelNode = function(m,evt){
+  				this.FuncGetSelNode(m);
+  				var node = this.SelNode.data;
+  				this.FuncGetMenber(-1,0,node,function(data){
+  					if(data.data.length>0){
+  						this.FuncOpenPop(3);
+  					}else{
+  						this.FuncDelNode(node.ID);
+  					}
+  					/*this.SelNode.data={};
+  					this.SelNode.obj={};*/
+  					var e=(evt)?evt:window.event; 
+  	  				if (window.event) {
+  		  				e.cancelBubble=true;
+  	  				} else {
+  	  					e.stopPropagation();
+  	  				}
+  				}.bind(this));
+  				
+				return false
+  			}.bind(this)
+  			this.FuncClearCache=function(){
+  				tone.cache.AllDept={};
+				tone.cache.DeptTrees={};
+  			}
+  			//保存操作
+  			this.FuncSaveNode = function(data,callback){
+  				var url = "/adminmanager/company/add_circle";
+  				//var param = data;
+  				tone.ajaxJson(url,data,'post',function(data){
+					if(data.success!=undefined&&data.success==true){
+						if(typeof callback == "function"){
+							callback(JSON.parse(data.data));
+						}
+						this.FuncClearAdd();
+						$("#"+this.AddDeptPopID).css("display","none");
+						this.FuncClearCache();
+					}else{
+						tone.views.FuncAddTip("保存出错，请刷新重试");	
+					}
+				}.bind(this));
+  			}
+  			this.EventEditNode = function(m,evt){
+  				
+  				var r = $(m).parents('.node').find('.title').text();
+  				if(r == "root"){
+  					tone.views.FuncAddTip("当前根组织是虚拟组织，无法被编辑");
+  					return
+  				}
+  				this.IsUpdate(true)
+  				this.FuncGetSelNode(m);
+  				this.Node.CircleName(this.SelNode.data.CircleName);
+  				this.FuncOpenAddPop(m,evt);
+  				var e=(evt)?evt:window.event; 
+  				if (window.event) {
+	  				e.cancelBubble=true;
+  				} else {
+  					e.stopPropagation();
+  				}
+  			}.bind(this);
+  			//更新操作
+  			this.FuncUpdateNode = function(param){
+  				var url = "/adminmanager/company/update_circle";
+  				tone.ajaxJson(url,param,'post',function(data){
+					if(data.success!=undefined&&data.success==true){
+						if(typeof callback == "function"){
+							callback(data.data);
+						}
+						this.FuncClearAdd();
+						this.SelNode.obj.find('.title').text(param.CircleName);
+						this.SelNode.obj.data('ui_data').CircleName = param.CircleName;
+						this.SelNode.obj.find('.title').append('<div class="v4-manage-pepnum">'+this.SelNode.data.Number+'人</div>');
+						$("#"+this.AddDeptPopID).css("display","none");
+						this.FuncClearCache();
+					}else{
+						tone.views.FuncAddTip(data.message);	
+					}
+				}.bind(this));
+  			}.bind(this);
+  			//删除节点
+  			this.FuncDelNode = function(id,callback){
+  				var url = "/adminmanager/company/remove_circle";
+  				tone.ajaxJson(url,{CircleID:id},'get',function(data){
+					if(data.success!=undefined&&data.success==true){
+						if(typeof callback == "function"){
+							callback(data.data)
+						}
+						var $node = this.SelNode.obj;
+						$('#'+this.CtrlTreeID).orgchart('removeNodes', $node);
+						this.FuncClearCache();
+					}else{
+						tone.views.FuncAddTip(data.message);	
+					}
+				}.bind(this));
+  			}.bind(this);
+  			/*清空添加信息*/
+  			this.FuncClearAdd = function(){
+  				this.Node.CircleName('');
+  				this.Node.Type(2);
+  			};
+  			this.FuncGetNowDeptTree = function(i,callback){
+				var hidedept = i;
+				$('#'+this.CtrlTem.MoveDeptID).depttree({
+					depttype:parseInt('00010001',2),
+					//itemtype:504,
+					action:2,
+					hiden:hidedept,
+					onseluser:function(data){
+						console.log(data);
+					},
+					onseldept:function(data){
+						if($.type(callback)=="function"){
+							callback(data);
+						}
+					}.bind(this),
+					callback:function(){
+					}
+				});
+			};
+  		
+  			this.EventClickNode = function(data){
+  				this.FuncGetMenber(-1,0,data,function(menber){
+  					try{
+  					var list = []
+					$.each(menber.data,function(k,v){
+						v.IsSel = ko.observable(false);
+						list.push(v);
+					})
+					if(start == -1){
+						this.MenberCtrl.data(list);
+					}else{
+						this.MenberCtrl.data.push(list)
+					}
+  					}catch(e){console.log(e)}
+  				}.bind(this))
+  				this.FuncOpenPop(1);
+  			}.bind(this);
+  			this.FuncGetSelNode = function(m){
+  				this.SelNode.data = $(m).parents(".node").data('ui_data');
+  				this.SelNode.obj = $(m).parents(".node");
+  			}
+  			this.EventAddNode = function(m,evt){
+  				this.IsUpdate(false);
+  				this.Node.CircleName('');
+  				this.FuncOpenAddPop(m,evt)
+  			}
+  			this.FuncOpenAddPop = function(m,evt){		
+  				$("#"+this.AddDeptPopID).css("display","");
+  				this.FuncGetSelNode(m)
+  				var e=(evt)?evt:window.event; 
+  				if (window.event) {
+  				} else {
+  					e.stopPropagation();
+  				} 
+				return false;	
+  			};
+  			this.FuncCloseAddPop = function(m,e){
+  				if($(e.target).attr("id") == this.AddDeptPopID){
+  					$("#"+this.AddDeptPopID).css("display","none");
+  				}
+  			}
+  			this.FuncOpenPop = function(i){
+  				$("#"+this.BgPopID).css("display","");
+  				//打开组织人数
+  				if(i==1){
+  					$("#"+this.MenberPop).css("display","");
+  					$("#"+this.CtrlPopID).css("display","");
+  					$("#"+this.CtrlMenberID).css("display","none");
+  				//	$("#"+this.TipViewID).css("display","none");
+  				}
+  				//选中成员
+  				if(i==2){
+  					$("#"+this.MenberPop).css("display","");
+  					$("#"+this.CtrlPopID).css("display","none");
+  					$("#"+this.CtrlMenberID).css("display","");
+  					$("#"+this.TipViewID).css("display","none");
+  				}
+  				//删除节点提示层
+  				if(i==3){
+  					$("#"+this.MenberPop).css("display","");
+  					$("#"+this.CtrlPopID).css("display","none");
+  					$("#"+this.CtrlMenberID).css("display","none");
+  	  				$("#"+this.TipViewID).css("display","");
+  				}
+  			}
+  			this.EventSelMenber = function(m,e){
+  				m.IsSel(m.IsSel()?false:true);
+  				this.FuncOpenPop(2)
+  			}.bind(this);
+  			
+  			//查询组织成员
+  			this.FuncGetMenber=function(start,end,data,callback){
+				var url='/adminmanager/company/circle_user';
+				var params={Start:start,End:end,Keys:''};
+				params.CircleID = data.ID
+				//当搜索视图时，加入Keys参数
+			/*	if(this.AttrSearch.views()){
+					params.Keys=keys.slice(0,120);
+				}*/
+				tone.ajaxJson(url,params,'get',function(data){
+					if(data.success!=undefined&&data.success==true){
+						data=data.data;
+						this.MenberCtrl.start=data.start;
+						this.MenberCtrl.end=data.end;
+						if(typeof callback == "function"){
+							callback(data);
+						}
+					}
+				}.bind(this));
+			};
+  			this.FuncClosePop = function(m,e){
+  				if ($(e.target).attr("id") == this.BgPopID){
+  					$("#"+this.BgPopID).css("display","none");
+  				}else{
+  				}
+  			}
+  			this.FuncMakeDispose = function(data){
+  				var list = [];
+  				$.each(data,function(k,v){
+  					if(v.ExtType!=3){
+	  					if(v.Children!=undefined&&v.Children.length>0){
+							v.Children=this.FuncMakeDispose(v.Children);
+						}
+	  					list.push(v);
+  					}
+  				}.bind(this))
+  				return list
+  			}
+  			this.FuncDispose = function(data){
+  				var disdata = {};
+  				var getdata = [];
+  				try{
+  				getdata = this.FuncMakeData(this.FuncMakeDispose(data));}catch(e){console.log(e)}
+  				if(data.length>1){		
+  					disdata.name = "root";	  			
+  		  			disdata.children = getdata;
+  				}else if(data.length==1){
+  					disdata = getdata[0];
+  					disdata.children = getdata[0].Children||[];
+					disdata.name = getdata[0].name;
+  				}else{
+  					disdata = getdata[0];
+  					disdata.name = data.CircleName	  			
+  		  			disdata.children = [];
+  				}
+  				disdata.relationship = "001";	
+  				return disdata
+  			};
+  			this.FuncMakeData=function(data){
+				var tmp_data=[];
+				if(data!=undefined&&$.isArray(data)&&data.length>0){
+					$.each(data,function(index,item){			
+						item.relationship = "110";	
+						item.name = item.CircleName;
+						item.children = item.Children;
+						item.UI_Hide=ko.observable(true);		//是否隐藏子节点
+						item.UI_Children=ko.observableArray([]);//子节点
+						item.UI_Member=ko.observableArray([]);//组织成员
+						if(item.Children!=undefined&&item.Children.length>0){
+							item.relationship = "111"
+							item.UI_Children(this.FuncMakeData(item.Children));
+						}
+						tmp_data.push(item);
+					}.bind(this));
+				}
+				return tmp_data;
+			}
+  			
+  			this.EventMouseOut = function(o){
+  				$(o).css('dislay','none');
+  			}
+  			this.EventMoveNode = function(evt){
+  				var m =$(evt.target).parents('.node').data('ui_data');
+  				this.CtrlView.MoveDeptObj($(evt.target));
+				this.CtrlData.seldeptnode(m);
+  				this.FuncGetNowDeptTree([m.ID],function(data){
+  					this.CtrlData.selmovedept(data);
+  				}.bind(this));
+  				this.CtrlView.MoveDeptView(1);
+  				var e=(evt)?evt:window.event; 
+  				if (window.event) {
+  				} else {
+  					e.stopPropagation();
+  				} 
+				return false;	
+  			};
+  			this.EventNextMoveNode=function(){
+  				this.FuncMoveNode(function(){
+  					$('#'+this.CtrlTreeID).orgchart('removeNodes', this.CtrlView.MoveDeptObj());
+  					var $node = $('#'+this.CtrlData.selmovedept().ID);
+  				   var nodeVals = [];
+  				   var hasChild = $node.parent().attr('colspan') > 0 ? true : false;	  
+				   nodeVals.push(this.CtrlData.seldeptnode().CircleName);
+  				   var data = this.CtrlData.seldeptnode();
+  				   data.ParentID = this.CtrlData.selmovedept().ID;
+				  	if(!hasChild){
+				  		data.name = this.CtrlData.seldeptnode().CircleName;
+				  		if(data.Children!=undefined&&data.Children.length>0){
+				  			data.relationship = '101';
+				  		}else{
+				  			data.relationship = '100';
+				  		}
+				  		data.Number = this.CtrlData.seldeptnode().Number;
+				  	 	$('#'+this.CtrlTreeID).orgchart('addChildren', $node,{'children':nodeVals.map(function(){return data})}, $.extend({},$('#'+this.CtrlTreeID).data('orgchart').options,data));
+				  	} else {
+				  		try{
+				  		data.name = this.CtrlData.seldeptnode().CircleName;
+				  		if(data.Children!=undefined&&data.Children.length>0){
+				  			data.relationship = '111';
+				  		}else{
+				  			data.relationship = '110';
+				  		}
+				  		data.Number = this.CtrlData.seldeptnode().Number;
+						$('#'+this.CtrlTreeID).orgchart('addSiblings', $node.closest('tr').siblings('.nodes').find('.node:first'),
+				           { 'siblings':   nodeVals.map(function() { return data})});
+				  		}catch(e){console.log(e)}
+					}
+				  	this.CtrlData.seldeptnode({});
+				  	this.CtrlData.selmovedept({});
+				  	this.CtrlView.MoveDeptObj({});
+				  	this.CtrlView.MoveDeptView(0);
+  				}.bind(this))
+  			}
+  			//移动组织
+  			this.FuncMoveNode = function(callback){
+  				if(this.CtrlData.selmovedept().ID==undefined){
+					//tone.views.FuncAddTip("请选择移动至组织");	
+					return
+				}
+  				var url = '/adminmanager/company/move_circle';
+  				var params={
+  						ID:this.CtrlData.seldeptnode().ID,
+  						ParentID:this.CtrlData.selmovedept().ID
+  					}
+  				tone.ajaxJson(url,params,'get',function(data){
+					if(data.success!=undefined&&data.success==true){
+						if(typeof callback == "function"){
+							callback(data);
+						}
+					}
+				}.bind(this));
+  			}
+  			this.FuncInit=function(){
+  				tone.ajaxJson('/authize/join/getdepartmenttree',{enableAuthize:false,number:true},'get',function(data){
+  			
+  					if(data.success==true&&data.data&&data.data.data){
+						var disdata = this.FuncDispose(data.data.data);
+						$('#'+this.CtrlTreeID).orgchart({
+							'data' : disdata,
+							'nodeTitle': 'name',
+							'exportButton': false,
+							'exportFilename': 'SportsChart',
+							'parentNodeSymbol': 'fa-th-large',
+							'nodeChildren': 'children',
+							'createNode': function($node, m) {
+								$node.data('ui_data',m);
+								$node.attr("id",m.ID);
+								var secondMenu = $('[data-tem="menu"]').html();
+								$node.append(secondMenu);
+								$node.on('click', function(event) {
+									this.SelNode.data =m;
+									this.SelNode.obj=$node			
+									if (!$(event.target).is('.edge')) {
+										if($(event.target).attr("name")=="menu"){
+											return
+										}else{
+											//当前迭代不执行2016.04.29
+										//	this.EventClickNode(data);
+										}
+									}
+								}.bind(this));
+								$node.on('mouseout',function(event){
+									if (!$(event.target).is('.edge')) {
+											$node.find('[name="menu"]').css('display','none');
+										}
+								}.bind(this));
+								$node.on('mouseover',function(event){
+										var menu = $node.find('[name="menu"]');
+											menu.css('display','');
+										
+								}.bind(this));
+								$node.find('.title').append('<div class="v4-manage-pepnum">'+m.Number+'人</div>');
+							}.bind(this)
+						});
+						
+					}
+				}.bind(this));
+			}.bind(this);
+  			this.Views=function(){
+  				var dtd = new $.Deferred();
+  				if($('').orgchart==undefined){
+	  				tone.sys.loadcss('{{.StaticServer}}/common/cssAndjs/lib/orgtree/css/font-awesome.min.css');
+	  				tone.sys.loadcss('{{.StaticServer}}/common/cssAndjs/lib/orgtree/css/jquery.orgchart.css');
+	  				tone.sys.loadcss('{{.StaticServer}}/common/cssAndjs/lib/orgtree/css/style.css');
+	  				tone.sys.loadcss('{{.StaticServer}}/common/cssAndjs/lib/orgtree/style.css');
+	  				tone.sys.loadjs('{{.StaticServer}}/common/cssAndjs/lib/orgtree/jquery.orgchart.js',function(){
+	  					dtd.resolve();
+	  				});
+  				}else{
+  					dtd.resolve();
+  				}
+  				$.ajax(dtd).done(this.FuncInit);
+  			};
+  			this.Binding=function(ctrl){
+  				ko.applyBindings(this,ctrl);
+  				this.Views();
+  			}
+  		}
+  		manage_Dept_DeptManageV21 = new Manage_Dept_DeptManageV21();
+  		manage_Dept_DeptManageV21.Binding(ctrl[0]);
+  	});
+  </script>
+</div>
