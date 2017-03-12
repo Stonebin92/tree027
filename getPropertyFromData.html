@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Document</title>
+</head>
+<body>
+<script src="http://cdn.bootcss.com/jquery/1.8.0/jquery-1.8.0.js"></script>
+  <script>
+  
+    $(function () {
+      var datascource = {
+        "Authize": true,
+        "Children": [
+          {
+            "Authize": true,
+            "Children": [
+              {
+                "Authize": true,
+                "Children": [
+                  {
+                    "Authize": true,
+                    "CircleName": "财务部",
+                    "ExtType": 2,
+                    "ID": "573bd3f660faf548d800008b",
+                    "Number": 1,
+                    "ParentID": "573bd38860faf548d800007e",
+                    "Target": "{573bd38860faf548d800007e}"
+                  }
+                ],
+                "CircleName": "财务总监",
+                "ExtType": 2,
+                "ID": "573bd38860faf548d800007e",
+                "Number": 2,
+                "ParentID": "56a584f860faf572ecd3bc42",
+                "Target": "{56a584f860faf572ecd3bc42,573bd37160faf548d800007a,573bd37760faf548d800007b,573bd37e60faf548d800007c,573bd38360faf548d800007d}"
+              },
+              {
+                "Authize": true,
+                "Children": [
+                  {
+                    "Authize": true,
+                    "Children": [
+                      {
+                        "Authize": true,
+                        "Children": [
+                          {
+                            "Authize": true,
+                            "CircleName": "小组",
+                            "ExtType": 2,
+                            "ID": "57ac185060faf50e98000a33",
+                            "Number": 0,
+                            "ParentID": "573bd44060faf548d8000092",
+                            "Target": "{573bd44060faf548d8000092}"
+                          }
+                        ],
+                        "CircleName": "合作二部",
+                        "ExtType": 2,
+                        "ID": "573bd44060faf548d8000092",
+                        "Number": 0,
+                        "ParentID": "573bd3fd60faf548d800008c",
+                        "Target": "{573bd3fd60faf548d800008c,573bd43b60faf548d8000091}"
+                      },
+                      {
+                        "Authize": true,
+                        "CircleName": "合作三部",
+                        "ExtType": 2,
+                        "ID": "573bd44560faf548d8000093",
+                        "Number": 1,
+                        "ParentID": "573bd3fd60faf548d800008c",
+                        "Target": "{573bd3fd60faf548d800008c,573bd43b60faf548d8000091,573bd44060faf548d8000092}"
+                      },
+                      {
+                        "Authize": true,
+                        "CircleName": "合作一部",
+                        "ExtType": 2,
+                        "ID": "573bd43b60faf548d8000091",
+                        "Number": 0,
+                        "ParentID": "573bd3fd60faf548d800008c",
+                        "Target": "{573bd3fd60faf548d800008c}"
+                      }
+                    ],
+                    "CircleName": "开发总监",
+                    "ExtType": 2,
+                    "ID": "573bd3fd60faf548d800008c",
+                    "Number": 2,
+                    "ParentID": "573bd37160faf548d800007a",
+                    "Target": "{573bd37160faf548d800007a}"
+                  },
+                  {
+                    "Authize": true,
+                    "Children": [
+                      {
+                        "Authize": true,
+                        "CircleName": "售后二部",
+                        "ExtType": 2,
+                        "ID": "573bd40960faf548d800008e",
+                        "Number": 0,
+                        "ParentID": "573bd40460faf548d800008d",
+                        "Target": "{573bd40460faf548d800008d}"
+                      },
+                      {
+                        "Authize": true,
+                        "CircleName": "售后三部",
+                        "ExtType": 2,
+                        "ID": "573bd41460faf548d8000090",
+                        "Number": 0,
+                        "ParentID": "573bd40460faf548d800008d",
+                        "Target": "{573bd40460faf548d800008d,573bd40960faf548d800008e,573bd40e60faf548d800008f}"
+                      }
+                    ],
+                    "CircleName": "售后总监",
+                    "ExtType": 2,
+                    "ID": "573bd40460faf548d800008d",
+                    "Number": 0,
+                    "ParentID": "573bd37160faf548d800007a",
+                    "Target": "{573bd37160faf548d800007a,573bd3fd60faf548d800008c}"
+                  }
+                ],
+                "CircleName": "常务副总",
+                "ExtType": 2,
+                "ID": "573bd37160faf548d800007a",
+                "Number": 0,
+                "ParentID": "56a584f860faf572ecd3bc42",
+                "Target": "{56a584f860faf572ecd3bc42}"
+              },
+              {
+                "Authize": true,
+                "CircleName": "技术总监",
+                "ExtType": 2,
+                "ID": "573bd37e60faf548d800007c",
+                "Number": 4,
+                "ParentID": "56a584f860faf572ecd3bc42",
+                "Target": "{56a584f860faf572ecd3bc42,573bd37160faf548d800007a,573bd37760faf548d800007b}"
+              },
+              {
+                "Authize": true,
+                "Children": [
+                  {
+                    "Authize": true,
+                    "CircleName": "test",
+                    "ExtType": 2,
+                    "ID": "58aa83bd609a5f165100098d",
+                    "Number": 0,
+                    "ParentID": "573bd38360faf548d800007d",
+                    "Target": "{573bd38360faf548d800007d,573bd3ea60faf548d8000089,573bd3ef60faf548d800008a}"
+                  },
+                  {
+                    "Authize": true,
+                    "CircleName": "行政部",
+                    "ExtType": 2,
+                    "ID": "573bd3ef60faf548d800008a",
+                    "Number": 0,
+                    "ParentID": "573bd38360faf548d800007d",
+                    "Target": "{573bd38360faf548d800007d,573bd3ea60faf548d8000089}"
+                  },
+                  {
+                    "Authize": true,
+                    "CircleName": "人力资源部",
+                    "ExtType": 2,
+                    "ID": "573bd3ea60faf548d8000089",
+                    "Number": 0,
+                    "ParentID": "573bd38360faf548d800007d",
+                    "Target": "{573bd38360faf548d800007d}"
+                  }
+                ],
+                "CircleName": "人力总监",
+                "ExtType": 2,
+                "ID": "573bd38360faf548d800007d",
+                "Number": 1,
+                "ParentID": "56a584f860faf572ecd3bc42",
+                "Target": "{56a584f860faf572ecd3bc42,573bd37160faf548d800007a,573bd37760faf548d800007b,573bd37e60faf548d800007c}"
+              },
+              {
+                "Authize": true,
+                "Children": [
+                  {
+                    "Authize": true,
+                    "Children": [
+                      {
+                        "Authize": true,
+                        "CircleName": "咨询二部",
+                        "ExtType": 2,
+                        "ID": "573bd3dd60faf548d8000087",
+                        "Number": 0,
+                        "ParentID": "573bd3a760faf548d8000081",
+                        "Target": "{573bd3a760faf548d8000081,573bd3d560faf548d8000086}"
+                      },
+                      {
+                        "Authize": true,
+                        "CircleName": "咨询三部",
+                        "ExtType": 2,
+                        "ID": "573bd3e460faf548d8000088",
+                        "Number": 0,
+                        "ParentID": "573bd3a760faf548d8000081",
+                        "Target": "{573bd3a760faf548d8000081,573bd3d560faf548d8000086,573bd3dd60faf548d8000087}"
+                      },
+                      {
+                        "Authize": true,
+                        "CircleName": "咨询一部",
+                        "ExtType": 2,
+                        "ID": "573bd3d560faf548d8000086",
+                        "Number": 0,
+                        "ParentID": "573bd3a760faf548d8000081",
+                        "Target": "{573bd3a760faf548d8000081}"
+                      }
+                    ],
+                    "CircleName": "咨询部",
+                    "ExtType": 2,
+                    "ID": "573bd3a760faf548d8000081",
+                    "Number": 0,
+                    "ParentID": "573bd37760faf548d800007b",
+                    "Target": "{573bd37760faf548d800007b}"
+                  }
+                ],
+                "CircleName": "销售总监",
+                "ExtType": 2,
+                "ID": "573bd37760faf548d800007b",
+                "Number": 2,
+                "ParentID": "56a584f860faf572ecd3bc42",
+                "Target": "{56a584f860faf572ecd3bc42,573bd37160faf548d800007a}"
+              }
+            ],
+            "CircleName": "总经理",
+            "ExtType": 2,
+            "ID": "56a584f860faf572ecd3bc42",
+            "Number": 13,
+            "ParentID": "56d6640860faf5390957ee99",
+            "Target": "{56d6640860faf5390957ee99}"
+          }
+        ],
+        "CircleName": "R集团",
+        "ExtType": 2,
+        "ID": "56d6640860faf5390957ee99",
+        "Number": 6,
+        "ParentID": "",
+        "Target": "{}"
+      }
+
+
+
+
+      /**
+       * @param  Object obj 对象类型
+       * @param  String property 需要获取的属性，可以自定义例如:ID，Name
+       * @param  String separator obj 分隔符，可以自定义使用
+       * @return String 返回字符串类型
+       */
+      function getPropertyFromDataAsString(data, property = 'ID', separator = '|') {
+        var property = property;
+        if(!data[property]) return;
+        // 返回为字符串
+        var properties = '';
+        properties += separator + data[property];
+
+        if(data.Children) {
+          $.each(data.Children, function(index, element) {
+            properties += getPropertyFromDataAsString(element, property);
+          });
+        }
+        return properties;
+      }
+
+      /**
+       * @param  Object data 传入需要处理的数据对象
+       * @param  String property 需要获取的属性，可以自定义例如:ID，Name
+       * @param  Array arr 数据容器
+       * @return Array 返回所有的
+       */
+      function getPropertyFromDataAsArray(data, property = 'ID', arr = []) {
+        var property = property;
+        if(!data[property]) return;
+        // 返回为数组
+        arr.push(data[property]);
+        // console.log(data[property]);
+        if(data.Children) {
+          $.each(data.Children, function(index, element) {
+            // console.log(property);
+            getPropertyFromDataAsArray(element, property, arr);
+          });
+        }
+
+        return arr;
+      }
+
+
+      var arr = getPropertyFromDataAsArray(datascource, 'ID');
+      var string = getPropertyFromDataAsString(datascource, 'CircleName');
+      console.log(arr);
+      console.log(string);
+    });
+
+  
+  </script>
+</body>
+</html>
