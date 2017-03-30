@@ -1,0 +1,3342 @@
+<div id="{{.GUID}}">
+	<!-- 正在导入覆盖层 -->
+	<style>
+	.v4-hr-msg-edit .msg-content .edit-div .city-picker-span {height: auto!important;}
+	</style>
+	<div class="v4-mask-bg" data-bind="attr:{id:CtrlTem.WaitForLoading}" style="display:none;">
+		<div class="table">
+			<div class="table-cell">
+				<div class="notice-msg">
+					<span class="icon-notice left" style="display:none"></span>
+					<span class="icon-loading left"></span>
+					<div class="overflow-h">正在导入数据，请稍等</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- 导入错误提示 -->
+	<div ui-pop-bg="true" data-bind="attr:{id:CtrlTem.LoadingLog}" class="v4-pop-bg" style="display:none;">
+		<div ui-pop="true" class="v4-pop v4-hr-person-pop " style="height: 360px;">
+			<div class="nxtstep-content">
+				<div class="head" style="font-size: 22px;">导入员工信息表失败</div>
+				<div data-bind="foreach:CtrlData.LoadingLogMessages" class="main" style="height: 250px;font-size: 18px;padding-left: 90px;">
+					<div data-bind="text:$data.messages" style="margin-top: 3px"></div>
+				</div>
+				<div class="btn-group clearfix">
+					<button data-bind="click:EventCloseLoadingLog" type="button" class="green-btn right">知道了</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	
+	<div data-bind="attr:{id:CtrlTem.C_SaveID}" class="v4-black-tips" style="display:none">
+		<span data-bind="css:{'icon-notice':CtrlView.f_success(),'icon-cross':!CtrlView.f_success()}" class="icon-notice icon-cross"></span><!-- icon-notice警示，icon-corss成功 -->
+		<div data-bind="text:CtrlView.f_tip()" class="overflow-h lh24"></div>
+	</div>
+	<div class="v4-hr-person">
+		<div class="head-tabs">
+			<div data-bind="foreach:CtrlDis.HeadTable" class="clearfix">
+				<div data-bind="click:$root.EventSelHead,css:{'current':$data.IsSel()}" class="left items">
+					<span data-bind="text:$data.name">新入职</span>
+					<sup data-bind="text:$data.num" style="display:none">23</sup>
+				</div>
+			</div>
+		</div>
+		<!-- 头部 -->
+		<div  class="head">
+			<div data-bind="visible:CtrlData.selhead().type!='leave',attr:{id:CtrlTem.DisposeID}" >
+				<a data-bind="click:EventSwitchDispose" data-num="0" class="items">入职</a>
+				<a data-bind="click:EventSwitchDispose,css:{'unclick':CtrlData.selhead().type=='leave'||CtrlData.selemps().length<=0}" data-num="1" class="items">调动</a>
+				<!-- CtrlData.selemps().length>1|| -->
+				<a data-bind="click:EventSwitchDispose,css:{'unclick':CtrlData.selhead().type=='leave'||CtrlData.selemp().ID==undefined }" data-num="2" class="items">离职</a>
+	
+				<div class="items">
+					<a data-bind="click:EventSwitchDispose" data-num="3" class="s-retire clr77">导入</a>
+					<input name="file" data-bind="attr:{id:CtrlTem.LoadFileID}" type="file">
+				</div>
+				<!-- <a data-bind="click:EventSwitchDispose" data-num="3">导入</a> -->
+				<a data-bind="click:EventSwitchDispose" data-num="4" class="items">导出</a>
+				<a data-bind="click:EventPrint"  class="items">打印</a>
+			</div>
+			<div data-bind="visible:CtrlData.selhead().type=='leave',click:EventReJoin,clickBubble:false" style="display:none" class="items">
+				<!-- CtrlData.selemps().length>1|| -->
+				<a data-bind="css:{'unclick':CtrlData.selemp().ID==undefined}" class="clr77 s-retire">返聘</a>
+			</div>
+			<button data-bind="click:EventListSwich,css:{'card':CtrlView.switchlist()==0,'table':CtrlView.switchlist()==1}" type="button" class="right swiftbtn"></button><!-- card卡片 table列表显示  -->
+			<button data-bind="click:EventDownloadTemplet" class="right importbtn" style="margin-right: 8px;" title="下载导入模板"></button>
+				<button data-bind="click:EventShowSort"  class="right sortbtn" title="排序" style="display:none;"></button>
+				<button data-bind="click:EventShowFilter,clickBubble:false"  class="right filterbtn" title="过滤"></button>
+			<!-- search -->
+			<div class="input-search right">
+				<span class="i-search"></span>
+				<input data-bind="textinput:CtrlView.searchvalue,event:{keydown:EventSearch}" type="text" placeholder="搜索"/>
+			</div>
+			
+		</div>
+		<!-- 子级 -->
+		<div class="main">
+			<div class="leftbar-popview">
+				<div data-bind="attr:{id:CtrlTem.AllDeptID}" class="tree-wrapper"></div>
+				<button class="pullout-btn"></button>
+			</div>
+			<script>
+				$(function(){
+					$(".pullout-btn").click(function(){
+						$(".leftbar-popview").toggleClass("leftbar-popview-out")
+					})
+				})
+			</script>
+			<!-- 列表显示 -->
+
+			<div data-bind="visible:CtrlView.switchlist()==1" data-view="list" class="members-wrapper s-members-clr bgff" style="display:none;padding:0px;">
+				<div style="display:none-" class="ptb15 plr20">
+					<span class="right clr77"><span data-bind="text:AttrOnNum"></span>个员工</span>
+				</div>
+				<div class="members-table-div" style="top:50px;left:20px;">
+					<!-- 表头 -->
+					<div style="width:2930px" class="pr20">
+						<!-- 表格 -->
+						<table width="100%" border="1" cellpadding="0" cellspacing="0">
+							<colgroup span="20" align="left">
+								<col width="60"></col>
+								<col width="100"></col>
+								<col width="200"></col>
+								<col width="100"></col>
+								<col width="100"></col>
+								<col width="100"></col>
+								<col width="100"></col>
+								<col width="100"></col>
+								<col width="100"></col>
+								<col width="150"></col>
+								<col width="100"></col>
+								<col width="100"></col>
+								<col width="100"></col>
+								<col width="100"></col>
+								<col width="100"></col>
+								<col width="100"></col>
+								<col width="100"></col>
+								<col width="100"></col>
+								<col width="100"></col>
+								<col width="100"></col>
+							</colgroup>
+							<thead>
+								<tr>
+									<td>
+										<div class="item-cell" style="text-align:center;width:60px;">
+											<input class="bluecheck" data-bind="event:{change:EventSelectAll},checked:CtrlView.selallview()" type="checkbox"/>
+										</div>
+									</td>
+									<td>
+										<div class="item-cell">
+											<span>员工编号</span>
+										</div>
+									</td>
+									<td>
+										<div class="item-cell">
+											<span>姓名</span>
+										</div>
+									</td>
+									<td>
+										<div class="item-cell">
+											<span>部门</span>
+										</div>
+									</td>
+									<td>
+										<div class="item-cell">
+											<span>职位</span>
+										</div>
+									</td>
+									<td>
+										<div class="item-cell">
+											<span>入职时间</span>
+										</div>
+									</td>
+									
+									<td>
+										<div class="item-cell">
+											<span>性别</span>
+										</div>
+									</td>
+									<td>
+										<div class="item-cell">
+											<span>状态</span>
+										</div>
+									</td>
+									<td>
+										<div class="item-cell">
+											<span>身份证号码</span>
+										</div>
+									</td>
+									<td>
+										<div class="item-cell">
+											<span>账号</span>
+										</div>
+									</td>
+									<td>
+										<div class="item-cell">
+											<span>学历</span>
+										</div>
+									</td>
+									<td>
+										<div class="item-cell">
+											<span>毕业学校</span>
+										</div>
+									</td>
+									<td>
+										<div class="item-cell">
+											<span>专业</span>
+										</div>
+									</td>
+								
+									<td>
+										<div class="item-cell">
+											<span>婚姻状态</span>
+										</div>
+									</td>
+									<td>
+										<div class="item-cell">
+											<span>民族</span>
+										</div>
+									</td>
+									<td>
+										<div class="item-cell">
+											<span>户口地址</span>
+										</div>
+									</td>
+									<td>
+										<div class="item-cell">
+											<span>联系电话</span>
+										</div>
+									</td>
+									<td>
+										<div class="item-cell">
+											<span>办公电话</span>
+										</div>
+									</td>
+									<td>
+										<div class="item-cell">
+											<span>紧急联系人</span>
+										</div>
+									</td>
+									<td>
+										<div class="item-cell">
+											<span>紧急联系电话</span>
+										</div>
+									</td>
+								</tr>
+							</thead>
+						</table>
+					</div>
+					<!-- 表体 -->
+					<div style=" width:2930px;overflow-y: auto;overflow-x: hidden;" class="pr20">
+						<!-- 表格 -->
+						<table width="100%" border="1" cellpadding="0" cellspacing="0">
+							<colgroup span="20" align="left">
+								<col width="60"></col>
+								<col width="100"></col>
+								<col width="200"></col>
+								<col width="100"></col>
+								<col width="100"></col>
+								<col width="100"></col>
+								<col width="100"></col>
+								<col width="100"></col>
+								<col width="100"></col>
+								<col width="150"></col>
+								<col width="100"></col>
+								<col width="100"></col>
+								<col width="100"></col>
+								<col width="100"></col>
+								<col width="100"></col>
+								<col width="100"></col>
+								<col width="100"></col>
+								<col width="100"></col>
+								<col width="100"></col>
+								<col width="100"></col>
+							</colgroup>
+							<tbody data-bind="foreach:CtrlData.emplist">
+								<tr data-bind="css:{'current':$data.IsSel()}">
+									<td>
+										<div class="item-cell" style="text-align:center;width:60px;">
+											<input class="bluecheck" data-bind="checked:$data.IsSel(),event:{change:$root.EventSelectOne}" type="checkbox"/>
+										</div>
+									</td>
+									<td>
+										<div class="item-cell">
+											<a data-bind="text:$data.ItemCode,click:$root.EventEmpInfo,clickBubble:false" class="a-link">10179</a>
+										</div>
+									</td>
+									<td>
+										<div class="item-cell">
+											<span data-bind="text:$data.RealName">李思思</span>
+										</div>
+									</td>
+									<td>
+										<div class="item-cell">
+											<span data-bind="text:$data.DeptID==undefined?'':$data.DeptID.CircleName">交互设计组</span>
+										</div>
+									</td>
+									<td>
+										<div class="item-cell">
+											<span data-bind="text:$data.JobID==undefined?'':$data.JobID.ItemName">设计师</span>
+										</div>
+									</td>
+									<td>
+										<div class="item-cell">
+											<span data-bind="text:$data.HireDate">2015-11-20</span>
+										</div>
+									</td>
+									<td>
+										<div class="item-cell">
+											<span data-bind="text:$data.ui_sex">女</span>
+										</div>
+									</td>
+									<td>
+										<div class="item-cell">
+											<span data-bind="text:$data.ui_exttype">在职</span>
+										</div>
+									</td>
+									<td>
+										<div class="item-cell">
+											<span data-bind="text:$data.IdentityID">44200019881284560</span>
+										</div>
+									</td>
+									<td>
+										<div class="item-cell">
+											<span data-bind="text:$data.Mail">lisisis</span>
+										</div>
+									</td>
+									<td>
+										<div class="item-cell">
+											<span data-bind="text:$data.Education">本科</span>
+										</div>
+									</td>
+									<td>
+										<div class="item-cell">
+											<span data-bind="text:$data.GraduateSchool">广东工业大学</span>
+										</div>
+									</td>
+									<td>
+										<div class="item-cell">
+											<span data-bind="text:$data.Major">金融学</span>
+										</div>
+									</td>
+								
+									<td>
+										<div class="item-cell">
+											<span data-bind="text:$data.Maritalstatus">未婚</span>
+										</div>
+									</td>
+									<td>
+										<div class="item-cell">
+											<span data-bind="text:$data.Nation">汉族</span>
+										</div>
+									</td>
+									<td>
+										<div class="item-cell">
+											<span data-bind="text:$data.NativeAddr">广东广州</span>
+										</div>
+									</td>
+									<td>
+										<div class="item-cell">
+											<span data-bind="text:$data.Mph">18988104567</span>
+										</div>
+									</td>
+									<td>
+										<div class="item-cell">
+											<span data-bind="text:$data.Oph">18988104567</span>
+										</div>
+									</td>
+									<td>
+										<div class="item-cell">
+											<span data-bind="text:$data.EmergencyContract">李思思</span>
+										</div>
+									</td>
+									<td>
+										<div class="item-cell">
+											<span data-bind="text:$data.EmergencyPhone">18988104567</span>
+										</div>
+									</td>
+								</tr>
+							</tbody>
+							
+							<div class="members-wrapper" style="display: none;" data-bind="visible:CtrlData.emplist().length<1">
+									<span class="div-nonedata" style="display:block;text-align:center;">
+										搜索无结果
+									</span>
+							</div>
+						</table>
+					</div>
+
+					<div data-bind="visible:CtrlData.empcount()<CtrlData.emptotal()" class="txt-center">
+						<button data-bind="click:EventLoadMore,clickBubble:false" type="button" class="v4-hr-morebtn">加载更多</button>
+					</div>
+				</div>
+			</div>
+	
+			<!-- 卡片显示 -->
+			<div data-bind="visible:CtrlView.switchlist()==0" class="members-wrapper pt0" style="display:none-;padding:0px;">
+				<div style="display:none-" class="pt15 plr20">
+					<span class="right clr77"><span data-bind="text:AttrOnNum"></span>个员工</span>
+				</div>
+				<div data-bind="foreach:CtrlData.emplist" class="clearfix plr25 ptb20" style="margin-left:1%;">
+					<!-- 每个成员 -->
+					<div data-bind="click:$root.EventSelEmp,css:{'current':$data.IsSel()}" class="member-item relative">
+						<div class="line-mask"></div>
+						<!-- 查看资料 -->
+						<div  class="i-profile-green"></div>
+						<!-- 头像 -->
+						<div class="avater left">
+							<a data-bind="style:{'background':'url(/'+tone.apiVersion+'/hr/organizeuser/getstandardimage?organizeUserID='+$data.ID+')'}" 
+							class="image-normal left" style="width: 90px!important; height: 120px!important;"></a>
+						</div>
+						<div class="overflow-h ">
+							<div data-bind="text:$data.RealName" class="name">吴思思</div>
+							<!-- <div data-bind="text:$data.Mail" class="email">katherine_88@qq.com</div> -->
+							<!-- 工号 -->
+							<div class="txtmsg mt8">
+								<span class="clr99 mr5">工号</span>
+								<span data-bind="text:$data.ItemCode" class="clr22">OAL-00000001</span>
+							</div>
+							<div class="txtmsg">
+								<span class="clr99 mr5">部门</span>
+								<span data-bind="text:$data.DeptID==undefined?'':$data.DeptID.CircleName" class="clr22">交互设计组</span>
+							</div>
+							<div class="txtmsg">
+								<span class="clr99 mr5">职位</span>
+								<span data-bind="text:$data.JobID==undefined?'':$data.JobID.ItemName" class="clr22">视觉设计师</span>
+							</div>
+						</div>
+						<div class="hr-detalbtn">
+							<button data-bind="click:$root.EventEmpInfo,clickBubble:false">详细信息</button>
+						</div>
+					</div>
+				</div>
+				<div data-bind="visible:CtrlData.empcount()<CtrlData.emptotal()" class="txt-center">
+					<button data-bind="click:EventLoadMore,clickBubble:false" type="button" class="v4-hr-morebtn">加载更多</button>
+				</div>
+				<div class="members-wrapper" style="display: none;" data-bind="visible:CtrlData.emplist().length<1">
+					<span class="div-nonedata" style="display:block;text-align:center;">
+						搜索无结果
+					</span>
+				</div>
+			</div>
+			
+			<!-- 没有数据 -->
+			<div class="members-wrapper" style="display:none;">
+				<span class="div-nonedata">
+					没有数据
+				</span>
+			</div>
+		</div>
+	</div>
+
+	<!-- 列表排序 -->
+	<div data-bind="attr:{id:CtrlSortID}"  class="list-order-bg" style="display:none;">
+		<span class="fs14 clr22 title">列表排序 </span>
+		<div class="middle" ui-module="true">
+		</div>
+		<div class="footer">		
+			<button class="widgets-btn bluebtn right">确定</button>
+			<button class="clrblue emptybtn right">清空排序</button>
+		</div>
+	</div>
+	
+	<!-- 列表筛选 -->
+	<div data-bind="attr:{id:CtrlFilterID}" class="list-order-bg list-filtrate-bg" style="display:none;right:87px;"  ui-dialog="true">
+		<!-- <span class="fs14 clr22 title">列表筛选</span>-->
+		<div class="middle" ui-module="true">
+		</div>
+		<!-- <div class="footer">		
+			<button data-bind="click:EventFilterSearch" class="widgets-btn bluebtn right">确定</button>
+			<button data-bind="click:EventClearFilter" class="clrblue emptybtn right">清空筛选</button>
+		</div>-->
+	</div>
+
+	<!-- 入职弹出层 -->
+	<div data-bind="click:EventHidenPop,attr:{id:CtrlTem.B_Background}" data-type="action" class="v4-pop-bg" style="display:none;">
+		<div data-ui="card_style" class="v4-pop v4-hr-person-pop">
+			<!-- 查找帐号 -->
+			<div data-bind="attr:{id:CtrlTem.J_SearchID},visible:CtrlView.searchview()==0" class="hr-pop-search" style="display:none;">
+				<h1>查找员工</h1>
+				<div class="mt10 clr77">输入账号或邮箱地址，找到相关员工，加入企业</div>
+				<!-- input -->
+				<div class="input-div">
+					<button data-bind="click:EventSearchEmp,clickBubble:false" type="button" class="green-btn right">查找</button>
+					<div class="input">
+						<span class="left icon-search"></span>
+						<div class="overflow-h">
+							<input data-bind="textinput:CtrlData.empsearch" type="text" placeholder="云助手帐号或邮箱"/>
+						</div>
+					</div>
+				</div>
+				<div class="notice">没有账号？<a data-card="acname" data-bind="click:EventSwitchCard">直接加入企业</a></div>
+			</div>
+			
+			
+			<!-- <div data-bind="visible:CtrlView.searchview()==1,attr:{id:CtrlTem.J_AddNameID}" class="hr-pop-search" style="display:none;">
+				<h1>直接加入企业</h1>
+				<div class="mt10 clr77">主要把没有注册账号的员工，添加到企业，统一管理</div>
+				<div class="input-div">
+					<button data-bind="click:EventAddEmpForUnName,clickBubble:false" type="button" class="green-btn right">查找</button>
+					<div class="input">
+						<span class="left icon-search"></span>
+						<div class="overflow-h">
+							<input data-bind="textinput:CtrlData.empsearch" type="text" placeholder="输入员工姓名"/>
+						</div>
+					</div>
+				</div>
+				<div class="notice">已有账号？<a data-card="name" data-bind="click:EventSwitchCard">查找加入企业</a></div>
+			</div>
+			
+			
+			 
+			
+			<!-- 选择调动方式 -->    <!-- attr:{id:CtrlTem.D_Dept} -->
+			<div data-bind="attr:{id:CtrlTem.D_Dept}" class="hr-pop-search" style="display:none;">
+				<h1>选择调动方式</h1>
+				<div class="mt10 clr77">请选择调动的方式，“同部门调动”或“不同部门调动”</div>
+				<div class="input-div">
+					<button data-bind="click:EventSameDept,clickBubble:false" type="button" class="bluebtn" style="margin-right:23px;">同部门</button>
+					<button data-bind="click:EventDifferentDept,clickBubble:false" type="button" class="bluebtn">不同部门</button>
+				</div>
+			</div>	
+			<!-- 详情信息 -->
+			<div class="nxtstep-content">
+				<!-- 离职原因 -->
+				<div data-bind="attr:{id:CtrlTem.L_SubmitID}" class="leave-detail" style="display:none">
+					<textarea data-bind="textinput:CtrlView.f_leave" placeholder="请写离职原因"></textarea>
+					<div data-bind="foreach:CtrlData.leavetype" class="btn-group clearfix">
+						<button data-bind="click:$root.EventSelLeaveType,text:$data.ItemName,css:{'current':$data.IsSel()}" class="current" type="button">辞职</button>
+					</div>
+				</div>
+				<div data-bind="attr:{id:CtrlTem.C_TitleID}" class="head" style="display:none">
+					<span data-bind="text:CtrlView.f_title()">详细信息</span>
+				</div>
+				<!-- 三个切换 -->
+				<div data-bind="attr:{id:CtrlTem.C_Background}" style="display:none">
+					<div data-bind="attr:{id:CtrlTem.C_MainID}" class="main">
+						<!-- 员工信息 -->
+						<div data-bind="attr:{id:CtrlTem.J_InfoID}" class="member-msg-div" style="display:none;">
+							<img data-bind="attr:{src:'/'+tone.apiVersion+'/sys/action/uavatar?uid='+CtrlData.j_info().id}" src="/{{.CurVersion}}/sys/action/uavatar"/>
+							<div class="overflow-h">
+								<div data-bind="text:CtrlData.j_info().realname" class="fs24 mr25" style="margin-top:100px;">李思思</div>
+								<div data-bind="text:CtrlData.j_info().acname" class="mt10 mr25">账号：100860</div>
+								<div data-bind="text:CtrlData.j_info().mail">邮箱：maria@noesdesign.com</div>
+							</div>
+						</div>
+						<!-- 选择职位 -->
+						<div data-bind="foreach:CtrlData.joblist,attr:{id:CtrlTem.C_DeptID}" class="clearfix p20" style="display:none;">
+							<a data-bind="click:$root.EventSelJobView,text:$data.ItemName,css:{'item-current':$data.IsSel()}" class="choose-item">交互设计</a>
+						</div>
+						<!-- 选择部门 -->
+						<div data-bind="attr:{id:CtrlTem.NowDeptID}" class="tree-wrapper" style="display:none">
+						</div>
+						<!-- 选择日期 -->
+						<div data-bind="attr:{id:CtrlTem.C_DateID}" style="display:none">
+							<input data-bind="textinput:CtrlData.seldate" type="text" style="display:none" class="ui_pikaday"/>
+						</div>
+					</div>
+					<div data-bind="attr:{id:CtrlTem.C_FlowID}" class="btn-group clearfix">
+						<button data-bind="click:EventStepView,clickBubble:false,text:CtrlView.f_stepbutton1()" data-step="next" type="button" class="green-btn right">下一步</button>
+						<button data-bind="click:EventStepView,clickBubble:false" data-step="last" type="button" class="white-btn right">上一步</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!--news-->
+	<div data-bind="attr:{id:CtrlTem.EmpInfoID},click:EventHidenPop"  data-type="info" class="v4-pop-bg" style="display:none;">
+		<div data-bind="css:{'v4-hr-msg-edit':AttrView()==1}"  class="v4-pop v4-hr-person-pop v4-member-pop">
+			<div >
+				<div class="member-msg">
+					<div class="avatar">
+						<img data-bind="attr:{src:'/'+tone.apiVersion+'/sys/action/uavatar?uid='+CtrlData.empinfo.UID}">
+					</div>
+					
+					<div class="overflow-h">
+						<div class="clearfix">
+							<div data-bind="text:CtrlData.empinfo().RealName"  class="name left">飞</div>
+							<div class="overflow-h" >
+								<button data-bind="click:EventEdit" class="editbtn">编辑个人资料</button>
+								<div class="clearfix">
+									<button data-bind="click:EventSave"  class="savebtn" style="margin-top:50px;">保存</button>
+									<button data-bind="click:EventEdit"  class="cancelbtn" style="margin-top:50px;">取消</button>
+								</div>
+							</div>
+						</div>
+
+						<div  class="email clr77">
+							<span data-bind="text:CtrlData.selemp().UID==undefined?'昵称：':'昵称：'+CtrlData.selemp().UID.NickName" class="mr25">帐号：100562</span>
+							<span data-bind="text:CtrlData.selemp().AcName==undefined||CtrlData.selemp().AcName==null?'帐号：':'帐号：'+CtrlData.selemp().AcName" class="mr25">帐号：100562</span>
+							<span data-bind="text:CtrlData.selemp().Mail==undefined||CtrlData.selemp().Mail==null?'绑定邮箱：':'绑定邮箱：'+CtrlData.selemp().Mail" class="mr25">nicheng ：100562</span>
+						</div>
+					</div>
+					<div class="tab-nav clearfix">
+						<a data-bind="click:EventSwithInfo,css:{'current':CtrlView.switchinfo()==0}" data-num="0" class="current">员工信息</a>
+						<a data-bind="click:EventSwithInfo,css:{'current':CtrlView.switchinfo()==1}" data-num="1" data-click="1">个人信息</a>
+						<a data-bind="click:EventSwithInfo,css:{'current':CtrlView.switchinfo()==2}" data-num="2" data-click="2">教育信息</a>
+						<a data-bind="click:EventSwithInfo,css:{'current':CtrlView.switchinfo()==3}" data-num="3" data-click="3">工作经历</a>
+						<a data-bind="click:EventSwithInfo,css:{'current':CtrlView.switchinfo()==4}" data-num="4">联系方式</a>
+						<a data-bind="click:EventSwithInfo,css:{'current':CtrlView.switchinfo()==5}" data-num="5">合同信息</a>
+					</div>
+				</div>
+		
+				<div data-bind="visible:CtrlView.switchinfo()==0,attr:{id:CtrlTem.E_BasicID}"  class="msg-content clearfix">
+					<div class="item">
+						<div class="title left">
+							<sup>*</sup>
+							<span>员工姓名</span>
+							<span class="colon">:</span>
+						</div>
+						<div class="overflow-h">
+							<div class="check-div">
+								<span data-bind="text:CtrlData.empinfo().RealName">飞</span>
+							</div>
+							<div class="edit-div">
+								<input data-bind="textInput:CtrlData.emploaddata().RealName" type="text">
+							</div>
+						</div>
+					</div>
+				
+					<div class="item">
+						<div class="title left">
+							<span>员工编号</span>
+							<span class="colon">:</span>
+						</div>
+						<div class="overflow-h">
+							<div class="check-div">
+								<span data-bind="text:CtrlData.empinfo().ItemCode"></span>
+							</div>
+							<div class="edit-div">
+								<input data-bind="textInput:CtrlData.emploaddata().ItemCode"  type="text">
+							</div>
+						</div>
+					</div>
+				
+					<div class="item">
+						<div class="title left">
+							<span >部门</span>
+							<span class="colon">:</span>
+						</div>
+						<div class="overflow-h">
+							<div class="check-div">
+								<span data-bind="text:CtrlData.empinfo().DeptID">11</span>
+							</div>
+							<div class="edit-div">
+								<input data-bind="textInput:CtrlData.emploaddata().DeptID" disabled="disabled" type="text">
+							</div>
+						</div>
+					</div>
+				
+					<div class="item">
+						<div class="title left">
+							<span>职位</span>
+							<span class="colon">:</span>
+						</div>
+						<div class="overflow-h">
+							<div class="check-div">
+								<span data-bind="text:CtrlData.empinfo().JobID"></span>
+							</div>
+							<div class="edit-div">
+								<input data-bind="textInput:CtrlData.emploaddata().JobID" disabled="disabled" type="text">
+							</div>
+						</div>
+					</div>
+				
+					<div class="item">
+						<div class="title left">
+							<span>入职日期</span>
+							<span class="colon">:</span>
+						</div>
+						<div class="overflow-h">
+							<div class="check-div">
+								<span data-bind="text:CtrlData.empinfo().HireDate"></span>
+							</div>
+							<div class="edit-div">
+								<input data-bind="textInput:CtrlData.emploaddata().HireDate" disabled="disabled" type="text">
+							</div>
+						</div>
+					</div>
+				</div>
+				
+				<div data-bind="visible:CtrlView.switchinfo()==1,attr:{id:CtrlTem.E_InfomID}" class="msg-content clearfix" style="display:none;">
+					<div class="member-img right">
+						<a data-bind="style:{'background':'url('+(CtrlData.empimg()||('/'+tone.apiVersion+'/hr/organizeuser/getstandardimage?organizeUserID='+CtrlData.empinfo().ID))+')'}" 
+							class="image-normal left" style="width: 115px!important; height: 153px!important;margin-bottom:10px;"></a>
+						<a data-bind="visible:AttrView()==1">上传个人标准照</a>
+						<input data-bind="attr:{id:CtrlView.IDimg},event:{change:EventUploadImg}" type="file">
+					</div>
+					<div class="overflow-h">
+						<div class="item">
+							<div class="title left">
+								性别
+								<span class="colon">:</span>
+							</div>
+							<div class="overflow-h">
+								<div class="check-div">
+									<span data-bind="text:CtrlData.empinfo().Sex">男</span>
+								</div>
+								<div class="edit-div" data-bind="foreach:CtrlConf.Sex">
+									<span data-bind="click:$root.EventSwitchSex,css:{'radiobtn-checked':$data.IsSel()}" class="radiobtn "></span>
+									<span data-bind="text:$data.ItemName" class="mr10">男</span>
+								</div>
+							</div>
+						</div>
+						<div class="item">
+							<div class="title left">
+								出生日期
+								<span class="colon">:</span>
+							</div>
+							<div class="overflow-h">
+								<div class="check-div">
+									<span data-bind="text:CtrlData.empinfo().Birthday">1990-5-28</span>
+								</div>
+								<div class="edit-div">
+									<input data-bind="textInput:CtrlData.emploaddata().Birthday"  disabled="disabled" type="text" placeholder="">
+								</div>
+							</div>
+						</div>
+						<div class="item">
+							<div class="title left">
+								籍贯
+								<span class="colon">:</span>
+							</div>
+							<div class="overflow-h">
+								<div class="check-div">
+									<span data-bind="text:CtrlData.empinfo().Native">河北省</span>
+								</div>
+								<div class="edit-div">
+									<select data-type="Native" data-bind="selectedOptions:CtrlConf.SeledProvince,foreach:CtrlConf.Province,event:{change:EventDropDown}">
+										<option data-type="Native" data-bind="text:$data.name">选择籍贯</option>
+									</select>
+								</div>
+							</div>
+						</div>
+						<div class="item">
+							<div class="title left">
+								民族
+								<span class="colon">:</span>
+							</div>
+							<div class="overflow-h">
+								<div class="check-div">
+									<span data-bind="text:CtrlData.empinfo().Nation">满族</span>
+								</div>
+								<div class="edit-div">
+									<select data-type="Nation" data-bind="selectedOptions:CtrlConf.SeledNation,options:CtrlConf.Native,event:{change:EventDropDown}">
+									</select>
+								</div>
+							</div>
+						</div>
+						<div class="item">
+							<div class="title left">
+								<sup>*</sup>
+								学历
+								<span class="colon">:</span>
+							</div>
+							<div class="overflow-h">
+								<div class="check-div">
+									<span data-bind="text:CtrlData.empinfo().Education">小学</span>
+								</div>
+								<div class="edit-div">
+									<select data-type="Education" data-bind="selectedOptions:CtrlConf.SeledEducation,options:CtrlConf.Education,event:{change:EventDropDown}">		
+									</select>
+								</div>
+							</div>
+						</div>
+						<div class="item">
+							<div class="title left">
+								婚姻状况
+								<span class="colon">:</span>
+							</div>
+							<div class="overflow-h">
+								<div class="check-div">
+									<span data-bind="text:CtrlData.empinfo().Maritalstatus">保密</span>
+								</div>
+								<div data-bind="foreach:CtrlConf.Marital" class="edit-div">
+									<span data-bind="click:$root.EventSwitchMarital,css:{'radiobtn-checked':$data.IsSel()}" class="radiobtn "></span>
+									<span data-bind="text:$data.name" class="mr10"></span>
+								</div>
+							</div>
+						</div>
+						<div class="item">
+							<div class="title left">
+								<sup>*</sup>
+								身份证号
+								<span class="colon">:</span>
+							</div>
+							<div class="overflow-h">
+								<div class="check-div">
+									<span data-bind="text:CtrlData.empinfo().IdentityID">411381199005280833</span>
+								</div>
+								<div class="edit-div">
+									<input data-bind="textInput:CtrlData.emploaddata().IdentityID,event:{blur:EventCheckID}" type="text" placeholder="">
+								</div>
+							</div>
+						</div>
+						<div class="item">
+							<div class="title left">
+								户口所在地
+								<span class="colon">:</span>
+							</div>
+							<div class="overflow-h">
+								<div class="check-div">
+									<span data-bind="text:CtrlData.empinfo().NativeReside">辽宁省/铁岭市/清河区</span>
+								</div>
+								<div class="edit-div" data-bind="attr:{id:CtrlTem.NativeAddress}">
+									<input data-ui="citynative" type="text" >	
+								</div>
+							</div>
+						</div>
+						<div class="item">
+							<div class="title left">
+								详细地址
+								<span class="colon">:</span>
+							</div>
+							<div class="overflow-h">
+								<div class="check-div">
+									<span data-bind="text:CtrlData.empinfo().NativeAddr"></span>
+								</div>
+								<div class="edit-div">
+									<textarea data-bind="textInput:CtrlData.emploaddata().NativeAddr"></textarea>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+		
+				<div data-bind="visible:CtrlView.switchinfo()==2,attr:{id:CtrlTem.E_EducationHistory}" class="msg-content clearfix" style="display:none;">
+					<div class="edit-div" style="margin-top:-15px;">
+						<table width="100%" cellpadding="0">
+							<thead>
+								<tr>
+									<td style="width:98px">起始日期</td>
+									<td style="width:98px">结束日期</td>
+									<td>毕业学校</td>
+									<td style="width:75px">专业</td>
+									<td style="width:75px">学历</td>
+									<td style="width:75px">获得学位</td>
+									<td></td>
+								</tr>
+							</thead>
+							<tbody data-bind="foreach:CtrlData.empeduction">
+								<tr>
+									<td style="width:98px">
+										<input ui-date="true" readonly="readonly" data-bind="textinput:$data.BeginDate"  type="text"/>
+									</td>
+									<td style="width:98px">
+										<input ui-date="true" readonly="readonly" data-bind="textInput:$data.EndDate" type="text"/>
+									</td>
+									<td>
+										<input data-bind="textInput:$data.GraduateSchool" type="text"/>
+									</td>
+									<td style="width:75px">
+										<input data-bind="textInput:$data.Profession" type="text"/>
+									</td>
+									<td style="width:75px">
+										<input data-bind="textInput:$data.Education" type="text"/>
+									</td>
+									<td style="width:75px">
+										<div style="border:1px solid #d2d2d2;height:30px;text-align:center;">
+											<input data-bind="checked:$data.HasDegree" type="checkbox" style="vertical-align:-0.4ex;"/>
+										</div>
+									</td>
+									<td>
+										<button data-bind="click:$root.EventAddEducation,css:{'msg-delbtn':$data.ui_candel(),'msg-addbtn':!ui_candel()}" class="msg-delbtn msg-addbtn"></button>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+					<div data-bind="foreach:CtrlData.empinfo().EducationHistory" class="check-div">
+						<div class="item-list">
+							<div data-bind="text:$data.BeginDate+'~'+$data.EndDate" class="time-period">2014/02  ~  2015/02</div>
+							<div class="">
+								<strong data-bind="text:$data.GraduateSchool">广东华宜美科技有限公司</strong>
+								<span>
+								【
+								<span data-bind="text:$data.Education">设计师</span>
+								<span data-bind="text:$data.Profession">设计师</span>
+								<span data-bind="text:$data.HasDegree?'取得学位':''">设计师</span>
+
+								】
+								</span>
+							</div>
+
+						</div>
+					</div>
+				</div>
+		
+				<div data-bind="visible:CtrlView.switchinfo()==3,attr:{id:CtrlTem.E_WorkHistory}" class="msg-content clearfix" style="display:none;">
+					<div class="edit-div" style="margin-top:-15px;">
+						<table width="100%" cellpadding="0">
+							<thead>
+								<tr>
+									<td style="width:98px">起始日期</td>
+									<td style="width:98px">结束日期</td>
+									<td>公司名称</td>
+									<td style="width:75px">担任职务</td>
+									<td></td>
+								</tr>
+							</thead>
+							<tbody data-bind="foreach:CtrlData.empwork">
+								<tr>
+									<td style="width:98px">
+										<input ui-date="true" readonly="readonly" data-bind="textinput:$data.BeginDate"  type="text"/>
+									</td>
+									<td style="width:98px">
+										<input ui-date="true" readonly="readonly" data-bind="textInput:$data.EndDate" type="text"/>
+									</td>
+									<td>
+										<input data-bind="textInput:$data.CompanyName" type="text"/>
+									</td>
+									<td style="width:75px">
+										<input data-bind="textInput:$data.Job" type="text"/>
+									</td>
+									<td style="text-align:center;">
+										<button data-bind="click:$root.EventAddWork,css:{'msg-delbtn':$data.ui_candel(),'msg-addbtn':!ui_candel()}"  class="msg-delbtn msg-addbtn"></button>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+					<div data-bind="foreach:CtrlData.empinfo().WorkHistory" class="check-div">
+						<div class="item-list">
+							<div data-bind="text:$data.BeginDate+'~'+$data.EndDate" class="time-period">2014/02  ~  2015/02</div>
+							<div class="">
+								<strong data-bind="text:$data.CompanyName">广东华宜美科技有限公司</strong>
+								<span>
+								【
+								<span data-bind="text:$data.Job">设计师</span>
+
+								】
+								</span>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div data-bind="visible:CtrlView.switchinfo()==4" class="msg-content clearfix" style="display:none;">
+					<div class="item">
+						<div class="title left">
+							手机
+							<span class="colon">:</span>
+						</div>
+						<div class="overflow-h">
+							<div class="check-div">
+								<span data-bind="text:CtrlData.empinfo().Mph">188899923232</span>
+							</div>
+							<div class="edit-div">
+								<input data-bind="textInput:CtrlData.emploaddata().Mph" type="text"/>
+							</div>
+						</div>
+					</div>	
+					<div class="item">
+						<div class="title left">
+							现住地址
+							<span class="colon">:</span>
+						</div>
+						<div class="overflow-h">
+							<div class="check-div">
+								<span data-bind="text:CtrlData.empinfo().CurrentReside">188899923232</span>
+							</div>
+							<div class="edit-div" data-bind="attr:{id:CtrlTem.CurrAddress}">
+								<input data-ui="citycurr" type="text" style="width:219px;"/>
+							</div>
+						</div>
+					</div>
+					<div class="item">
+						<div class="title left">
+							详细地址
+							<span class="colon">:</span>
+						</div>
+						<div class="overflow-h">
+							<div class="check-div">
+								<span data-bind="text:CtrlData.empinfo().Addr">188899923232</span>
+							</div>
+							<div class="edit-div">
+								<textarea data-bind="textInput:CtrlData.emploaddata().Addr"></textarea>
+							</div>
+						</div>
+					</div>
+					<div class="item">
+						<div class="title left">
+							紧急联系人
+							<span class="colon">:</span>
+						</div>
+						<div class="overflow-h">
+							<div class="check-div">
+								<span data-bind="text:CtrlData.empinfo().EmergencyContract">188899923232</span>
+							</div>
+							<div class="edit-div">
+								<input data-bind="textInput:CtrlData.emploaddata().EmergencyContract" type="text"/>
+							</div>
+						</div>
+					</div>
+					<div class="item">
+						<div class="title left">
+							紧急联系电话
+							<span class="colon">:</span>
+						</div>
+						<div class="overflow-h">
+							<div class="check-div">
+								<span data-bind="text:CtrlData.empinfo().EmergencyPhone">188899923232</span>
+							</div>
+							<div class="edit-div">
+								<input data-bind="textInput:CtrlData.emploaddata().EmergencyPhone" type="text"/>
+							</div>
+						</div>
+					</div>
+				</div>
+		
+				<div data-bind="visible:CtrlView.switchinfo()==5,attr:{id:CtrlTem.E_ContractID}" class="msg-content clearfix" style="display:none;">
+					<div data-bind="visible:CtrlData.contract().ID==undefined" class="nonedata">
+						<div class="v4-form-none"></div>
+						没有合同
+					</div>
+					<div data-bind="visible:CtrlData.contract().ID!=undefined">
+						<div class="item">
+							<div class="title left">合同编号<span class="colon">:</span></div>
+							<div data-bind="text:CtrlData.contract().ItemCode" class="overflow-h clr22 txt-overflow">交互设计</div>
+						</div>
+						<div class="item">
+							<div class="title left">身份证号<span class="colon">:</span></div>
+							<div data-bind="text:CtrlData.contract().IDentityID" class="overflow-h clr22 txt-overflow">交互设计</div>
+						</div>
+						<div class="item">
+							<div class="title left">起始日期<span class="colon">:</span></div>
+							<div data-bind="text:CtrlData.contract().BeginDate" class="overflow-h clr22 txt-overflow">交互设计</div>
+						</div>
+						<div class="item">
+							<div class="title left">结束日期<span class="colon">:</span></div>
+							<div data-bind="text:CtrlData.contract().EndDate" class="overflow-h clr22 txt-overflow">交互设计</div>
+						</div>
+						<div class="item">
+							<div class="title left">合同类型<span class="colon">:</span></div>
+							<div data-bind="text:CtrlData.contract().ContractTypeID!=undefined?CtrlData.contract().ContractTypeID.ItemName:''" class="overflow-h clr22 txt-overflow">交互设计</div>
+						</div>
+						<div class="item">
+							<div class="title left">附件<span class="colon">:</span></div>
+							<div class="overflow-h clr22 txt-overflow">
+								<a data-bind="text:CtrlData.contract().ui_name,click:EventDownAffix" style="color:#222;">AS000000001劳动合同.doc</a>
+							</div>
+						</div>	
+						<div class="clearfix">
+							<a data-bind="click:EventShowContractHistory,clickBubble:false" class="contract-link right" style="margin-top:113px;" >历史合同</a>
+						</div>
+					</div>
+				</div>
+				<div data-bind="attr:{id:CtrlTem.ContractHistoryID},click:EventHidenPop" data-type="history" class="v4-pop-bg" style="display:none;">
+					<div class="v4-pop v4-memory-contract">
+						<div class="head">历史合同</div>
+						<div class="table-div">	
+							<table width="828" border="1" cellpadding="0" cellspacing="0" class="title">
+								<colgroup span="6" align="left">
+									<col width="80">
+									<col width="180">
+									<col width="100">
+									<col width="150">
+									<col width="150">
+								</colgroup>
+								<tbody>
+								<tr>
+									<td>姓名</td>
+									<td>身份证号</td>
+									<td>合同类型</td>
+									<td>合同起始日期</td>
+									<td>合同结束日期</td>
+									<td>附件</td>
+								</tr>
+							</tbody></table>
+							<div class="table-main">
+								<table width="828" border="1" cellpadding="0" cellspacing="0">
+									<colgroup span="6" align="left">
+										<col width="80">
+										<col width="180">
+										<col width="100">
+										<col width="150">
+										<col width="150">
+									</colgroup>
+									<tbody data-bind="foreach:CtrlData.contracts">
+										<tr>
+											<td data-bind="text:$data.OrganizeUserID.RealName"></td>
+											<td data-bind="text:$data.IDentityID"></td>
+											<td data-bind="text:$data.ContractTypeID==undefined?'':$data.ContractTypeID.ItemName"></td>
+											<td data-bind="text:$data.BeginDate"></td>
+											<td data-bind="text:$data.EndDate"></td>
+											<td><span data-bind="visible:$data.Attachment.length>0,click:function(){window.open('/'+tone.apiVersion+'/common/file/download/'+$data.Attachment);}" class="i-attachment" title="附件"></span></td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	
+	<div data-bind="visible:CtrlView.searchview()==1,attr:{id:CtrlTem.J_AddNameID}" ui-pop-bg="true"  class="popup-widgets-bg" style="display: none;">
+		<div ui-pop="true" class="pop-widgets v4-hr-person-pop">
+			<div class="headnav">
+				<a class="right closebtn" data-bind="click:EventCloseEmpForUnName,clickBubble:false"  title="关闭"></a>
+				<span class="fs16 clr22">直接加入企业</span>
+			</div>
+			<div  class="content v4-hr-popcontent clearfix">
+				<div class="left">
+					<div class="input-widgets input-w219">
+						<span class="title left clr22">
+							<span>员工姓名：</span>
+						</span>
+						<div class="input-div">
+							<input data-bind="textinput:CtrlData.empsearch" type="text" placeholder="输入员工姓名"/>
+						</div>
+					</div>
+					<div class="select-widgets">
+						<span class="title left clr22">
+							<span>部门：</span>
+						</span>
+						<div class="select-widgets-div clearfix">
+							<div class="select-widgets-div left">
+				    			<div class="select-item" style="width:219px;" data-bind="click:EventShowDept">
+				    				<span class="arrow-down"></span>
+				    				<div class="overflow-h txt-overflow">
+				    					<span data-bind="text:CtrlData.seldodept().CircleName||'请选择部门'">人事部</span>
+				    				</div>
+				    			</div>
+								<!-- <div data-bind="attr:{id:CtrlTem.NowDeptID}" class="tree-wrapper" style="display:none;">
+	   						</div> -->
+	   						<div data-bind="attr:{id:CtrlTem.NowDeptID2},visible:AttrShowJobView()==2" class="select-popview" style="display:none">
+								</div>
+				    		</div>
+						</div>
+					</div>
+					<div class="select-widgets">
+						<span class="title left clr22">
+							<span>职位：</span>
+						</span>
+						<div class="select-widgets-div clearfix">
+							<div class="select-widgets-div left">
+				    			<div class="select-item" style="width:219px;" data-bind="click:function(m,e){AttrShowJobView(AttrShowJobView()==1?0:1)}">
+				    				<span class="arrow-down"></span>
+				    				<div class="overflow-h txt-overflow">
+				    					<span  data-bind="text:CtrlData.seljob().ItemName||'请选择职位'">助理</span>
+				    				</div>
+				    			</div>
+								<div data-bind="foreach:CtrlData.joblist,visible:AttrShowJobView()==1" class="select-popview" style="display:none;">
+	    							<div>
+										<span class="item clearfix" data-bind="click:$root.EventSelJobView,text:$data.ItemName">dd</span>
+									</div>
+	   						</div>
+				    		</div>
+						</div>
+					</div>
+					<div class="input-widgets input-w219">
+						<span class="title">
+							<span>入职时间：</span>
+						</span>
+						<div class="input-div">
+							<input data-bind="textInput:CtrlData.seljoindate" ui-date="true" type="text" placeholder="请选择入职日期">
+						</div>
+					</div>
+				</div>
+				<div class="member-img right">
+					<a data-bind="style:{'background':'url('+(CtrlData.empimg()||('/'+tone.apiVersion+'/hr/organizeuser/getstandardimage?organizeUserID='+CtrlData.empinfo().ID))+')'}" 
+							class="image-normal left" style="width: 115px!important; height: 153px!important;margin-bottom:10px;"></a>
+					<a>上传标准照</a>
+					<input data-bind="attr:{id:CtrlView.IDimg},event:{change:EventUploadImg}" accept="image/*" style="position: absolute;width: 115px;height: 180px;top: 0;bottom: 0;left: 0;right: 0;opacity: 0;display: block!important;" type="file">
+				</div>
+			</div>
+			<div class="bottom" style="height:48px">
+				<button data-bind="click:EventCloseEmpForUnName,clickBubble:false"  class="right right graybtn" style="margin-top:6px;">取消</button>
+				<button data-bind="click:EventSaveEmpForUnName,clickBubble:false"  class="right bluebtn" style="margin-top:6px;">保存</button>
+			</div>
+		</div>
+	</div>
+	
+	
+	<!-- 2017.03.17初始化提示 -->
+	<div  class="popup-widgets-bg" style="display: none;" data-type="tip" data-bind="attr:{id:CtrlTip},click:EventHidenPop,visible:AttrTip">
+	  <div class="pop-widgets v4-warmtip-pop">
+	    <a class="closebtn"  title="关闭"></a>
+	    <p class="clr22 fs24 lh28 pb10">温馨提示</p>
+	    <span class="clr77 fs14">为确保企业管理可以正常运行，请您先完成以下操作步骤：</span>
+	    <div class="mt30 ml10">
+	      <div class="v4-warmtip-checkstep clearfix mb25">
+	        <span class="stepsum left">1</span>
+	        <div class="left">
+	          <span class="fs16 clr22">创建组织架构</span>
+	          <br/>
+	          <span class="clr77">操作步骤：人事 〉组织 〉添加组织</span>
+	        </div>
+	      </div>
+	      <div class="v4-warmtip-checkstep clearfix mb30">
+	        <span class="stepsum left">2</span>
+	        <div class="left">
+	          <span class="fs16 clr22">为自己入职</span>
+	          <br/>
+	          <span class="clr77">操作步骤：人事 〉员工 〉入职</span>
+	        </div>
+	      </div>
+	    </div>
+	    <button class="widgets-btn bluebtn right">知道了</button>
+	  </div>
+	</div>
+	
+	
+	<!-- 
+<script type="text/javascript" src="{{.StaticServer}}/common/cssAndjs/lib/ajaxfileupload.js"></script>
+<script type="text/javascript" src="{{.StaticServer}}/common/cssAndjs/lib/dropdown_json.js"></script>-->
+<script>
+	tone.sys.loadjs('{{.StaticServer}}/common/cssAndjs/lib/ajaxfileupload.js',false);
+	tone.sys.loadjs('{{.StaticServer}}/common/cssAndjs/lib/dropdown_json.js',false);
+	//$(function(){
+		/*create at 2016.05.10 by yzy*/
+		var ctrlhr = $('#{{.GUID}}');
+		function Manage1_App_Hr_V21(){
+			this.AttrView = ko.observable(0);
+			this.AttrOnNum=ko.observable(0);
+			this.CtrlSortID=tone.sys.guid();
+			this.CtrlFilterID=tone.sys.guid();
+			this.CtrlTip=tone.sys.guid();
+			this.AttrTip=ko.observable(false);
+			this.CtrlConf={
+				Education:["","保密","小学","初中","高中","大专","本科","硕士研究生","博士研究生"],
+				Sex:ko.observableArray([{"ItemName":"男","ItemCode":1,"IsSel":ko.observable(false)},
+						{"ItemName":"女","ItemCode":0,"IsSel":ko.observable(false)},{"ItemName":"保密","ItemCode":-1,"IsSel":ko.observable(false)}]),
+				Marital:[{name:"保密",IsSel:ko.observable(false)},{name:"未婚",IsSel:ko.observable(false)},{name:"已婚",IsSel:ko.observable(false)},{name:"离异",IsSel:ko.observable(false)}],
+				Province:ko.observableArray(JSON_Province),
+				Native:ko.observableArray(JSON_Native),
+				SeledEducation:ko.observableArray([]),
+				SeledProvince:ko.observableArray([]),
+				SeledNation:ko.observableArray([]),
+			}; 
+			this.AttrShowJobView = ko.observable(0);//控制职位下拉列表的显示与否
+			this.CtrlTem = {
+				//---
+				/*by lzl */
+				NativeAddress:tone.sys.guid(),
+				CurrAddress:tone.sys.guid(),
+				//---
+				AllDeptID:tone.sys.guid(),//全局组织树
+				NowDeptID:tone.sys.guid(),//方法内组织树
+				NowDeptID2:tone.sys.guid(),//方法内组织树
+				DisposeID:tone.sys.guid(),//员工处理菜单
+				EmpInfoID:tone.sys.guid(),//员工信息弹出层
+				E_BasicID:tone.sys.guid(),//员工信息基础信息页面
+				E_InfomID:tone.sys.guid(),//员工信息个人信息页面
+				E_PhoneID:tone.sys.guid(), //员工信息联系方式页面
+				E_ContractID:tone.sys.guid(), //员工信息合同信息页面
+				ContractHistoryID:tone.sys.guid(), //历史合同弹出层
+				E_EducationHistory:tone.sys.guid(),//员工教育信息
+				E_WorkHistory:tone.sys.guid(),//员工教育信息		
+				B_Background:tone.sys.guid(),//工作流程背景页
+				C_Background:tone.sys.guid(),//共用工作流程背景页
+				C_TitleID:tone.sys.guid(),
+				C_DeptID:tone.sys.guid(),//职位
+				C_FlowID:tone.sys.guid(),
+				C_DateID:tone.sys.guid(),
+				C_SaveID:tone.sys.guid(),
+				C_MainID:tone.sys.guid(),
+				J_SearchID:tone.sys.guid(), //入职 搜索功能页		
+				J_InfoID:tone.sys.guid(),
+				L_SubmitID:tone.sys.guid(),	//离职 离职申请页面		
+				J_AddNameID:tone.sys.guid(),
+				
+				D_Dept:tone.sys.guid(), //选择调动方式页	
+				
+				LoadFileID:tone.sys.guid(),//上传员工信息表按钮
+				WaitForLoading:tone.sys.guid(),//正在导入中弹出层
+				LoadingLog:tone.sys.guid()//导入日志弹出层
+			}
+			//数据控制
+			this.CtrlData={
+				empdis:{},//数据字典
+				emplist:ko.observableArray([]),//员工列表
+				joblist:ko.observableArray([]),//职位列表
+				leavetype:ko.observableArray([]),
+				selemp:ko.observable({UID:{NickName:''}}),//当前所选员工
+				selemps:ko.observableArray([]),//当前选中的员工
+				seldept:ko.observable({}),//所选部门
+				seldodept:ko.observable({}),//选择加入或者异动的部门
+				seljob:ko.observable({}),//选择的职位
+				seldate:ko.observable({}),//选择的日期
+				seljoindate:ko.observable(''),//选择的日期--新入职弹出层用
+				selleavetype:ko.observable({}),//选择的离职类型
+				selhead:ko.observable({}),
+				empinfo:ko.observable({}),//员工详情-全局
+				empinfoItemCode:ko.observable({}),//员工编号
+				j_info:ko.observable({}),//员工详情-方法内
+				empsearch:ko.observable(''),//搜索词
+				//empofnum:{add:ko.observable(0),pass:ko.observable(0),leave:ko.observable(0)},
+				emploaddata:ko.observable({}),
+				empskip:0,
+				emplimit:20,
+				emptotal:ko.observable(0),
+				empcount:ko.observable(0),
+				jobskip:0,
+				joblimit:50,
+				//合同信息
+				contract:ko.observable({}),
+				contractlimit:20,
+				contracts:ko.observableArray([]),
+				empwork:ko.observableArray([]),
+				empeduction:ko.observableArray([]),
+				empimg:ko.observable(''),
+				LoadingLogMessages:ko.observableArray([])//导入日志信息
+			}
+			this.CtrlDis={
+				EmpInfo:ko.observableArray([]),
+				EmpPhone:ko.observableArray([]),
+				HeadTable:ko.observableArray([]),
+			}
+			//视图控制
+			this.CtrlView = {
+				switchtable:ko.observable(0),//标签切换
+				switchinfo:ko.observable(0),//员工信息资料标签切换
+				switchdispose:ko.observable(0),
+				switchlist:ko.observable(0),//列表图标显示方式,
+				selallview:ko.observable(false),//是否全选
+				searchvalue:ko.observable(''),//搜索值
+				f_title:ko.observable(""),
+				f_tip:ko.observable(""),//保存成功或失败提示
+				f_type:ko.observable(""),//当前流程类型
+				f_success:ko.observable(true),
+				f_leave:ko.observable(""),//离职说明
+				f_step:ko.observable(1),//当前流程步骤
+				f_stepbutton1:ko.observable("下一步"),
+				f_isreopen:ko.observable(false),
+				f_seldatenode:{},
+				imgisok:ko.observable(false),
+				IDimg:tone.sys.guid(),
+				searchview:ko.observable(0),
+				isaddname:ko.observable(false),
+				isrejoin:ko.observable(false)
+			};
+
+			this.EventEdit = function(m,e){
+				this.AttrIsOK(true);
+				//
+				/*by lzl*/
+				$('#'+this.CtrlTem.NativeAddress).html('<input data-ui="citynative" type="text" >');
+				$('#'+this.CtrlTem.CurrAddress).html('<input data-ui="citycurr" type="text" style="width:219px;"/>');
+
+				//
+				if(this.AttrView()==1){
+
+				}else{
+					var obj = {};
+					for(key in this.CtrlData.empinfo()){
+						obj[key]=ko.observable(this.CtrlData.empinfo()[key]);
+					}
+					this.CtrlData.emploaddata(obj);
+					//console.log(this.CtrlData.emploaddata().Birthday())
+				}
+				this.AttrView(this.AttrView()==1?0:1);
+				$('[data-ui="citynative"]').citypicker({province:this.CtrlData.emploaddata().NativeReside().split('/')[0]||'',
+					city:this.CtrlData.emploaddata().NativeReside().split('/')[1]||'',district:this.CtrlData.emploaddata().NativeReside().split('/')[2]||'',h_district:'',selectcallback:function(val){
+					this.CtrlData.emploaddata().NativeReside(val);
+				}.bind(this)})
+				$('[data-ui="citycurr"]').citypicker({province:this.CtrlData.emploaddata().CurrentReside().split('/')[0]||'',
+					city:this.CtrlData.emploaddata().CurrentReside().split('/')[1]||'',district:this.CtrlData.emploaddata().CurrentReside().split('/')[2]||'',h_district:'',selectcallback:function(val){
+					//console.log(this.CtrlData.emploaddata())
+					this.CtrlData.emploaddata().CurrentReside(val);
+				}.bind(this)})
+			}.bind(this);
+			this.EventSwitchSex=function(m,e){
+				var list = this.CtrlConf.Sex();
+				$.each(list,function(k,v){
+					if(v.IsSel()){
+						v.IsSel(false);
+					}
+				})
+				m.IsSel(true);
+			}.bind(this);
+			this.EventSwitchCard=function(m,e){
+				if($(e.target).attr('data-card')=="acname"){
+				//	$('[data-ui="card_style"]').addClass('v4-hr-switching')
+				//	setTimeout(function (){
+				//		$('[data-ui="card_style"]').removeClass('v4-hr-switching');
+						$('#'+this.CtrlTem.B_Background).hide();
+						this.CtrlData.j_info({});
+						this.CtrlData.empsearch('');
+						this.CtrlData.seldodept({});
+						this.CtrlData.seljob({});
+						this.CtrlData.seljoindate('');
+						this.CtrlData.empimg('');
+						this.CtrlView.isaddname(false);
+						$('[ui-date="true"]').datepicker({'dateFormat':'yy-mm-dd',changeMonth: true,changeYear: true});
+						this.CtrlView.searchview(1);
+				//	}.bind(this), 600);
+				}else{
+				//	$('[data-ui="card_style"]').addClass('v4-hr-switching')
+				//	setTimeout(function (){
+				//		$('[data-ui="card_style"]').removeClass('v4-hr-switching');
+						this.CtrlView.searchview(0);
+				//	}.bind(this), 600);
+				}
+			};
+			this.EventDropDown=function(m,e){
+				var t = $(e.target).attr('data-type');
+				switch(t){
+					case "Education":
+						this.CtrlData.emploaddata().Education($(e.target).val());
+						break;
+					case "Nation":
+						this.CtrlData.emploaddata().Nation($(e.target).val());
+						break;
+					case "Native":
+						this.CtrlData.emploaddata().Native($(e.target).val());
+						break;
+				}
+			}.bind(this);
+			this.EventSwitchMarital=function(m,e){
+				var list = this.CtrlConf.Marital;
+				$.each(list,function(k,v){
+					if(v.IsSel()){
+						v.IsSel(false);
+					}
+				})
+				m.IsSel(true);
+				//console.log("change is:",this.CtrlData.emploaddata())
+				this.CtrlData.emploaddata().Maritalstatus(m.name);
+			}.bind(this);
+			//点击员工信息事件
+			this.EventEmpInfo = function(m,e){
+				//console.log("m is:",m);
+				this.AttrIsOK(true);
+				this.CtrlData.selemp({});
+				m.IsSel(true);				
+				this.CtrlView.switchinfo(0)
+				this.CtrlData.contract({});
+				this.CtrlData.contracts([]);
+				if(m.IsSel()){
+					this.CtrlData.selemp(m);
+					this.CtrlData.selemps.remove(m);
+					this.CtrlData.selemps.push(m);
+				}else{
+					this.CtrlData.selemps.remove(m);
+					if(this.CtrlData.selemps().length==1){
+						this.CtrlData.selemp(this.CtrlData.selemps()[0]);
+					}else{
+						this.CtrlData.selemp({});
+					}
+				}
+				//当未选中任何员工时可以执行入职操作
+				if(this.CtrlData.selemps().length<=0){	
+					this.CtrlView.switchdispose(0);
+				}else{
+					//同时可进行异动和离职操作
+					this.CtrlView.switchdispose(3);
+				}
+				
+				try{
+					this.FuncGetEmpInfo(m.ID,function(data){
+						$('#'+this.CtrlTem.EmpInfoID).css('display','');
+						this.FuncGetContracts(m.ID,2);
+					}.bind(this))
+				}catch(e){console.log(e)}
+			}.bind(this);
+			//选中员工事件--选中的员工会添加到已选中数组，已选中数组会在切换部门和异动离职等执行完成后清空
+			//当CtrlView.switchdispose == 1时可以多选
+			//当CtrlView.switchdispose == 2时只能单选
+			this.EventSelEmp = function(m,e){
+				/*this.CtrlData.selemp({});
+				this.CtrlData.selemp(m);*/
+				m.IsSel(m.IsSel()?false:true);
+				if(m.IsSel()){
+					this.CtrlData.selemp(m);
+					this.CtrlData.selemps.push(m);
+				}else{
+					this.CtrlData.selemps.remove(m);
+					if(this.CtrlData.selemps().length==1){
+						this.CtrlData.selemp(this.CtrlData.selemps()[0]);
+					}else{
+						this.CtrlData.selemp({});
+					}
+					this.CtrlView.selallview(false);
+				}
+				
+
+				//当未选中任何员工时可以执行入职操作
+				if(this.CtrlData.selemps().length<=0){	
+					this.CtrlView.switchdispose(0);
+				}else{
+					//同时可进行异动和离职操作
+					this.CtrlView.switchdispose(3);
+					
+					if(this.CtrlData.selemps().length==this.CtrlData.emplist().length){
+						this.CtrlView.selallview(true);
+					}
+				}
+			}.bind(this);
+			//弹出层关闭事件
+			this.EventHidenPop=function(m,e){
+				var t = $(e.target).attr("data-type")
+				if(t=="info"){
+					$('#'+this.CtrlTem.EmpInfoID).hide();
+					this.AttrView(0);
+				}else if(t=="action"){
+					$('#'+this.CtrlTem.B_Background).hide();
+				}else if(t=="history"){
+					$('#'+this.CtrlTem.ContractHistoryID).hide();
+				}else if(t="tip"){
+					this.AttrTip(false);
+					$('#'+this.CtrlTip).hide();
+				}else{
+					return true
+				}
+				return false
+			}
+			//员工信息标签切换
+			this.EventSwithInfo=function(m,e){
+				var t=$(e.target).attr('data-num');
+				this.CtrlView.switchinfo(t);
+			}
+			//员工处理标签切换
+			//当标签处于unclick状态时，点击无效
+			this.EventSwitchDispose=function(m,e){
+				if($(e.target).hasClass('unclick')){
+					console.log("[INFOM]The Button Is Lock")
+					return
+				}
+				this.CtrlView.f_isreopen(true);
+				var t=$(e.target).attr('data-num');
+				this.CtrlView.switchdispose(t);
+				//当入职时进行的操作
+				if(t==0){
+					this.CtrlData.empsearch('');//清空搜索词
+					this.CtrlData.j_info({});//进行新的搜索前清空上一个搜索信息
+					this.CtrlView.searchview(0);
+					this.CtrlView.isaddname(false);
+					this.FuncActionView("join",1);
+					this.CtrlView.isrejoin(false);
+				}
+				//当异动时进行的操作
+				if(t==1){
+
+					$('#'+this.CtrlTem.B_Background).show();
+					$('#'+this.CtrlTem.D_Dept).show();
+					this.CtrlView.searchview(-1);
+					$('#'+this.CtrlTem.C_Background).hide();
+					$('#'+this.CtrlTem.J_InfoID).hide();
+					$('#'+this.CtrlTem.NowDeptID).hide();
+					$('#'+this.CtrlTem.C_FlowID).hide();
+					$('#'+this.CtrlTem.C_TitleID).hide();
+					$('#'+this.CtrlTem.C_DeptID).hide();
+					$('#'+this.CtrlTem.C_SaveID).hide();
+					$('#'+this.CtrlTem.L_SubmitID).hide();
+					$('#'+this.CtrlTem.C_MainID).hide();
+					$('#'+this.CtrlTem.C_DateID).hide();
+				}
+				//当离职时进行的操作
+				if(t==2){
+					this.CtrlView.searchview(-1);
+					this.CtrlView.f_leave('');
+					this.FuncActionView("leave",1);
+				}
+				
+				//当导入员工表时进行的操作
+				if(t==3){
+					//console.log("我是导入按钮");
+				}
+				//当导出员工表时进行的操作
+				if(t==4){
+					
+					//console.log("我是导出按钮")
+					var list = [];
+					$.each(this.CtrlData.selemps(),function(k,v){
+						if(v.ID!=undefined){
+							list.push(v.ID);
+						}
+					})
+					//console.log(list)
+					//{'filter':'["id__in":"'+"'"+list.join("','")+"'"+'"]'}
+					if(list.length>0){
+						var form = $('<form action="'+tone.apiVersion+'/report/organizeuser/0/10000?fields=AcName,RealName,ItemCode,EmpType_ItemName,DeptID_CircleName,JobID_ItemName,HireDate,Sex,Birthday,Native,Nation,Education,Maritalstatus,IdentityID,NativeReside,NativeAddr,Mph,CurrentReside,Addr,EmergencyContract,EmergencyPhone" method="post" name="aa"><input  type="hidden"  id="test1" name="filter" value=[{'+'"id__in"'+':"'+"'"+list.join("','")+"'"+'"}]></form>');
+						$('body').append(form);
+						form.submit();
+						tone.views.FuncAddTip("正在导出员工信息表");
+						form.remove();
+					}else{
+						var form = $('<form action="'+tone.apiVersion+'/report/organizeuser/0/10000?fields=AcName,RealName,ItemCode,EmpType_ItemName,DeptID_CircleName,JobID_ItemName,HireDate,Sex,Birthday,Native,Nation,Education,Maritalstatus,IdentityID,NativeReside,NativeAddr,Mph,CurrentReside,Addr,EmergencyContract,EmergencyPhone" method="post" name="aa"></form>');
+						$('body').append(form);
+						form.submit();
+						tone.views.FuncAddTip("正在导出员工信息表");
+						form.remove();
+					}
+				   
+				}
+			}	
+			//查询员工
+			this.EventSearchEmp = function(){
+				this.CtrlView.isaddname(false);
+				var acname = this.CtrlData.empsearch();
+				this.FuncGetUserJoin(acname,function(data){
+					//console.log(data);
+					this.CtrlData.j_info(data);
+					this.FuncActionView("join",2);
+				}.bind(this))
+			}.bind(this);
+			//添加无账号员工
+			this.EventAddEmpForUnName=function(){
+				//var name = this.CtrlData.empsearch();
+				this.CtrlView.isaddname(true);
+				this.FuncActionView("join",3);
+			}
+			//无帐号新增保存
+			this.EventSaveEmpForUnName = function(m,e){
+				var url="/hr/join/noaccount/create";
+				if(this.CtrlData.empsearch()==''){
+					tone.views.FuncAddTip('请输入员工姓名');
+					return;
+				}
+				if(this.CtrlData.seldodept().ID==undefined){
+					tone.views.FuncAddTip('请选择入职部门');
+					return;
+				}
+				if(this.CtrlData.seljob().ID==undefined){
+					tone.views.FuncAddTip('请选择职位');
+					return;
+				}
+				
+				if(this.CtrlData.seljoindate()==''){
+					tone.views.FuncAddTip('请选择入职日期');
+					return;
+				}
+				var param={
+					RealName:this.CtrlData.empsearch(),
+					DeptID:this.CtrlData.seldodept().ID,
+					JobID:this.CtrlData.seljob().ID,
+					HireDate:this.CtrlData.seljoindate(),
+					Sex:-1
+				}
+				/* if(this.CtrlView.imgisok()){
+					tone.sys.img_inflate($('#'+this.CtrlView.IDimg)[0],function(data){
+						data=data.split(',');
+						data=data[data.length-1];
+						param.StandardImage=data;
+					}.bind(this),500*1024);
+				} */
+				if(this.CtrlData.empimg()!=''){
+					param.StandardImage=this.CtrlData.empimg();
+				}
+				tone.ajaxJson(url,param,'post',function(data){
+					this.CtrlView.f_success(data.success);
+					if(data.success!=undefined&&data.success==true){
+						this.CtrlView.f_tip("保存成功");
+						$('#'+this.CtrlTem.B_Background).hide();
+						$('#'+this.CtrlTem.C_SaveID).show();
+						this.CtrlView.searchview(0);
+						setTimeout(function (){
+							$('#'+this.CtrlTem.C_SaveID).hide();
+							  //清除本次流程变量
+							this.CtrlData.j_info({});
+							this.CtrlData.empsearch('');
+							this.CtrlData.seldodept({});
+							this.CtrlData.seljob({});
+							this.CtrlData.seljoindate('');
+							this.CtrlData.empimg('');
+							this.CtrlView.isaddname(false);
+							this.FuncGetEmpOfNum();
+							this.FuncGetEmployees(0,this.CtrlData.selhead().type,this.CtrlData.seldept().ID,false);
+						}.bind(this), 1000);
+					}else{
+						this.CtrlView.f_tip("保存失败!");
+						tone.views.FuncAddTip(data.error);
+					}
+				}.bind(this));
+			}.bind(this);
+			
+			//取消无帐号新增
+			this.EventCloseEmpForUnName = function(m,e){
+				this.CtrlData.j_info({});
+				this.CtrlData.empsearch('');
+				this.CtrlData.seldodept({});
+				this.CtrlData.seljob({});
+				this.CtrlData.seljoindate('');
+				this.CtrlData.empimg('');
+				this.CtrlView.searchview(0);
+				this.CtrlView.isaddname(false);
+				$('#'+this.CtrlTem.J_AddNameID).hide();
+			}.bind(this);
+			//显示下拉组织树
+			this.EventShowDept = function(m,e){
+				//$('#'+this.CtrlTem.NowDeptID2).show();
+				this.AttrShowJobView(this.AttrShowJobView()==2?0:2)
+				this.FuncGetNowDeptTree2([],'join',function(data){
+					this.CtrlData.seldodept(data);
+					//$('#'+this.CtrlTem.NowDeptID2).hide();
+					this.AttrShowJobView(0);
+				}.bind(this));
+			}.bind(this);
+			//下拉列表方法内组织树
+			this.FuncGetNowDeptTree2 = function(i,itemtype,callback){
+				var hidedept = i;
+				$('#'+this.CtrlTem.NowDeptID2).depttree({
+					depttype:parseInt('00010000',2),
+					itemtype:itemtype,
+					action:1,
+					hiden:[],
+					disables:i,
+					onseluser:function(data){
+						//console.log(data);
+					},
+					onseldept:function(data){
+						if($.type(callback)=="function"){
+							callback(data);
+						}
+					}.bind(this),
+					callback:function(){
+						console.log('[INFOM]The FuncDeptTree Is Ok.');
+					}
+				});
+			};
+			
+			
+			this.EventReJoin=function(m,e){
+				if($(e.target).hasClass("unclick")){
+					return
+				}
+				this.CtrlView.isrejoin(true);
+				this.CtrlView.searchview(0);
+				this.CtrlView.isaddname(false);
+				this.FuncActionView("join",3);
+			}
+			//前后视图切换事件
+			this.EventStepView=function(m,e){
+				var to = $(e.target).attr("data-step");
+				var dotype=this.CtrlView.f_type();
+				var dostep=this.CtrlView.f_step();
+				if(dostep==3&&dotype=="join"&&to=="last"&&this.CtrlView.isaddname()){
+					dostep=2;
+				}
+				if(dostep==3&&dotype=="join"&&to=="last"&&this.CtrlView.isrejoin()){
+					dostep=1;
+				}
+				if(to=='last'){
+					this.CtrlView.f_isreopen(false);
+					dostep--;
+				}
+				if(to=='next'){
+					dostep++;
+				}
+				this.FuncActionView(dotype,dostep)
+			}.bind(this);
+			//选择职位事件--职位只能单选;
+			this.EventSelJobView=function(m,e){
+				m.IsSel(m.IsSel()?false:true);
+				if(!m.IsSel())return;
+				var list = this.CtrlData.joblist();
+				$.each(list,function(k,v){
+					if(v.IsSel()&&v.ID!=m.ID){
+						v.IsSel(false);
+					}
+				})
+				this.CtrlData.joblist(list);
+				this.CtrlData.seljob(m);
+				this.AttrShowJobView(0);
+			}.bind(this);
+			//选择离职类型事件-只能单选
+			this.EventSelLeaveType = function(m,e){
+				var list = this.CtrlData.leavetype();
+				$.each(list,function(k,v){
+					if(v.IsSel()){
+						v.IsSel(false);
+					}
+				})
+				m.IsSel(true);
+				this.CtrlData.selleavetype(m);
+			}.bind(this);
+			this.EventSelHead = function(m,e){
+				var list = this.CtrlDis.HeadTable();
+				$.each(list,function(k,v){
+					if(v.IsSel()){
+						v.IsSel(false);
+					}
+				})
+				m.IsSel(true);
+				this.CtrlData.selemps([]);
+				this.CtrlData.selemp({});
+				this.CtrlView.switchdispose(0);
+				this.CtrlData.selhead(m);
+				this.FuncGetEmployees(0,m.type,this.CtrlData.seldept().ID,false)
+			}.bind(this);
+			this.EventLoadMore = function(){
+				var total = this.CtrlData.emptotal();
+				var count = this.CtrlData.empcount();
+				if(count < total){
+					this.CtrlData.empskip=count;
+					this.FuncGetEmployees(count,this.CtrlData.selhead().type,this.CtrlData.seldept().ID,false)
+				}
+			}.bind(this);
+			//列表视图切换
+			this.EventListSwich=function(){
+				this.CtrlView.switchlist(this.CtrlView.switchlist()==0?1:0);
+			}.bind(this);
+			this.EventShowContractHistory=function(){
+				this.FuncGetContracts(this.CtrlData.selemp().ID,1,function(data){
+					if(data.length<1){
+						tone.views.FuncAddTip("没有历史合同");
+						return
+					}
+					$('#'+this.CtrlTem.ContractHistoryID).show();
+				}.bind(this))
+			};
+			//全选事件
+			this.EventSelectAll=function(m,e){
+				var list = this.CtrlData.emplist();
+				var sellist = [];
+				if($(e.target).attr("checked")){
+					this.CtrlView.selallview(true);
+					$.each(list,function(k,v){
+						v.IsSel(true);
+						sellist.push(v)
+					})
+				}else{
+					this.CtrlView.selallview(false);
+					$.each(list,function(k,v){
+						v.IsSel(false);
+					})
+				}
+				this.CtrlData.selemps(sellist);
+				this.CtrlData.emplist(list);
+				
+				if(sellist.length<1){
+					this.CtrlData.selemp({});
+				}
+				//当未选中任何员工时可以执行入职操作
+				if(this.CtrlData.selemps().length<=0){	
+					this.CtrlView.switchdispose(0);
+				}else{
+					//同时可进行异动和离职操作
+					this.CtrlView.switchdispose(3);
+				}
+			}
+			//单选事件
+			this.EventSelectOne=function(m,e){
+				m.IsSel(m.IsSel()?false:true);
+				this.CtrlView.selallview(false);
+				var list = this.CtrlData.emplist();
+				var sellist = [];
+				$.each(list,function(k,v){
+					if(v.IsSel()){
+						sellist.push(v)
+					}
+				})
+				this.CtrlData.selemps(sellist);
+				
+				if(!m.IsSel()){
+					this.CtrlData.selemps.remove(m);
+					if(this.CtrlData.selemps().length==1){
+						this.CtrlData.selemp(this.CtrlData.selemps()[0]);
+					}else{
+						this.CtrlData.selemp({});
+					}
+				}else{
+					this.CtrlData.selemp(m);
+				}
+				
+				//当未选中任何员工时可以执行入职操作
+				if(this.CtrlData.selemps().length<=0){	
+					this.CtrlView.switchdispose(0);
+				}else{
+					//同时可进行异动和离职操作
+					this.CtrlView.switchdispose(3);
+					if(this.CtrlData.selemps().length==this.CtrlData.emplist().length){
+						this.CtrlView.selallview(true);
+					}
+				}
+			}.bind(this);
+			//搜索事件
+			this.EventSearch=function(m,e){
+				if(e.which == 13){
+					this.FuncGetEmployees(0,this.CtrlData.selhead().type,this.CtrlData.seldept().ID,this.CtrlView.searchvalue().length>0);
+					return false;
+				}
+				return true;
+			};
+			//高级过滤
+			this.EventFilterSearch=function(m,e){
+				this.FuncGetEmployees(0,this.CtrlData.selhead().type,this.CtrlData.seldept().ID,this.CtrlView.searchvalue().length>0);
+			};
+			//下载附件事件
+			this.EventDownAffix=function(){
+				if(this.CtrlData.contract().Attachment!=undefined&&this.CtrlData.contract().Attachment.length>0){
+					window.open("/{{.CurVersion}}/common/file/download/"+this.CtrlData.contract().Attachment);
+				}
+			}.bind(this);
+			//获取合同附件
+			this.FuncGetContractAffix=function(id,callback){
+				tone.ajaxJson('/common/file/download/'+id,{},'get',function(data){
+					if(data.success!=undefined&&data.success==true){
+						if($.type(callback)=="function"){
+							callback(data)
+						}
+					}else{
+						tone.views.FuncAddTip("合同附件不存在")
+					}
+				}.bind(this));
+			}
+			//同部门调动
+			this.AttrSameDept = ko.observable(true);
+			this.EventSameDept = function(m,e){
+				this.AttrSameDept(true);
+				$('#'+this.CtrlTem.D_Dept).hide();
+				this.FuncActionView("move",2);
+			}.bind(this);
+			
+			//不同部门调动
+			this.EventDifferentDept = function(m,e){
+				this.AttrSameDept(false);
+				$('#'+this.CtrlTem.D_Dept).hide();
+				this.FuncActionView("move",1);
+			}.bind(this);
+			this.EventAddEducation=function(m,e){
+				var list = this.CtrlData.empeduction();
+				var len = list.length;
+				var DATE_FORMAT = /^[0-9]{4}-[0-1]?[0-9]{1}-[0-3]?[0-9]{1}$/;
+				if($(e.target).hasClass('msg-delbtn')){
+					this.CtrlData.empeduction.remove(m);
+					list=this.CtrlData.empeduction();
+					len=list.length;
+					if(len>1){
+						list[len-1].ui_candel(false);
+					}
+					this.CtrlData.empeduction(list);
+				}else{
+					if(len>0){
+						var o = list[len-1];
+						if(o.GraduateSchool.length<1||o.BeginDate.length<1||o.EndDate.length<1){
+							tone.views.FuncAddTip('请先完善此条资料');
+							return
+						}
+					}
+					if(DATE_FORMAT.test(m.BeginDate)&&DATE_FORMAT.test(m.EndDate)){
+						var startTime=m.BeginDate;  
+					     var start=new Date(startTime.replace("-", "/").replace("-", "/"));  
+					     var endTime=m.EndDate;  
+					     var end=new Date(endTime.replace("-", "/").replace("-", "/"));
+					     if(start>end){
+					    		tone.views.FuncAddTip("结束日期不能小于开始日期");
+					    		return
+						}
+					}else{
+						tone.views.FuncAddTip("请选择正确的时间");
+						return
+					}
+
+					m.ui_candel(true);
+					this.CtrlData.empeduction.push({GraduateSchool:'',Profession:'',Education:'',BeginDate:'',EndDate:'',HasDegree:false,ui_candel:ko.observable(false)});
+				}
+				$('[ui-date="true"]').datepicker({'dateFormat':'yy-mm-dd',changeMonth: true,changeYear: true});
+			}.bind(this);
+			this.EventAddWork=function(m,e){
+				var list=this.CtrlData.empwork();
+				var len=list.length;
+				var DATE_FORMAT = /^[0-9]{4}-[0-1]?[0-9]{1}-[0-3]?[0-9]{1}$/;
+				if($(e.target).hasClass('msg-delbtn')){
+					this.CtrlData.empwork.remove(m);
+					if(len>1){
+						list[len-1].ui_candel(false);
+					}
+					this.CtrlData.empwork(list);
+				}else{
+					if(len>0){
+						var o = list[len-1];
+						if(o.BeginDate.length<1||o.EndDate.length<1||o.CompanyName.length<1){
+							tone.views.FuncAddTip('请先完善此条资料');
+							return
+						}
+					}
+					if(DATE_FORMAT.test(m.BeginDate)&&DATE_FORMAT.test(m.EndDate)){
+						var startTime=m.BeginDate;  
+					     var start=new Date(startTime.replace("-", "/").replace("-", "/"));  
+					     var endTime=m.EndDate;  
+					     var end=new Date(endTime.replace("-", "/").replace("-", "/"));
+					     if(start>end){
+					    		tone.views.FuncAddTip("结束日期不能小于开始日期");
+					    		return
+						}
+					}else{
+						tone.views.FuncAddTip("请选择正确的时间");
+						return
+					}
+					m.ui_candel(true);
+					this.CtrlData.empwork.push({Job:'',CompanyName:'',BeginDate:'',EndDate:'',ui_candel:ko.observable(false)});
+				}
+				$('[ui-date="true"]').datepicker({'dateFormat':'yy-mm-dd',changeMonth: true,changeYear: true});
+			}.bind(this);
+			
+			this.AttrIsOK = ko.observable(true);
+			this.EventCheckID=function(){
+				this.AttrIsOK(true);
+				var ok=true;
+				var re;
+				if(this.CtrlData.emploaddata().IdentityID().length<=0){
+					return
+				}
+				if(this.CtrlData.emploaddata().IdentityID().length==15){
+					re = new RegExp(/^(\d{6})(\d{2})(\d{2})(\d{2})(\d{3})$/);
+					var arrSplit = this.CtrlData.emploaddata().IdentityID().match(re);
+					//检查生日日期是否正确
+					var dtmBirth = new Date('19' + arrSplit[2] + '-' + arrSplit[3] + '-' + arrSplit[4]);
+					ok = (dtmBirth.getYear() == Number(arrSplit[2])) && ((dtmBirth.getMonth() + 1) == Number(arrSplit[3])) && (dtmBirth.getDate() == Number(arrSplit[4]));
+					if (!ok){
+						tone.views.FuncAddTip(['无法效验身份证']);
+						this.AttrIsOK(false);
+						return
+					}else{
+						var d = dtmBirth.getFullYear()+"-"+(dtmBirth.getMonth() + 1)+"-"+dtmBirth.getDate();
+						this.CtrlData.emploaddata().Birthday(d);
+					}
+				}else if(this.CtrlData.emploaddata().IdentityID().length==18){
+					re = new RegExp(/^(\d{6})(\d{4})(\d{2})(\d{2})(\d{3})([0-9]|X)$/);
+					var arrSplit = this.CtrlData.emploaddata().IdentityID().match(re);
+
+					//检查生日日期是否正确
+					var dtmBirth = new Date(arrSplit[2] + "-" + arrSplit[3] + "-" + arrSplit[4]);
+					ok = (dtmBirth.getFullYear() == Number(arrSplit[2])) && ((dtmBirth.getMonth() + 1) == Number(arrSplit[3])) && (dtmBirth.getDate() == Number(arrSplit[4]));
+					if (!ok){
+						tone.views.FuncAddTip(['无法效验身份证']);
+						this.AttrIsOK(false);
+						return
+					}else{
+						var d = dtmBirth.getFullYear()+"-"+(dtmBirth.getMonth() + 1)+"-"+dtmBirth.getDate();
+						this.CtrlData.emploaddata().Birthday(d);
+					}
+				}else{
+					tone.views.FuncAddTip(['不合法的身份证号']);
+					this.AttrIsOK(false);
+				}
+			};
+			this.EventSave=function(){
+				try{
+				this.FuncSave(function(){
+				}.bind(this));
+				}catch(e){console.log(e)}
+			};
+			this.FuncSave=function(callback){
+				var params={};
+				var obj = this.CtrlData.emploaddata();
+				var sex = '';
+				$.each(obj,function(k,v){
+					if(k!="WorkHistory"&&k!="EducationHistory"&&k!="DeptID"&&k!="JobID"&&k!="AcName"){
+						params[k]=v();
+					}
+				})
+				$.each(this.CtrlConf.Sex(),function(k,v){
+					if(v.IsSel()){
+						params.Sex=v.ItemCode;
+						sex=v.ItemName;
+					}
+				}.bind(this));
+				
+				if(!this.AttrIsOK()){
+					$('[data-click="1"]').click();
+					tone.views.FuncAddTip('请填写正确的身份证号码');
+					return;
+				}
+				var edu = [];
+				var work = [];
+				
+				var tmp = this.CtrlData.empeduction()[0]
+				if(tmp.BeginDate!=''||tmp.EndDate!=''){
+					var da = this.CtrlData.empeduction();
+					for(var i in da){
+						if(da[i].BeginDate!=''&&da[i].EndDate==''){
+							$('[data-click="2"]').click();
+							tone.views.FuncAddTip('请选择第'+(++i)+'行的结束日期');
+							return;
+						}else if(da[i].BeginDate==''&&da[i].EndDate!=''){
+							$('[data-click="2"]').click();
+							tone.views.FuncAddTip('请选择第'+(++i)+'行的起始日期');
+							return;
+						}else if((da[i].BeginDate>=da[i].EndDate)&&da[i].BeginDate!=''&&da[i].EndDate!=''){
+							$('[data-click="2"]').click();
+							tone.views.FuncAddTip('第'+(++i)+'行的起始日期要小于结束日期');
+							return;
+						}else if(da[i].BeginDate!=''&&da[i].EndDate!=''&&da[i].GraduateSchool.length<1){
+							$('[data-click="2"]').click();
+							tone.views.FuncAddTip('请填写第'+(++i)+'行的毕业学校');
+							return;
+						}
+					}
+				}
+				
+				$.each(this.CtrlData.empeduction(),function(k,v){
+					if(v.BeginDate.length>0&&v.GraduateSchool.length>0){
+						edu.push(v)
+					}
+				})
+				
+				var tmp2 = this.CtrlData.empwork()[0]
+				if(tmp2.BeginDate!=''||tmp2.EndDate!=''){
+					var da = this.CtrlData.empwork();
+					for(var i in da){
+						if(da[i].BeginDate!=''&&da[i].EndDate==''){
+							$('[data-click="3"]').click();
+							tone.views.FuncAddTip('请选择第'+(++i)+'行的结束日期');
+							return;
+						}else if(da[i].BeginDate==''&&da[i].EndDate!=''){
+							$('[data-click="3"]').click();
+							tone.views.FuncAddTip('请选择第'+(++i)+'行的起始日期');
+							return;
+						}else if(da[i].BeginDate>=da[i].EndDate&&da[i].BeginDate!=''&&da[i].EndDate!=''){
+							$('[data-click="3"]').click();
+							tone.views.FuncAddTip('第'+(++i)+'行的起始日期要小于结束日期');
+							return;
+						}else if(da[i].BeginDate!=''&&da[i].EndDate!=''&&da[i].CompanyName.length<1){
+							$('[data-click="3"]').click();
+							tone.views.FuncAddTip('请填写第'+(++i)+'行的公司名称');
+							return;
+						}
+					}
+				}
+			
+				$.each(this.CtrlData.empwork(),function(k,v){
+					if(v.BeginDate.length>0&&v.CompanyName.length>0){
+						work.push(v)
+					}
+				})
+
+				if(work.length>0){
+					params.WorkHistory=JSON.stringify(work);
+				}else{
+					params.WorkHistory="";
+				}
+				if(edu.length>0){
+					params.EducationHistory=JSON.stringify(edu);
+				}else{
+					params.EducationHistory="";
+				}
+				//console.log(params.AcName,isNaN(params.AcName))
+				if(!isNaN(params.AcName)){
+					delete params.AcName;
+				}
+				if(isNaN(params.Sex)){
+					params.Sex=-1;
+				}
+				params.MaritalStatus = params.Maritalstatus
+				var uid = this.CtrlData.empinfo().UID;
+				console.log("uid is:",this.CtrlData.empinfo());
+				var id = this.CtrlData.selemp().ID;
+				if(uid!=undefined){
+					params.UID=uid;
+				}
+				if(this.CtrlData.selemp().AcName!=undefined){
+					params.AcName=this.CtrlData.selemp().AcName;
+				}
+				
+				params.OrganizeUserID = this.CtrlData.selemp().ID;
+			//	params.UID = this.CtrlData.selemp().UID
+				//console.log("SELEMP IS",this.CtrlData.selemp())
+				//return
+				if(this.CtrlView.imgisok()){
+					tone.sys.img_inflate($('#'+this.CtrlView.IDimg)[0],function(data){
+						data=data.split(',');
+						data=data[data.length-1];
+						params.StandardImage=data;
+						this.FuncSaveData(id,params,function(){
+							if($.type(callback)=="function"){
+								callback();
+							}
+						});
+					}.bind(this),500*1024);
+				}else{
+					this.FuncSaveData(id,params,function(){
+						if($.type(callback)=="function"){
+							callback();
+						}
+					})
+				}
+			}
+			this.FuncSaveData=function(id,params,callback){
+				tone.ajaxJson('/common/update/organizeuser/'+id,params,'post',function(data){
+					if(data.success!=undefined&&data.success==true){
+						if($.type(callback)=="function"){
+							callback();
+							try{
+							params.DeptID=this.CtrlData.selemp().DeptID;
+							params.JobID=this.CtrlData.selemp().JobID;
+							this.CtrlData.empinfo(this.FuncMakeInfoData(params));
+							this.FuncGetEmployees(0,this.CtrlData.selhead().type,this.CtrlData.seldept().ID,false);
+						}catch(e){console.log(e)}
+							this.AttrView(0);
+
+						}
+					}else if(data.error!=undefined&&data.error.length>0){
+						tone.views.FuncAddTip(data.error);
+					}
+				}.bind(this));
+			}
+			this.FunInitInfo=function(data){
+				var listsex = this.CtrlConf.Sex();
+				var listmarital = this.CtrlConf.Marital;
+				this.CtrlConf.SeledProvince([]);
+				this.CtrlConf.SeledNation([]);
+				this.CtrlConf.SeledEducation([]);
+				this.CtrlData.empeduction([]);
+				this.CtrlData.empwork([]);
+				$.each(listsex,function(k,v){
+					if(v.ItemCode==data.Sex){
+						v.IsSel(true);
+					}else{
+						v.IsSel(false);
+					}
+				})
+				$.each(listmarital,function(k,v){
+					if(v.name==data.Maritalstatus){
+						v.IsSel(true);
+					}else{
+						v.IsSel(false);
+					}
+				})
+				var p_ok = false;
+				$.each(this.CtrlConf.Province(),function(k,v){
+					if(data.Native==v.name){
+						p_ok=true;
+					}
+				})
+				if(!p_ok){data.Native=""}
+				if($.inArray(data.Nation,this.CtrlConf.Native())==-1){
+					data.Nation="";
+				}
+				if($.inArray(data.Education,this.CtrlConf.Education)==-1){
+					data.Education="";
+				}
+				this.CtrlConf.SeledProvince.push(data.Native);
+				this.CtrlConf.SeledNation.push(data.Nation);
+				this.CtrlConf.SeledEducation.push(data.Education);
+				if(data.EducationHistory!=undefined&&data.EducationHistory.length>0){
+					var list = [];
+					$.each(data.EducationHistory,function(k,v){
+						v.ui_candel=ko.observable(true);
+						v.UID=this.CtrlData.selemp().UID!=undefined?this.CtrlData.selemp().UID.ID:'';
+						v.IndexID=tone.views.AttrUser().CompanyID;
+						list.push(v);
+					}.bind(this))
+					list[list.length-1].ui_candel(false);
+					this.CtrlData.empeduction(list);
+				}else{
+					this.CtrlData.empeduction.push({GraduateSchool:'',Profession:'',Education:'',BeginDate:'',EndDate:'',HasDegree:false,ui_candel:ko.observable(false),UID:this.CtrlData.selemp().UID!=undefined?this.CtrlData.selemp().UID.ID:'',IndexID:tone.views.AttrUser().CompanyID});
+				}
+				if(data.WorkHistory!=undefined&&data.WorkHistory.length>0){
+					var list=data.WorkHistory;
+					$.each(list,function(k,v){
+						v.ui_candel=ko.observable(true);
+					})
+					list[list.length-1].ui_candel(false);
+					this.CtrlData.empwork(list);
+				}else{
+					this.CtrlData.empwork.push({Job:'',CompanyName:'',BeginDate:'',EndDate:'',ui_candel:ko.observable(false),UID:this.CtrlData.selemp().UID!=undefined?this.CtrlData.selemp().UID.ID:'',IndexID:tone.views.AttrUser().CompanyID});
+				}
+				$('[ui-date="true"]').datepicker({'dateFormat':'yy-mm-dd',changeMonth: true,changeYear: true});
+			}
+			this.EventUploadImg=function(m,e){
+				var file= $(e.target).val().replace(/[^\\\/]*[\\\/]+/g,"");
+				var postfix = /\.[^\.]+/.exec(file);
+				if(postfix!=".jpg"&&postfix!=".jpeg"&&postfix!=".png"&&postfix!=".jpeg"){
+					tone.views.FuncAddTip('仅支持.jpg .png .jpeg文档类型格式，请重新上传');
+					this.CtrlView.imgisok(false);
+					return
+				}else{
+					this.CtrlView.imgisok(true);
+					tone.sys.img_inflate($(e.target),function(data){
+						this.CtrlData.empimg(data);
+					}.bind(this))
+				}
+			};
+			//功能视图切换 @t 类型（入职，异动，离职）;@i 步骤
+			//t= join|move|leave i=0|1|2...
+			this.FuncActionView=function(t,i){
+				var ids = this.CtrlTem;
+				if(t!="leave"){
+					this.FuncGetJobList(0);
+				}else{
+					this.FuncGetTypeList();
+				}
+				this.CtrlView.f_type(t);
+				this.CtrlView.f_step(i);
+				$('#'+ids.B_Background).show();
+				if(this.CtrlView.f_isreopen()){
+					$('.pika-table').find('.is-selected').removeClass("is-selected");
+					$('#'+this.CtrlTem.NowDeptID).find(".current").removeClass("current");
+				}
+				if(t=="join"){
+					switch(i){
+						case 1:
+							this.CtrlView.f_stepbutton1("下一步");
+							this.CtrlView.searchview(this.CtrlView.isaddname()?1:0);
+							$('#'+ids.C_Background).hide();
+							$('#'+ids.C_FlowID).hide();
+							$('#'+ids.C_TitleID).hide();
+							$('#'+ids.C_SaveID).hide();
+							$('#'+ids.L_SubmitID).hide();
+
+							$('#'+ids.J_InfoID).hide();
+							$('#'+ids.NowDeptID).hide();
+							$('#'+ids.C_TitleID).hide();
+							$('#'+ids.C_DeptID).hide();
+							$('#'+ids.D_Dept).hide();
+							break;
+						case 2:
+							this.CtrlView.f_title("详细信息");
+							this.CtrlView.f_stepbutton1("下一步");
+							this.CtrlView.searchview(-1);
+							$('#'+ids.C_MainID).show();
+							$('#'+ids.C_Background).show();
+							$('#'+ids.NowDeptID).hide();
+							$('#'+ids.C_TitleID).show();
+							$('#'+ids.J_InfoID).show();
+							$('#'+ids.C_FlowID).show();
+							$('#'+ids.C_DeptID).hide();
+							$('#'+ids.C_DateID).hide();
+							$('#'+ids.C_SaveID).hide();
+							$('#'+ids.D_Dept).hide();
+							break;
+						case 3:
+							this.FuncGetNowDeptTree([],'join',function(data){
+								this.CtrlData.seldodept(data);
+							}.bind(this));
+							this.CtrlData.seldodept({});
+							this.CtrlView.f_stepbutton1("下一步");
+							this.CtrlView.f_title("选择加入的部门");
+							$('#'+ids.C_MainID).show();
+							this.CtrlView.searchview(-1);
+							$('#'+ids.C_Background).show();
+							$('#'+ids.J_InfoID).hide();
+							$('#'+ids.NowDeptID).show();
+							$('#'+ids.C_FlowID).show();
+							$('#'+ids.C_TitleID).show();
+							$('#'+ids.C_DeptID).hide();
+							$('#'+ids.C_DateID).hide();
+							$('#'+ids.C_SaveID).hide();
+							$('#'+ids.D_Dept).hide();
+							break;
+						case 4:
+							if(this.CtrlData.seldodept().ID==undefined){
+								this.CtrlView.f_step(3);
+								tone.views.FuncAddTip("请选择入职的部门");
+								return
+							}
+							this.CtrlView.f_stepbutton1("下一步");
+							this.CtrlData.seljob({});
+							this.CtrlView.f_title("选择职位");
+							this.CtrlView.searchview(-1);
+							$('#'+ids.C_Background).show();
+							$('#'+ids.J_InfoID).hide();
+							$('#'+ids.NowDeptID).hide();
+							$('#'+ids.C_FlowID).show();
+							$('#'+ids.C_TitleID).show();
+							$('#'+ids.C_DeptID).show();
+							$('#'+ids.C_DateID).hide();
+							$('#'+ids.C_SaveID).hide();
+							$('#'+ids.D_Dept).hide();
+							break;
+						case 5:
+							if(this.CtrlData.seljob().ID==undefined){
+								this.CtrlView.f_step(4);
+								tone.views.FuncAddTip("请选择入职的职位");
+								return
+							}
+							this.CtrlView.f_stepbutton1("确定");
+							this.CtrlData.seldate('');
+							this.CtrlView.f_title("选择入职日期");
+							this.CtrlView.searchview(-1);
+							$('#'+ids.C_Background).show();
+							$('#'+ids.J_InfoID).hide();
+							$('#'+ids.NowDeptID).hide();
+							$('#'+ids.C_FlowID).show();
+							$('#'+ids.C_TitleID).show();
+							$('#'+ids.C_DeptID).hide();
+							$('#'+ids.C_DateID).show();
+							$('#'+ids.C_SaveID).hide();
+							$('#'+ids.D_Dept).hide();
+							break;
+						case 6:
+							if(this.CtrlData.seldate().length<=0){
+								this.CtrlView.f_step(5);
+								tone.views.FuncAddTip("请选择入职的时间");
+								return
+							}
+							var param={};
+							var typenum = 0;
+							if(!this.CtrlView.isrejoin()&&!this.CtrlView.isaddname()){
+								param = {
+									UID:this.CtrlData.j_info().id,
+									DeptID:this.CtrlData.seldodept().ID,
+									JobID:this.CtrlData.seljob().ID,
+									HireDate:this.CtrlData.seldate()
+								}
+							}else if(this.CtrlView.isrejoin()){
+								var list = []
+								$.each(this.CtrlData.selemps(),function(k,v){
+									var tmp = {ID:v.ID}
+									list.push(tmp)
+								}.bind(this));
+								typenum=2;
+								param={
+									OrganizeUserID:this.CtrlData.selemp().ID,
+									DeptID:this.CtrlData.seldodept().ID,
+									JobID:this.CtrlData.seljob().ID,
+									HireDate:this.CtrlData.seldate()
+								}
+								if(this.CtrlData.selemp().UID!=undefined){
+									param.UID=this.CtrlData.selemp().UID.ID;
+								}
+							}else{
+								typenum=1;
+								param={
+									RealName:this.CtrlData.empsearch(),
+									DeptID:this.CtrlData.seldodept().ID,
+									JobID:this.CtrlData.seljob().ID,
+									HireDate:this.CtrlData.seldate(),
+									Sex:-1
+								}
+							}
+							
+							if(this.CtrlView.isrejoin()){
+								$.each(list,function(k,v){
+									param.OrganizeUserID = v.ID;
+									this.FuncJoinDispose(typenum,param,function(data){
+										if(k+1==list.length){
+											$('#'+ids.B_Background).hide();
+											$('#'+ids.C_SaveID).show();
+											setTimeout(function (){
+												$('#'+ids.C_SaveID).hide();
+												  //清除本次流程变量
+												this.CtrlData.j_info({});
+												this.CtrlData.seldodept({});
+												this.CtrlData.seljob({});
+												this.CtrlData.seldate('');
+												this.CtrlView.searchview(0);
+												this.CtrlView.isaddname(false);
+												this.CtrlView.isrejoin(false);
+											}.bind(this), 2000);
+											this.FuncGetEmpOfNum();
+											this.FuncGetEmployees(0,this.CtrlData.selhead().type,this.CtrlData.seldept().ID,false);
+										}
+									}.bind(this));
+								}.bind(this));
+							}else{
+								this.FuncJoinDispose(typenum,param,function(data){
+									$('#'+ids.B_Background).hide();
+									$('#'+ids.C_SaveID).show();
+									setTimeout(function (){
+										$('#'+ids.C_SaveID).hide();
+										  //清除本次流程变量
+										this.CtrlData.j_info({});
+										this.CtrlData.seldodept({});
+										this.CtrlData.seljob({});
+										this.CtrlData.seldate('');
+										this.CtrlView.searchview(0);
+										this.CtrlView.isaddname(false);
+										this.CtrlView.isrejoin(false);
+									}.bind(this), 2000);
+									this.FuncGetEmpOfNum();
+									//this.CtrlData.emplist.push(data);
+									this.FuncGetEmployees(0,this.CtrlData.selhead().type,this.CtrlData.seldept().ID,false);
+								}.bind(this));
+							}							
+							break;
+						default:
+							$('#'+ids.B_Background).hide();
+							break;
+					}
+				}
+				if(t=="move"){
+					switch(i){
+					case 0:
+						$('#'+ids.B_Background).show();
+						$('#'+ids.D_Dept).show();
+						this.CtrlView.searchview(-1);
+						$('#'+ids.C_Background).hide();
+						$('#'+ids.J_InfoID).hide();
+						$('#'+ids.NowDeptID).hide();
+						$('#'+ids.C_FlowID).hide();
+						$('#'+ids.C_TitleID).hide();
+						$('#'+ids.C_DeptID).hide();
+						$('#'+ids.C_SaveID).hide();
+						$('#'+ids.L_SubmitID).hide();
+						$('#'+ids.C_MainID).hide();
+						$('#'+ids.C_DateID).hide();
+						break;
+					case 1:
+						if(this.AttrSameDept()){
+							$('#'+ids.B_Background).show();
+							$('#'+ids.D_Dept).show();
+							this.CtrlView.searchview(-1);
+							$('#'+ids.C_Background).hide();
+							$('#'+ids.J_InfoID).hide();
+							$('#'+ids.NowDeptID).hide();
+							$('#'+ids.C_FlowID).hide();
+							$('#'+ids.C_TitleID).hide();
+							$('#'+ids.C_DeptID).hide();
+							$('#'+ids.C_SaveID).hide();
+							$('#'+ids.L_SubmitID).hide();
+							$('#'+ids.C_MainID).hide();
+							$('#'+ids.C_DateID).hide();
+							return;
+						}
+						var list = [];
+						$.each(this.CtrlData.selemps(),function(k,v){
+							list.push(v.DeptID.ID);
+						})
+						this.FuncGetNowDeptTree(list,'move',function(data){
+							var isrepeat=false;
+							$.each(this.CtrlData.selemps(),function(k,v){
+								if(v.DeptID.ID==data.ID){
+									isrepeat=true;
+									return false;
+								}
+							});
+							if(isrepeat){
+								this.CtrlData.seldodept({});
+								tone.views.FuncAddTip('不能选择原来所在部门');
+								return;
+							}
+							this.CtrlData.seldodept(data);
+						}.bind(this))
+
+						this.CtrlView.f_title("选择移动至的部门");
+						this.CtrlView.f_stepbutton1("下一步");
+						this.CtrlData.seldodept({});
+						this.CtrlView.searchview(-1);
+						$('#'+ids.C_Background).show();
+						$('#'+ids.J_InfoID).hide();
+						$('#'+ids.NowDeptID).show();
+						$('#'+ids.C_FlowID).show();
+						$('#'+ids.C_TitleID).show();
+						$('#'+ids.C_DeptID).hide();
+						$('#'+ids.C_SaveID).hide();
+						$('#'+ids.L_SubmitID).hide();
+						$('#'+ids.C_MainID).show();
+						$('#'+ids.C_DateID).hide();
+						$('#'+ids.D_Dept).hide();
+						$('#'+ids.NowDeptID).find(".current").removeClass("current");
+						break;
+					case 2:
+						if(this.CtrlData.seldodept().ID==undefined&&!this.AttrSameDept()){
+							this.CtrlView.f_step(1);
+							tone.views.FuncAddTip("请选择异动的部门");
+							return;
+						}
+						this.CtrlData.seljob({});
+						this.CtrlView.f_title("选择职位");
+						this.CtrlView.f_stepbutton1("下一步");
+						$('#'+ids.C_MainID).show();
+						this.CtrlView.searchview(-1);
+						$('#'+ids.C_Background).show();
+						$('#'+ids.J_InfoID).hide();
+						$('#'+ids.NowDeptID).hide();
+						$('#'+ids.C_FlowID).show();
+						$('#'+ids.C_TitleID).show();
+						$('#'+ids.C_DeptID).show();
+						$('#'+ids.C_DateID).hide();
+						$('#'+ids.C_SaveID).hide();
+						$('#'+ids.D_Dept).hide();
+						break;
+					case 3:
+						if(this.CtrlData.seljob().ID==undefined){
+							this.CtrlView.f_step(2);
+							tone.views.FuncAddTip("请选择异动的职位");
+							return
+						}
+						this.CtrlData.seldate('');
+						this.CtrlView.f_title("选择异动日期");
+						this.CtrlView.f_stepbutton1("确定");
+						this.CtrlView.searchview(-1);
+						$('#'+ids.C_Background).show();
+						$('#'+ids.J_InfoID).hide();
+						$('#'+ids.NowDeptID).hide();
+						$('#'+ids.C_FlowID).show();
+						$('#'+ids.C_TitleID).show();
+						$('#'+ids.C_DeptID).hide();
+						$('#'+ids.C_DateID).show();
+						$('#'+ids.C_SaveID).hide();
+						$('#'+ids.D_Dept).hide();
+						$('.pika-table').find('.is-selected').removeClass("is-selected");
+						break;
+					case 4:
+						if(this.CtrlData.seldate().length<=0){
+							this.CtrlView.f_step(3);
+							tone.views.FuncAddTip("请选择异动的时间");
+							return
+						}
+						var list = [];
+						$.each(this.CtrlData.selemps(),function(k,v){
+							//list.push(v.UID.ID);
+							list.push(v.ID);
+						})
+						//数组专字符串；
+						var param = {};
+						if(this.AttrSameDept()){
+							param = {
+								//UID:list.join(','),
+								OrganizeUserID:list.join(','),
+								//NewDeptID:this.CtrlData.seldodept().ID,
+								NewJobID:this.CtrlData.seljob().ID,
+								MoveDate:this.CtrlData.seldate(),	
+							}
+						}else{
+							param = {
+								//UID:list.join(','),
+								OrganizeUserID:list.join(','),
+								NewDeptID:this.CtrlData.seldodept().ID,
+								NewJobID:this.CtrlData.seljob().ID,
+								MoveDate:this.CtrlData.seldate()
+							}
+						}
+						
+						this.FuncMoveDispose(param,function(){
+							$('#'+ids.B_Background).hide();
+							$('#'+ids.C_SaveID).show();
+							  setTimeout(function (){
+								  $('#'+ids.C_SaveID).hide();
+							   }, 2000);
+							  this.FuncGetEmployees(0,this.CtrlData.selhead().type,this.CtrlData.seldept().ID),false;
+							  this.FuncGetEmpOfNum();
+						}.bind(this))
+						 this.CtrlData.j_info({});
+							this.CtrlData.seldodept({});
+							this.CtrlData.seljob({});
+							this.CtrlData.seldate('');
+							this.CtrlData.selemp({});
+							this.CtrlData.selemps([]);
+						break;
+					default:
+						$('#'+ids.B_Background).hide();
+						break;
+					}
+				}	
+				if(t=="leave"){
+					switch(i){
+					case 1:
+						this.CtrlView.f_stepbutton1("下一步");
+						this.CtrlView.searchview(-1);
+						$('#'+ids.C_Background).show();
+						$('#'+ids.J_InfoID).hide();
+						$('#'+ids.NowDeptID).hide();
+						$('#'+ids.C_FlowID).show();
+						$('#'+ids.C_TitleID).hide();
+						$('#'+ids.L_SubmitID).show();
+						$('#'+ids.C_DeptID).hide();
+						$('#'+ids.C_DateID).hide();
+						$('#'+ids.C_SaveID).hide();
+						$('#'+ids.C_MainID).hide();
+						$('#'+ids.D_Dept).hide();
+						break;
+					case 2:
+						if(this.CtrlView.f_leave().length<=0){
+							this.CtrlView.f_step(1);
+							tone.views.FuncAddTip("需要填写离职原因");
+							return
+						}
+						this.CtrlData.seldate('');
+						this.CtrlView.f_title("选择离职日期");
+						this.CtrlView.f_stepbutton1("确定");
+						$('#'+ids.C_MainID).show();
+						this.CtrlView.searchview(-1);
+						$('#'+ids.C_Background).show();
+						$('#'+ids.J_InfoID).hide();
+						$('#'+ids.NowDeptID).hide();
+						$('#'+ids.C_FlowID).show();
+						$('#'+ids.C_TitleID).show();
+						$('#'+ids.C_DeptID).hide();
+						$('#'+ids.C_DateID).show();
+						$('#'+ids.C_SaveID).hide();
+						$('#'+ids.L_SubmitID).hide();
+						$('#'+ids.D_Dept).hide();
+						break;
+					case 3:
+						if(this.CtrlData.seldate().length<=0){
+							this.CtrlView.f_step(2);
+							tone.views.FuncAddTip("请选择离职的时间");
+							return
+						}
+						var list = [];
+						$.each(this.CtrlData.selemps(),function(k,v){
+							var tmp = {ID:v.ID}
+							list.push(tmp);
+						})
+						var param = {
+								//UID:this.CtrlData.selemp().ID,
+								DeptID:this.CtrlData.selemp().DeptID.ID,
+								LeaveType:this.CtrlData.selleavetype().ID,
+								OrganizeUserID:this.CtrlData.selemp().ID,
+								Remark:this.CtrlView.f_leave(),
+								LeaveDate:this.CtrlData.seldate()
+						}
+						
+						$.each(list,function(k,v){
+							param.OrganizeUserID = v.ID;
+							this.FuncLeaveDispost(param,function(){
+								if(k+1==list.length){	
+									$('#'+ids.B_Background).hide();
+									$('#'+ids.C_SaveID).show();
+									setTimeout(function (){
+										$('#'+ids.C_SaveID).hide();
+									}, 2000);
+									this.FuncGetEmployees(0,this.CtrlData.selhead().type,this.CtrlData.seldept().ID,false);
+									// this.CtrlData.emplist.remove(this.selemp())
+									this.FuncGetEmpOfNum();
+								}
+								
+							}.bind(this));
+						}.bind(this));
+						console.log("ddddddd")
+						this.CtrlData.j_info({});
+						this.CtrlData.seldodept({});
+						this.CtrlData.seljob({});
+						this.CtrlData.seldate('');
+						this.CtrlData.selemps([]);
+						this.CtrlData.selemp({});
+						break;
+					default:
+						$('#'+ids.B_Background).hide();
+						break;
+					}
+				}
+			}
+			//员工处理菜单
+			this.FuncDisposeView = function(){
+				if($('#'+this.CtrlTem.DisposeID).css('display')=="none"){
+					$('#'+this.CtrlTem.DisposeID).css('display','');
+				}else{
+					$('#'+this.CtrlTem.DisposeID).css('display','none');
+				}
+			}.bind(this);
+			//员工入职处理
+			this.FuncJoinDispose=function(typenum,param,callback){
+				var url="";
+				switch (typenum){
+					case 0:
+						url="/hr/join/create";break;
+					case 1:
+						url="/hr/join/noaccount/create";break;
+					case 2:
+						url="/hr/join/rehire";break;
+				}
+				tone.ajaxJson(url,param,'post',function(data){
+					//var data ={success:true}
+					this.CtrlView.f_success(data.success);
+					if(data.success!=undefined&&data.success==true){
+						this.CtrlView.f_tip("保存成功");
+						if($.type(callback)=="function"){
+							try{
+							if(data.data!=undefined){
+							var data = JSON.parse(data.data);
+							data[0].IsSel = ko.observable(false);
+							callback(data[0]);
+							}else{callback()};
+							}catch(e){console.log('[ERROR]Join Func Callback Exception:'+e)}
+						}
+					}else{
+						this.CtrlView.f_tip("保存失败!");
+						tone.views.FuncAddTip(data.error);
+					}
+				}.bind(this));
+			};
+			//员工异动处理
+			this.FuncMoveDispose = function(param,callback){
+				tone.ajaxJson('/hr/move/create',param,'post',function(data){
+					this.CtrlView.f_success(data.success);
+					if(data.success!=undefined&&data.success==true){
+						this.CtrlView.f_tip("保存成功");
+						if($.type(callback)=="function"){
+							try{
+							callback();	
+							}catch(e){console.log('[ERROR]Move Func Callback Exception:'+e)}
+						}
+					}else{
+						this.CtrlView.f_tip("保存失败")
+					}
+				}.bind(this));
+			};
+			//员工离职处理
+			this.FuncLeaveDispost = function(param,callback){
+				tone.ajaxJson('/hr/workoff/create',param,'post',function(data){
+					if(data.success!=undefined&&data.success==true){
+						this.CtrlView.f_tip("保存成功");
+						this.CtrlData.selemp({});
+						this.CtrlData.selemps([]);
+						if($.type(callback)=="function"){
+							try{
+							callback();	
+							}catch(e){console.log(e)}
+						}
+					}else{
+						this.CtrlView.f_tip("保存失败")
+					}
+				}.bind(this));
+			};
+			//获取离职类型
+			this.FuncGetTypeList=function(){
+				tone.ajaxJson('/hrapi/queryfilter/dropdownitem/0/50',
+						{'typeid__exact':'1014212239028526008'},'post',function(data){
+					if(data.success!=undefined&&data.success==true){
+						if(data.data==undefined){data.data=[];}
+						var list = []
+						$.each(data.data,function(k,v){
+							v.IsSel = ko.observable(false);
+							list.push(v)
+						})
+						if(list.length>0){
+							list[0].IsSel(true);
+							this.CtrlData.selleavetype(list[0]);
+						}
+						this.CtrlData.leavetype(list);
+					}else{
+						tone.views.FuncAddTip('获取离职类型失败: '+data.error);
+					}
+				}.bind(this));
+			};
+			//处理员工模板列表
+			this.FuncMakeListView = function(doc){
+				$('.members-listshow').find('[data-type="cell"]').remove();
+				$('.members-listshow').append(doc);
+			}
+			this.FuncClearListView = function(){
+				$('[data-type="cell"]').remove();
+			}
+
+			//处理员工信息数据
+			this.FuncMakeInfoData = function(data){
+				//console.log("data is:",data)
+				var info = {};
+				var rep = '';
+				this.CtrlData.empimg('');
+				/*基础信息*/
+				if(data.UID!=undefined){
+					info.UID = data.UID;
+				}
+				info.AcName = data.AcName;
+				this.CtrlData.empinfoItemCode(data.ItemCode||rep);
+				info.ItemCode = data.ItemCode;
+				info.EmpType = data.EmpType==undefined?rep:data.EmpType.ItemName;
+				info.DeptID = data.DeptID==undefined?rep:data.DeptID.CircleName;
+				info.Mail=data.Mail==undefined||data.Mail==null?rep:data.Mail;
+				//if(data.DeptID==undefined){info.DeptID={CircleName:rep}}else{info.DeptID=data.DeptID}
+				info.JobID = data.JobID==undefined?rep:data.JobID.ItemName;
+				info.HireDate = data.HireDate || rep;
+				info.ProbationEndDate = data.ProbationEndDate || rep;
+				/*个人信息*/
+				info.RealName = data.RealName||rep;
+				info.Birthday = data.Birthday ||rep;
+				info.IdentityID = data.IdentityID||rep;
+				info.Addr = data.Addr||rep;
+				info.Education = data.Education||rep;
+				info.GraduateSchool=data.GraduateSchool||rep;
+				info.Major=data.Major||rep;
+				info.Maritalstatus=data.Maritalstatus||rep;
+				info.Nation = data.Nation||rep;
+				info.Native = data.Native||rep;
+				info.Name = data.Name||rep;
+				info.NativeAddr = data.NativeAddr||rep;
+				info.ID=data.ID;
+				if(data.Sex>=0){
+					info.Sex = data.Sex==0?'女':'男';
+				}else{
+					info.Sex = '保密';
+				}
+				info.NativeReside=data.NativeReside||rep;
+				info.CurrentReside=data.CurrentReside||rep;
+				info.Mph = data.Mph||rep;
+				info.Oph = data.Oph||rep;
+				info.EmergencyContract = data.EmergencyContract||rep;
+				info.EmergencyPhone = data.EmergencyPhone||rep;
+				if($.type(data.EducationHistory)=="string"&&data.EducationHistory.length>0){
+					data.EducationHistory=JSON.parse(data.EducationHistory);
+				}
+				if($.type(data.WorkHistory)=="string"&&data.WorkHistory.length>0){
+					data.WorkHistory=JSON.parse(data.WorkHistory);
+				}
+				info.EducationHistory=ko.observableArray(data.EducationHistory||[]);
+				info.WorkHistory=ko.observableArray(data.WorkHistory||[]);
+				try{
+				this.FunInitInfo(data)}catch(e){console.log(e)}
+				return info
+			}
+			//制作标题信息字典
+			this.FuncMakeHeadDis = function(data){
+				var list = [];
+				list.push({name:"在职",num:data.arg_on,IsSel:ko.observable(false),type:"arg_on"});
+				list.push({name:"离职",num:data.workoff,IsSel:ko.observable(false),type:"leave"});
+				this.CtrlDis.HeadTable(list);
+				if(this.CtrlData.selhead().type=='leave'){
+					list[1].IsSel(true);
+					list[0].IsSel(false)
+					this.CtrlData.selhead(list[1]);	
+				}else{
+					list[0].IsSel(true);
+					list[1].IsSel(false);
+					this.CtrlData.selhead(list[0]);
+				}
+			}
+			
+			//获取员工UID
+			this.EmpUID = ko.observable('');
+			//获取某员工信息
+			this.FuncGetEmpInfo = function(id,callback){
+				tone.ajaxJson('/hrapi/user/get/'+id,{},'get',function(data){
+					if(data.success!=undefined&&data.success==true){
+						//this.EmpUID(data.data[0].UID)
+						this.CtrlData.empinfo(this.FuncMakeInfoData(data.data[0]));
+						//console.log("info is:",this.CtrlData.empinfo());
+						if($.type(callback)=='function'){
+							callback(data.data);
+						}
+					}else{
+						tone.views.FuncAddTip(data.error);
+					}
+				}.bind(this));
+			};
+			//获取员工列表 @type 过滤类型
+			this.FuncGetEmployees=function(skip,type,id,issearch,callback){
+				var url='/common/queryfilter/organizeuser/'+skip+'/'+this.CtrlData.emplimit;
+				var params={sort:'-itemcode',filter:[],querychild:true};
+				if(id!=undefined&&id!=''){
+					//params.deptid=id;
+					params.filter.push({'Connector':'And','deptid__exact':id});
+				}else{
+					$.each($('#'+this.CtrlFilterID).children('[ui-module="true"]').t1yunadvfilter().FuncBuildFilter(),function(i,item){
+						params.filter.push(item);
+					});
+					params.sort = $('#'+this.CtrlFilterID).children('[ui-module="true"]').t1yunadvfilter().FuncBuildSort();
+					params.enableAuthize=true;
+				}
+				params.fields=['AcName','NickName','ID','ItemCode','Mail','RealName','DeptID','JobID','HireDate',
+				               'Sex','ExtType','IdentityID','Education','GraduateSchool','Major',
+				               'Maritalstatus','Nation','NativeAddr','Mph','Oph','EmergencyContract','EmergencyPhone','CreateDate'];
+				params.fields=JSON.stringify(params.fields);
+				switch(type){
+				case "leave":
+					params.filter.push({'Connector':'And',"exttype__exact":"-1"});
+					break;
+				case "arg_on":
+					params.filter.push({'Connector':'And',"exttype__exact":"1"});
+					break;
+				default:
+					params.filter.push({'Connector':'And',"exttype__exact":"1"});
+				}
+				if(issearch){
+					var search = this.CtrlView.searchvalue();
+					if(isNaN(search)){
+						//params.filter.push({"connector":"or","itemcode__contains":search, "realname__contains":search, "T2.itemname__contains":search, "T4.circlename__contains":search})
+						params.filter.push({'Connector':'And',"realname__icontains":search});
+					}else{
+						params.filter.push({'Connector':'And',"acname__exact":search})
+					}
+				}
+				params.filter=JSON.stringify(params.filter);
+				if(skip<1){
+					this.CtrlData.empcount(0);
+					this.CtrlData.emplist([]);
+				}
+				tone.ajaxJson(url,params,'post',function(data){
+					if(data.success!=undefined&&data.success==true){
+						this.CtrlData.emptotal(data.total);
+						var count = this.CtrlData.empcount();
+						var list = [];
+						$.each(data.data,function(k,v){
+							
+							v.IsSel = ko.observable(false);
+							if(v.Sex>=0){
+								v.ui_sex = v.Sex==0?'女':'男';
+							}else{
+								v.ui_sex = '保密';
+							}
+							v.ui_exttype=v.ExtType==1?'在职':'离职';
+							list.push(v);
+						})
+						if(skip<1){
+							count = data.count;
+							this.CtrlData.emplist(list);
+						}else{
+							count+=data.count;
+							$.each(list,function(k,v){
+								this.CtrlData.emplist.push(v);
+							}.bind(this))
+						}
+						this.CtrlData.empcount(count)
+						this.AttrOnNum(data.total)
+						if(typeof callback == "function"){
+							callback(data.data);
+						}
+					}
+				}.bind(this));
+			};
+			//通过acname查找帐号
+			this.FuncGetUserJoin = function(value,callback){
+				if(value.length<1) return;
+				tone.ajaxJson('/hr/organizeuser/joincheck',{'account':value},'get',function(data){
+					if(data.success!=undefined&&data.success==true){
+					//	data.data=data.data[0];
+						if($.type(callback)=="function"){
+							callback(data.data);
+						}
+					}else{
+						tone.views.FuncAddTip(data.error);
+					}
+				});
+				
+				/*var url='/common/queryfilter/users/0/100';
+				var params={filter:[],querychild:true};
+				params.enableAuthize=true;
+				if(isNaN(acname)){
+					params.filter.push({"mail__exact":acname});
+					//params.filter.push({"connector":"or", "realname__contains":acname, "mail__contains":acname});
+				}else{
+					params.filter.push({"acname__exact":acname})
+				}
+				params.filter=JSON.stringify(params.filter);
+				tone.ajaxJson(url,params,'post',function(data){
+					if(data.success!=undefined&&data.success==true&&data.data.length>0){
+						data.data1=data.data[0];
+						tone.ajaxJson('/hrapi/user/getbyacname',{'acname':data.data1.AcName},'get',function(data){
+							if(data.success!=undefined&&data.success==true&&data.data.length>0){
+								if($.type(callback)=="function"){
+									callback(data.data[0]);
+								}
+							}else{
+								tone.views.FuncAddTip(data.error);
+							}
+						});
+					}else{
+						tone.views.FuncAddTip('该用户不存在或输入有误');
+						return;
+					}
+				}.bind(this));*/
+			};
+			//获取员工信息模板
+			this.FuncGetTemplate = function(){
+				tone.ajaxJson('/hrapi/queryfilter/template/0/1000',{'Sortby':'id'},'post',function(data){
+					if(data.success!=undefined&&data.success==true&&data.data!=null){
+						$.each(data.data,function(k,v){
+							if(v.BillName=="OrganizeUser"){
+								this.CtrlData.empdis = JSON.parse(v.Fields);
+							}
+						}.bind(this))			
+					}
+				}.bind(this))
+			};
+			//获取职位
+			this.FuncGetJobList=function(start,callback){
+				tone.ajaxJson('/hrapi/job/all/'+start+'/'+this.CtrlData.joblimit,{'Sortby':'id'},'get',function(data){
+					if(data.success!=undefined&&data.success==true){
+						if(data.data==undefined){data.data=[];}
+						var list=[];
+						$.each(data.data,function(k,v){
+							v.IsSel = ko.observable(false);
+							list.push(v)
+						})
+						if(start<=0){
+							this.CtrlData.joblist(list);
+						}else{
+							$.each(list,function(k,v){
+								this.CtrlData.joblist.push(v);
+							}.bind(this))
+						}
+						if($.type(callback)=="function"){
+							callback(data.data);
+						}
+					}else{
+						tone.views.FuncAddTip('获取职位列表失败'+data.error);
+					}
+				}.bind(this));
+			};
+			this.FuncGetEmpOfNum = function(){
+				tone.ajaxJson('/hr/organizeuser/getcount',{},'get',function(data){
+					if(data.success!=undefined&&data.success==true){
+						this.FuncMakeHeadDis(data);
+					}else{
+						tone.views.FuncAddTip('获取企业人数失败'+data.error);
+					}
+				}.bind(this));
+			}
+			//获取全局组织树
+			this.FuncGetAllDeptTree = function(){
+				$('#'+this.CtrlTem.AllDeptID).depttree({
+					depttype:parseInt('00010001',2),
+					itemtype:'organizeuser',
+					action:8,
+					onseluser:function(data){
+					},
+					onseldept:function(data){
+						this.CtrlData.selemps([]);//切换部门时清空当前部门所选中的人
+						this.CtrlData.seldept(data);
+						this.CtrlData.selemp({});//clear sel of emp
+						this.CtrlView.selallview(false);//not sel all
+						this.FuncGetEmployees(0,this.CtrlData.selhead().type,data.ID,false)
+					}.bind(this),
+					callback:function(){
+						console.log('[INFOM]The AllDeptTree Is Ok.');
+					}
+				});
+			};
+			//方法内组织树
+			this.FuncGetNowDeptTree = function(i,itemtype,callback){
+				var hidedept = i;
+				$('#'+this.CtrlTem.NowDeptID).depttree({
+					depttype:parseInt('00010001',2),
+					itemtype:itemtype,
+					action:1,
+					hiden:[],
+					disables:i,
+					onseluser:function(data){
+						//console.log(data);
+					},
+					onseldept:function(data){
+						if($.type(callback)=="function"){
+							callback(data);
+						}
+					}.bind(this),
+					callback:function(){
+						console.log('[INFOM]The FuncDeptTree Is Ok.');
+					}
+				});
+			};
+			//获取合同数组||或者当前合同
+			// status 1|2 历史合同|当前合同
+			this.FuncGetContracts=function(id,status,callback){
+				var url = "/common/queryfilter/contractrecords/0"+"/"+this.CtrlData.contractlimit;
+				var params = {
+						filter:JSON.stringify([{"organizeuserid__exact":id},{"status__exact":status}])
+				}
+				tone.ajaxJson(url,params,'post',function(data){
+					if(data.success!=undefined&&data.success==true){
+						var list=[];
+						$.each(data.data,function(k,v){
+							if(v.ContractTypeID.ItemName!=undefined&&v.Attachment.length>0){
+								//v.ui_name = ko.observable(v.ItemCode+v.ContractTypeID.ItemName+'.doc');
+								v.ui_name='合同附件';
+							}else{
+								v.ui_name ='没有附件';
+							}
+							list.push(v);
+						})
+						if(status==2&&list.length>0){
+							this.CtrlData.contract(list[0]);
+						}else if(list.length>0){
+							this.CtrlData.contracts(list)	
+						}
+						if($.type(callback)=="function"){
+							callback(data.data)
+						}
+					}else{
+						tone.views.FuncAddTip('获取员工合同失败'+data.error);
+					}
+				}.bind(this));
+			};
+			
+			this.MakeTodayDate=function(){
+				var myDate = new Date();
+				var year = myDate.getFullYear();
+				var mon = myDate.getMonth()+1<10?'0'+(myDate.getMonth()+1):myDate.getMonth()+1;
+				var day = myDate.getDate()<10?'0'+myDate.getDate():myDate.getDate();   
+				return year+'-'+mon+'-'+day;
+			}
+			this.FuncClearData=function(){
+				var clear = this.CtrlData
+				clear.contract({});
+				clear.contracts([]);
+				clear.selemp({});
+				clear.selemps([]);
+			};
+			
+			//上传员工信息表Excel，选择后保存
+			this.EventUpLoadAffix=function(m,e){
+				var file= $('#'+this.CtrlTem.LoadFileID).val().replace(/[^\\\/]*[\\\/]+/g,"");
+				var postfix = /\.[^\.]+/.exec(file);
+				if(postfix!=".xls"&&postfix!=".xlsx"){
+					tone.views.FuncAddTip('仅支持.xls或者.xlsx表格类型格式，请重新上传');
+					return
+				}
+				this.FuncUpLoadAffix(this.CtrlTem.LoadFileID);
+				return;
+			}.bind(this);
+			//上传员工信息表Excel
+			//id:控件id
+			this.FuncUpLoadAffix=function(id,callback){	
+				var url = tone.apiVersion+'/report/import/organizeuser';
+				tone.func.uploadfile(url,id,false,function(data){
+					$('#'+this.CtrlTem.WaitForLoading).show();
+					if(data.success!=undefined&&data.success==true){
+						this.CtrlView.selallview(false);
+						this.CtrlData.selemp({});
+						this.CtrlData.selemps([]);
+						this.CtrlView.f_success(data.success);
+						window.setTimeout(function(){
+							$('#'+this.CtrlTem.WaitForLoading).hide();
+							$('#'+this.CtrlTem.C_SaveID).show();
+							this.CtrlView.f_tip("导入成功");
+							this.FuncGetEmpOfNum();
+							this.FuncGetEmployees(0,0);
+						}.bind(this),1000);
+						window.setTimeout(function(){
+							$('#'+this.CtrlTem.C_SaveID).hide();
+						}.bind(this),2000);
+						if($.type(callback)=="function"){
+							callback(data)
+						}
+					}else{
+						var that = this;
+						this.CtrlData.LoadingLogMessages([]);
+						window.setTimeout(function(){
+							$.each(data.messages,function(k,v){
+								var tmp = {messages:v};
+								that.CtrlData.LoadingLogMessages.push(tmp);
+							});
+							$('#'+this.CtrlTem.C_SaveID).show();
+							this.CtrlView.f_tip("导入失败");
+						}.bind(this),1000);
+						window.setTimeout(function(){
+							$('#'+this.CtrlTem.WaitForLoading).hide();
+							$('#'+this.CtrlTem.C_SaveID).hide();
+							$('#'+this.CtrlTem.LoadingLog).show();
+						}.bind(this),2000);
+					}
+				}.bind(this));
+			};
+			//关闭导入日志弹出层
+			this.EventCloseLoadingLog=function(m,e){
+				$('#'+this.CtrlTem.WaitForLoading).hide();
+				$('#'+this.CtrlTem.LoadingLog).hide();
+			}.bind(this);
+			
+			//下载导入模板
+			this.EventDownloadTemplet=function(m,e){
+				tone.views.FuncAddTip("正在下载员工信息导入模板");
+				window.location.href="/update/organizeuser.xlsx";
+        		}.bind(this);
+        
+         		this.EventShowFilter=function(){
+				$('#'+this.CtrlFilterID).toggle();
+				//$('#'+this.CtrlSortID).hide();
+			}.bind(this);
+         		this.EventShowSort=function(){
+				//$('#'+this.CtrlSortID).toggle();
+				//$('#'+this.CtrlFilterID).hide();
+			}.bind(this);
+         		this.EventClearFilter=function(){
+				$('#'+this.CtrlFilterID).children('[ui-module="true"]').t1yunadvfilter().FuncClear();
+				//$('#'+this.CtrlFilterID).hide();
+				this.FuncGetEmployees(0,0);
+			}.bind(this);
+	      	this.EventPrint = function(m,e){
+		         	if(this.ListHr().length<1){
+		         			tone.views.FuncAddTip("请先在打印设置页面设置打印模板");
+		         			return;
+		         		}
+		         	var tmp = [];
+				$.each(this.CtrlData.emplist(),function(index,item){
+					if(item.IsSel()){
+						if(item.Sex!='1'&&item.Sex!='0'){
+							item.Sex="保密" ;
+						}
+						if(item.Sex=='1'){
+							item.Sex="男" ;
+						}
+						if(item.Sex=='0'){
+							item.Sex="女" ;
+						}
+						tmp.push(item);
+					}
+				});
+				if(tmp.length<1){
+					tone.views.FuncAddTip(['请选择制表数据']);
+					return;
+				}
+	      		var dataa = {}
+	      		dataa.Hr = tmp;
+	      		/* 
+	      		var report = new Stimulsoft.Report.StiReport();
+	 				report.load(this.ListHr());
+	 				report.regData("dataa", "dataa", dataa);
+	 				report.render();
+	 				report.print(); */
+	 				
+	 				
+	 				var dataa2 ={}
+					dataa2.dataa = dataa;
+					dataa2.ReporTemp=this.ListHr();
+					sessionStorage.setItem("data", JSON.stringify(dataa2));
+					window.open('/t1yun/manage1/templatedesign/print');
+	         	}.bind(this);
+         	
+         	
+	         	this.ListHr = ko.observableArray([]);//打印模板的数据数组
+	          	//获取员工打印模板
+			this.FuncGetListHr_Print=function(m,e){
+				tone.ajaxJson('/common/queryfilter/reporttemplate/0/1',{'sort':'-CreateDate','filter':'[{"documenttype__exact":"Hr","enable__exact":"true"}]'},'post',function(data){
+					if(data.success!=undefined&&data.success==true){
+						if(data.data==undefined){data.data=[];}
+						//console.log(data.data)
+						var tmp = JSON.parse(data.data[0].Json)
+						//console.log(tmp)
+						this.ListHr(tmp);
+						//console.log(this.ListHr())
+					}else{
+						tone.views.FuncAddTip('获取打印模板数据失败'+data.error);
+					}
+				}.bind(this));
+	  		}.bind(this);
+
+			this.Views=function(){
+				if(tone.views.AttrUser().OrganizeUserID==""){//未入职
+					this.AttrTip(true);
+				}
+				//$('#'+this.CtrlSortID).children('[ui-module="true"]').t1yunadvfilter({'type':'OrganizeUser'});
+				var that =this;
+				$('#'+this.CtrlFilterID).children('[ui-module="true"]').t1yunadvfilter({'type':'OrganizeUser',callback:function(data){
+					that.FuncGetEmployees(0,0);
+				}});
+				this.FuncGetEmployees(0,0);
+				this.FuncGetAllDeptTree();
+				this.FuncGetTemplate();
+				this.FuncGetEmpOfNum();
+				this.FuncGetListHr_Print();
+				//tone.sys.loadcss("{{.StaticServer}}/common/cssAndjs/lib/pikaday/css/pikaday.css");
+				//tone.sys.loadjs("{{.StaticServer}}/common/cssAndjs/lib/pikaday/pikaday.js");
+				var picker = new Pikaday({
+					field: $('#'+this.CtrlTem.C_DateID).find('.ui_pikaday')[0],
+					bound:false,
+					format:"YYYY-MM-DD",
+					onseldate:function(e){
+						that.CtrlView.f_seldatenode=$(e.target);
+						//console.log(that.CtrlView.f_seldatenode().attr('class'))
+						
+					}
+				})
+				tone.func.setRollDownEvent($('[data-view="list"]'),function(e){
+					this.CtrlData.empskip=this.CtrlData.empcount();
+					
+					var skip = this.CtrlData.empskip;
+					if(skip<this.CtrlData.emptotal()){
+						//console.log("ff",skip)
+					}else{
+						//console.log("sff",skip)
+						return;
+					}
+				}.bind(this));
+				tone.sys.loadcss("{{.StaticServer}}/common/cssAndjs/lib/jquery-citypickers/css/city-picker.css");		
+			};
+			this.Binding=function(ctrl){
+				ko.applyBindings(this,ctrl);
+				this.Views();
+			};
+		}
+		try{
+			var manage1_app_hr_V21 = new Manage1_App_Hr_V21()
+			manage1_app_hr_V21.Binding(ctrlhr[0]);
+		}catch(e){console.log(e)}
+		var o = manage1_app_hr_V21;
+		$('#'+o.CtrlTem.LoadFileID).live("change",function(){
+			o.EventUpLoadAffix();
+			$('#'+o.CtrlTem.LoadFileID).replaceWith($('#'+o.CtrlTem.LoadFileID).clone(true));
+		});
+	//});
+</script>
+</div>
