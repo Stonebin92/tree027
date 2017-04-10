@@ -1,0 +1,815 @@
+{
+  "data": [
+    {
+      "AttributeValues": [
+        {
+          "CategoryID": "57a2aa820c069e0001000045",
+          "ID": "585c9c1d60faf50ef600129d",
+          "Name": "vds"
+        }
+      ],
+      "ID": "57b842d20c069e0009001725",
+      "IsColor": false,
+      "IsEnum": false,
+      "IsInput": true,
+      "IsMulti": false,
+      "IsNeed": false,
+      "IsSKU": false,
+      "IsSPU": true,
+      "IsSearch": true,
+      "Name": "3c认证部件",
+      "RelatedPicture": false
+    },
+    {
+      "AttributeValues": [
+        {
+          "CategoryID": "57a2aa820c069e0001000045",
+          "ID": "58ddb7d049f31629a1000021",
+          "Name": "玩儿"
+        }
+      ],
+      "ID": "57b842d20c069e0009001726",
+      "IsColor": false,
+      "IsEnum": false,
+      "IsInput": true,
+      "IsMulti": false,
+      "IsNeed": false,
+      "IsSKU": false,
+      "IsSPU": true,
+      "IsSearch": true,
+      "Name": "3c认证部件型号",
+      "RelatedPicture": false
+    },
+    {
+      "AttributeValues": [
+        {
+          "CategoryID": "57a2aa820c069e0002000056",
+          "ID": "58ddb60549f31629a1000011",
+          "Name": "壁灯属性1.1"
+        },
+        {
+          "CategoryID": "57a2aa820c069e0002000056",
+          "ID": "58ddb61049f31629a1000012",
+          "Name": "壁灯属性1.2"
+        },
+        {
+          "CategoryID": "57a2aa820c069e0002000056",
+          "ID": "58ddb61249f31629a1000013",
+          "Name": "壁灯属性1.3"
+        },
+        {
+          "CategoryID": "57a2aa820c069e0002000056",
+          "ID": "58ddb61549f31629a1000014",
+          "Name": "壁灯属性1.4"
+        }
+      ],
+      "ID": "58ddb5f249f31629a100000f",
+      "IsColor": false,
+      "IsEnum": true,
+      "IsInput": false,
+      "IsMulti": false,
+      "IsNeed": false,
+      "IsSKU": false,
+      "IsSPU": false,
+      "IsSearch": false,
+      "Name": "壁灯属性1",
+      "RelatedPicture": false
+    },
+    {
+      "AttributeValues": [
+        {
+          "CategoryID": "57a2aa820c069e0002000056",
+          "ID": "58ddb6bc49f31629a100001d",
+          "Name": "壁灯属性3.2"
+        },
+        {
+          "CategoryID": "57a2aa820c069e0002000056",
+          "ID": "58ddb6bf49f31629a100001f",
+          "Name": "壁灯属性3.4"
+        }
+      ],
+      "ID": "58ddb6b049f31629a100001b",
+      "IsColor": false,
+      "IsEnum": true,
+      "IsInput": false,
+      "IsMulti": false,
+      "IsNeed": false,
+      "IsSKU": false,
+      "IsSPU": false,
+      "IsSearch": false,
+      "Name": "壁灯属性3",
+      "RelatedPicture": false
+    },
+    {
+      "AttributeValues": [
+        {
+          "CategoryID": "57a2aa820c069e0002000056",
+          "ID": "58ddc0b549f31629a100002a",
+          "Name": "本色"
+        },
+        {
+          "CategoryID": "57a2aa820c069e0002000056",
+          "ID": "58ddc0bb49f31629a100002b",
+          "Name": "里面了"
+        },
+        {
+          "CategoryID": "57a2aa820c069e0002000056",
+          "ID": "58ddc0ca49f31629a100002c",
+          "Name": "碰了碰"
+        }
+      ],
+      "ID": "58ddc0ac49f31629a1000029",
+      "IsColor": true,
+      "IsEnum": true,
+      "IsInput": false,
+      "IsMulti": false,
+      "IsNeed": false,
+      "IsSKU": false,
+      "IsSPU": false,
+      "IsSearch": false,
+      "Name": "壁灯属性4",
+      "RelatedPicture": true
+    },
+    {
+      "AttributeValues": [
+        {
+          "CategoryID": "57a2aa820c069e0001000045",
+          "ID": "57b843200c069e0009001758",
+          "Name": "中国大陆"
+        },
+        {
+          "CategoryID": "57a2aa820c069e0001000045",
+          "ID": "57b843200c069e0009001759",
+          "Name": "亚太"
+        },
+        {
+          "CategoryID": "57a2aa820c069e0001000045",
+          "ID": "57b843200c069e0009001760",
+          "Name": "其他海外地区"
+        },
+        {
+          "CategoryID": "57a2aa820c069e0001000045",
+          "ID": "57b843200c069e0009001761",
+          "Name": "日本"
+        },
+        {
+          "CategoryID": "57a2aa820c069e0001000045",
+          "ID": "57b843200c069e0009001762",
+          "Name": "欧洲"
+        },
+        {
+          "CategoryID": "57a2aa820c069e0001000045",
+          "ID": "57b843200c069e0009001763",
+          "Name": "港澳台地区"
+        }
+      ],
+      "ID": "57b842d20c069e0009001727",
+      "IsColor": false,
+      "IsEnum": true,
+      "IsInput": false,
+      "IsMulti": false,
+      "IsNeed": false,
+      "IsSKU": false,
+      "IsSPU": true,
+      "IsSearch": true,
+      "Name": "产地",
+      "RelatedPicture": false
+    },
+    {
+      "AttributeValues": [
+        {
+          "CategoryID": "57a2aa820c069e0001000045",
+          "ID": "57b843200c069e0009001871",
+          "Name": "其他异型吊灯"
+        },
+        {
+          "CategoryID": "57a2aa820c069e0001000045",
+          "ID": "57b843200c069e0009001872",
+          "Name": "吸吊两用型吊灯"
+        },
+        {
+          "CategoryID": "57a2aa820c069e0001000045",
+          "ID": "57b843200c069e0009001873",
+          "Name": "枝型吊灯"
+        },
+        {
+          "CategoryID": "57a2aa820c069e0001000045",
+          "ID": "57b843200c069e0009001874",
+          "Name": "风扇吊灯"
+        },
+        {
+          "CategoryID": "57a2aa820c069e0001000045",
+          "ID": "57b843200c069e0009001875",
+          "Name": "鱼线型吊灯"
+        }
+      ],
+      "ID": "57b842d20c069e0009001737",
+      "IsColor": false,
+      "IsEnum": true,
+      "IsInput": false,
+      "IsMulti": false,
+      "IsNeed": false,
+      "IsSKU": false,
+      "IsSPU": false,
+      "IsSearch": true,
+      "Name": "灯具型状",
+      "RelatedPicture": false
+    },
+    {
+      "AttributeValues": [
+        {
+          "CategoryID": "57a2aa820c069e0001000045",
+          "ID": "57b843200c069e0009001766",
+          "Name": "ABS+五金底盘"
+        },
+        {
+          "CategoryID": "57a2aa820c069e0001000045",
+          "ID": "57b843200c069e0009001767",
+          "Name": "其他"
+        },
+        {
+          "CategoryID": "57a2aa820c069e0001000045",
+          "ID": "57b843200c069e0009001768",
+          "Name": "铁"
+        },
+        {
+          "CategoryID": "57a2aa820c069e0001000045",
+          "ID": "57b843200c069e0009001769",
+          "Name": "木"
+        },
+        {
+          "CategoryID": "57a2aa820c069e0001000045",
+          "ID": "57b843200c069e0009001770",
+          "Name": "水晶"
+        },
+        {
+          "CategoryID": "57a2aa820c069e0001000045",
+          "ID": "57b843200c069e0009001771",
+          "Name": "PVC"
+        },
+        {
+          "CategoryID": "57a2aa820c069e0001000045",
+          "ID": "57b843200c069e0009001772",
+          "Name": "石材"
+        },
+        {
+          "CategoryID": "57a2aa820c069e0001000045",
+          "ID": "57b843200c069e0009001773",
+          "Name": "布"
+        },
+        {
+          "CategoryID": "57a2aa820c069e0001000045",
+          "ID": "57b843200c069e0009001774",
+          "Name": "铜"
+        },
+        {
+          "CategoryID": "57a2aa820c069e0001000045",
+          "ID": "57b843200c069e0009001775",
+          "Name": "铝"
+        },
+        {
+          "CategoryID": "57a2aa820c069e0001000045",
+          "ID": "57b843200c069e0009001776",
+          "Name": "草藤\\柳编"
+        },
+        {
+          "CategoryID": "57a2aa820c069e0001000045",
+          "ID": "57b843200c069e0009001777",
+          "Name": "人造云石"
+        },
+        {
+          "CategoryID": "57a2aa820c069e0001000045",
+          "ID": "57b843200c069e0009001778",
+          "Name": "玻璃钢"
+        },
+        {
+          "CategoryID": "57a2aa820c069e0001000045",
+          "ID": "57b843200c069e0009001779",
+          "Name": "有机玻璃"
+        },
+        {
+          "CategoryID": "57a2aa820c069e0001000045",
+          "ID": "57b843200c069e0009001780",
+          "Name": "玻璃"
+        },
+        {
+          "CategoryID": "57a2aa820c069e0001000045",
+          "ID": "57b843200c069e0009001781",
+          "Name": "毛皮"
+        },
+        {
+          "CategoryID": "57a2aa820c069e0001000045",
+          "ID": "57b843200c069e0009001782",
+          "Name": "树脂"
+        },
+        {
+          "CategoryID": "57a2aa820c069e0001000045",
+          "ID": "57b843200c069e0009001783",
+          "Name": "陶瓷"
+        },
+        {
+          "CategoryID": "57a2aa820c069e0001000045",
+          "ID": "57b843200c069e0009001784",
+          "Name": "光纤"
+        },
+        {
+          "CategoryID": "57a2aa820c069e0001000045",
+          "ID": "57b843200c069e0009001785",
+          "Name": "聚丙烯(pp)"
+        },
+        {
+          "CategoryID": "57a2aa820c069e0001000045",
+          "ID": "57b843200c069e0009001786",
+          "Name": "贝壳"
+        },
+        {
+          "CategoryID": "57a2aa820c069e0001000045",
+          "ID": "57b843200c069e0009001787",
+          "Name": "云石"
+        },
+        {
+          "CategoryID": "57a2aa820c069e0001000045",
+          "ID": "57b843200c069e0009001788",
+          "Name": "石膏"
+        },
+        {
+          "CategoryID": "57a2aa820c069e0001000045",
+          "ID": "57b843200c069e0009001789",
+          "Name": "丝线"
+        },
+        {
+          "CategoryID": "57a2aa820c069e0001000045",
+          "ID": "57b843200c069e0009001790",
+          "Name": "高分子聚合物"
+        },
+        {
+          "CategoryID": "57a2aa820c069e0001000045",
+          "ID": "57b843200c069e0009001791",
+          "Name": "纸"
+        },
+        {
+          "CategoryID": "57a2aa820c069e0001000045",
+          "ID": "57b843200c069e0009001792",
+          "Name": "合金"
+        }
+      ],
+      "ID": "57b842d20c069e0009001729",
+      "IsColor": false,
+      "IsEnum": true,
+      "IsInput": false,
+      "IsMulti": false,
+      "IsNeed": false,
+      "IsSKU": false,
+      "IsSPU": true,
+      "IsSearch": true,
+      "Name": "灯身主材质",
+      "RelatedPicture": false
+    },
+    {
+      "AttributeValues": [
+        {
+          "CategoryID": "57a2aa820c069e0001000045",
+          "ID": "57b843200c069e0009001856",
+          "Name": "云石吊灯"
+        },
+        {
+          "CategoryID": "57a2aa820c069e0001000045",
+          "ID": "57b843200c069e0009001857",
+          "Name": "全铜/铜吊灯"
+        },
+        {
+          "CategoryID": "57a2aa820c069e0001000045",
+          "ID": "57b843200c069e0009001858",
+          "Name": "布艺吊灯"
+        },
+        {
+          "CategoryID": "57a2aa820c069e0001000045",
+          "ID": "57b843200c069e0009001859",
+          "Name": "木艺吊灯"
+        },
+        {
+          "CategoryID": "57a2aa820c069e0001000045",
+          "ID": "57b843200c069e0009001860",
+          "Name": "树脂吊灯"
+        },
+        {
+          "CategoryID": "57a2aa820c069e0001000045",
+          "ID": "57b843200c069e0009001861",
+          "Name": "水晶吊灯"
+        },
+        {
+          "CategoryID": "57a2aa820c069e0001000045",
+          "ID": "57b843200c069e0009001862",
+          "Name": "玻璃吊灯"
+        },
+        {
+          "CategoryID": "57a2aa820c069e0001000045",
+          "ID": "57b843200c069e0009001863",
+          "Name": "羊皮吊灯"
+        },
+        {
+          "CategoryID": "57a2aa820c069e0001000045",
+          "ID": "57b843200c069e0009001864",
+          "Name": "藤艺吊灯"
+        },
+        {
+          "CategoryID": "57a2aa820c069e0001000045",
+          "ID": "57b843200c069e0009001865",
+          "Name": "铁艺吊灯"
+        },
+        {
+          "CategoryID": "57a2aa820c069e0001000045",
+          "ID": "57b843200c069e0009001866",
+          "Name": "锌合金吊灯"
+        },
+        {
+          "CategoryID": "57a2aa820c069e0001000045",
+          "ID": "57b843200c069e0009001867",
+          "Name": "麻绳吊灯"
+        },
+        {
+          "CategoryID": "57a2aa820c069e0001000045",
+          "ID": "58574acc60faf50ef60009ac",
+          "Name": "da"
+        },
+        {
+          "CategoryID": "57a2aa820c069e0001000045",
+          "ID": "58577a0b60faf50ef60009e1",
+          "Name": "vzxvr6"
+        },
+        {
+          "CategoryID": "57a2aa820c069e0001000045",
+          "ID": "58577a0c60faf50ef60009e2",
+          "Name": "vx"
+        },
+        {
+          "CategoryID": "57a2aa820c069e0001000045",
+          "ID": "58577a0c60faf50ef60009e3",
+          "Name": "xdf"
+        }
+      ],
+      "ID": "57b842d20c069e0009001735",
+      "IsColor": false,
+      "IsEnum": true,
+      "IsInput": false,
+      "IsMulti": false,
+      "IsNeed": false,
+      "IsSKU": false,
+      "IsSPU": false,
+      "IsSearch": true,
+      "Name": "吊灯类型",
+      "RelatedPicture": false
+    },
+    {
+      "AttributeValues": [
+        {
+          "CategoryID": "57a2aa820c069e0001000045",
+          "ID": "57b843200c069e0009001823",
+          "Name": "镀铬"
+        },
+        {
+          "CategoryID": "57a2aa820c069e0001000045",
+          "ID": "57b843200c069e0009001824",
+          "Name": "拉丝垂吊"
+        },
+        {
+          "CategoryID": "57a2aa820c069e0001000045",
+          "ID": "57b843200c069e0009001825",
+          "Name": "电动冲孔"
+        },
+        {
+          "CategoryID": "57a2aa820c069e0001000045",
+          "ID": "57b843200c069e0009001826",
+          "Name": "磨花"
+        },
+        {
+          "CategoryID": "57a2aa820c069e0001000045",
+          "ID": "57b843200c069e0009001827",
+          "Name": "雕刻"
+        },
+        {
+          "CategoryID": "57a2aa820c069e0001000045",
+          "ID": "57b843200c069e0009001828",
+          "Name": "镂空雕花"
+        },
+        {
+          "CategoryID": "57a2aa820c069e0001000045",
+          "ID": "57b843200c069e0009001829",
+          "Name": "染色"
+        },
+        {
+          "CategoryID": "57a2aa820c069e0001000045",
+          "ID": "57b843200c069e0009001830",
+          "Name": "锻打"
+        },
+        {
+          "CategoryID": "57a2aa820c069e0001000045",
+          "ID": "57b843200c069e0009001831",
+          "Name": "手工编织"
+        },
+        {
+          "CategoryID": "57a2aa820c069e0001000045",
+          "ID": "57b843200c069e0009001832",
+          "Name": "鎏金"
+        },
+        {
+          "CategoryID": "57a2aa820c069e0001000045",
+          "ID": "57b843200c069e0009001833",
+          "Name": "喷漆磨砂"
+        },
+        {
+          "CategoryID": "57a2aa820c069e0001000045",
+          "ID": "57b843200c069e0009001834",
+          "Name": "其他/other"
+        },
+        {
+          "CategoryID": "57a2aa820c069e0001000045",
+          "ID": "57b843200c069e0009001835",
+          "Name": "电镀"
+        }
+      ],
+      "ID": "57b842d20c069e0009001732",
+      "IsColor": false,
+      "IsEnum": true,
+      "IsInput": false,
+      "IsMulti": false,
+      "IsNeed": false,
+      "IsSKU": false,
+      "IsSPU": false,
+      "IsSearch": true,
+      "Name": "工艺",
+      "RelatedPicture": false
+    },
+    {
+      "AttributeValues": [
+        {
+          "CategoryID": "57a2aa820c069e0001000045",
+          "ID": "57b843200c069e0009001843",
+          "Name": "1个"
+        },
+        {
+          "CategoryID": "57a2aa820c069e0001000045",
+          "ID": "57b843200c069e0009001844",
+          "Name": "2个"
+        },
+        {
+          "CategoryID": "57a2aa820c069e0001000045",
+          "ID": "57b843200c069e0009001845",
+          "Name": "3个"
+        },
+        {
+          "CategoryID": "57a2aa820c069e0001000045",
+          "ID": "57b843200c069e0009001846",
+          "Name": "4个"
+        },
+        {
+          "CategoryID": "57a2aa820c069e0001000045",
+          "ID": "57b843200c069e0009001847",
+          "Name": "5个"
+        },
+        {
+          "CategoryID": "57a2aa820c069e0001000045",
+          "ID": "57b843200c069e0009001848",
+          "Name": "6个"
+        },
+        {
+          "CategoryID": "57a2aa820c069e0001000045",
+          "ID": "57b843200c069e0009001849",
+          "Name": "7个"
+        },
+        {
+          "CategoryID": "57a2aa820c069e0001000045",
+          "ID": "57b843200c069e0009001850",
+          "Name": "8个"
+        },
+        {
+          "CategoryID": "57a2aa820c069e0001000045",
+          "ID": "57b843200c069e0009001851",
+          "Name": "9个"
+        },
+        {
+          "CategoryID": "57a2aa820c069e0001000045",
+          "ID": "57b843200c069e0009001852",
+          "Name": "10个"
+        },
+        {
+          "CategoryID": "57a2aa820c069e0001000045",
+          "ID": "57b843200c069e0009001853",
+          "Name": "10个(含)-15个(不含)"
+        },
+        {
+          "CategoryID": "57a2aa820c069e0001000045",
+          "ID": "57b843200c069e0009001854",
+          "Name": "15个(含)-20个(不含)"
+        },
+        {
+          "CategoryID": "57a2aa820c069e0001000045",
+          "ID": "57b843200c069e0009001855",
+          "Name": "20个及以上"
+        }
+      ],
+      "ID": "57b842d20c069e0009001734",
+      "IsColor": false,
+      "IsEnum": true,
+      "IsInput": false,
+      "IsMulti": false,
+      "IsNeed": false,
+      "IsSKU": false,
+      "IsSPU": false,
+      "IsSearch": true,
+      "Name": "光源个数",
+      "RelatedPicture": false
+    },
+    {
+      "AttributeValues": [
+        {
+          "CategoryID": "57a2aa820c069e0001000045",
+          "ID": "57b843200c069e0009001804",
+          "Name": "白炽灯"
+        },
+        {
+          "CategoryID": "57a2aa820c069e0001000045",
+          "ID": "57b843200c069e0009001805",
+          "Name": "节能灯"
+        },
+        {
+          "CategoryID": "57a2aa820c069e0001000045",
+          "ID": "57b843200c069e0009001806",
+          "Name": "荧光灯"
+        },
+        {
+          "CategoryID": "57a2aa820c069e0001000045",
+          "ID": "57b843200c069e0009001807",
+          "Name": "卤钨灯"
+        },
+        {
+          "CategoryID": "57a2aa820c069e0001000045",
+          "ID": "57b843200c069e0009001808",
+          "Name": "LED"
+        },
+        {
+          "CategoryID": "57a2aa820c069e0001000045",
+          "ID": "57b843200c069e0009001809",
+          "Name": "高压钠灯"
+        },
+        {
+          "CategoryID": "57a2aa820c069e0001000045",
+          "ID": "57b843200c069e0009001810",
+          "Name": "高压汞灯"
+        },
+        {
+          "CategoryID": "57a2aa820c069e0001000045",
+          "ID": "57b843200c069e0009001811",
+          "Name": "金卤灯"
+        },
+        {
+          "CategoryID": "57a2aa820c069e0001000045",
+          "ID": "57b843200c069e0009001822",
+          "Name": "PAR灯"
+        }
+      ],
+      "ID": "57b842d20c069e0009001731",
+      "IsColor": false,
+      "IsEnum": true,
+      "IsInput": false,
+      "IsMulti": false,
+      "IsNeed": false,
+      "IsSKU": false,
+      "IsSPU": false,
+      "IsSearch": true,
+      "Name": "光源类型",
+      "RelatedPicture": false
+    },
+    {
+      "AttributeValues": [
+        {
+          "CategoryID": "57a2aa820c069e0001000045",
+          "ID": "57b843200c069e0009001836",
+          "Name": "客厅"
+        },
+        {
+          "CategoryID": "57a2aa820c069e0001000045",
+          "ID": "57b843200c069e0009001837",
+          "Name": "餐厅"
+        },
+        {
+          "CategoryID": "57a2aa820c069e0001000045",
+          "ID": "57b843200c069e0009001838",
+          "Name": "厨房"
+        },
+        {
+          "CategoryID": "57a2aa820c069e0001000045",
+          "ID": "57b843200c069e0009001839",
+          "Name": "书房"
+        },
+        {
+          "CategoryID": "57a2aa820c069e0001000045",
+          "ID": "57b843200c069e0009001840",
+          "Name": "卧室"
+        },
+        {
+          "CategoryID": "57a2aa820c069e0001000045",
+          "ID": "57b843200c069e0009001841",
+          "Name": "卫生间"
+        },
+        {
+          "CategoryID": "57a2aa820c069e0001000045",
+          "ID": "57b843200c069e0009001842",
+          "Name": "其他/other"
+        }
+      ],
+      "ID": "57b842d20c069e0009001733",
+      "IsColor": false,
+      "IsEnum": true,
+      "IsInput": false,
+      "IsMulti": false,
+      "IsNeed": false,
+      "IsSKU": false,
+      "IsSPU": false,
+      "IsSearch": true,
+      "Name": "适用空间",
+      "RelatedPicture": false
+    },
+    {
+      "AttributeValues": [
+        {
+          "CategoryID": "57a2aa820c069e0002000056",
+          "ID": "58eb2f4049f316512100050f",
+          "Name": "套餐2"
+        },
+        {
+          "CategoryID": "57a2aa820c069e0002000056",
+          "ID": "58eb2f4849f3165121000512",
+          "Name": "套餐5"
+        }
+      ],
+      "ID": "58eb2f3849f316512100050d",
+      "IsColor": false,
+      "IsEnum": true,
+      "IsInput": false,
+      "IsMulti": false,
+      "IsNeed": false,
+      "IsSKU": true,
+      "IsSPU": false,
+      "IsSearch": false,
+      "Name": "套餐测试1",
+      "RelatedPicture": false
+    },
+    {
+      "AttributeValues": [
+        {
+          "CategoryID": "57a2aa820c069e0002000056",
+          "ID": "58eafcad49f3165121000509",
+          "Name": "色1"
+        },
+        {
+          "CategoryID": "57a2aa820c069e0002000056",
+          "ID": "58eafcb049f316512100050a",
+          "Name": "色2"
+        }
+      ],
+      "ID": "58eafca249f3165121000508",
+      "IsColor": false,
+      "IsEnum": true,
+      "IsInput": false,
+      "IsMulti": false,
+      "IsNeed": false,
+      "IsSKU": true,
+      "IsSPU": false,
+      "IsSearch": false,
+      "Name": "颜色测试1",
+      "RelatedPicture": false
+    },
+    {
+      "AttributeValues": [
+        {
+          "CategoryID": "57a2aa820c069e0001000045",
+          "ID": "57b843200c069e0009001868",
+          "Name": "不支持智能"
+        },
+        {
+          "CategoryID": "57a2aa820c069e0001000045",
+          "ID": "57b843200c069e0009001869",
+          "Name": "其他"
+        },
+        {
+          "CategoryID": "57a2aa820c069e0001000045",
+          "ID": "57b843200c069e0009001870",
+          "Name": "阿里小智"
+        }
+      ],
+      "ID": "57b842d20c069e0009001736",
+      "IsColor": false,
+      "IsEnum": true,
+      "IsInput": false,
+      "IsMulti": false,
+      "IsNeed": false,
+      "IsSKU": false,
+      "IsSPU": false,
+      "IsSearch": true,
+      "Name": "智能类型",
+      "RelatedPicture": false
+    }
+  ],
+  "success": true
+}
